@@ -224,19 +224,30 @@
    <div class="bg-beacon"></div>
    <div class="bg-ring"></div>
   </div>
-  <div id="app" class="w-full h-full overflow-auto"><!-- Landing Page -->
+  <div id="app" class="w-full h-full overflow-auto">
+   <!-- Header -->
+   <header class="sticky top-0 z-40 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"><!-- Logo --> <a href="#" id="logo-link" class="flex items-center gap-3 hover:opacity-90 transition"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20">VLP</span>
+      <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro Service</span>
+      </div></a> <!-- Nav Menu -->
+     <nav class="hidden md:flex items-center gap-8"><a href="#features" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Features</a> <a href="#how-it-works" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">How It Works</a> <button id="support-header-link" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition cursor-pointer bg-none border-none p-0">Support</button>
+     </nav><!-- CTA Button --> <button id="header-cta-btn" class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95">Get Started</button>
+    </div>
+   </header><!-- Landing Page -->
    <div id="landing-page" class="min-h-full flex flex-col">
     <main class="flex-1">
      <section class="px-6 pt-12 pb-12 md:pt-20 md:pb-20 overflow-hidden">
       <div class="max-w-7xl mx-auto grid gap-12 lg:grid-cols-[1.05fr_.95fr] items-center">
        <div class="text-center lg:text-left">
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700 mb-8 animate-fadeInDown">
-         <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewbox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+         <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewbox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
          </svg><span class="text-sm text-slate-300 tracking-[0.01em]">Premium U.S. clients seeking vetted developers. Flexible rates, full control.</span>
         </div>
         <h1 id="hero-headline" class="future-headline text-4xl md:text-6xl lg:text-7xl mb-6 animate-fadeInUp" style="animation-delay: 0.1s;">Work with U.S. <span class="gradient-text">Clients</span></h1>
         <p id="hero-subheadline" class="text-xl md:text-2xl text-slate-400 mb-10 max-w-2xl lg:max-w-none leading-relaxed animate-fadeInUp" style="animation-delay: 0.2s;">Virtual Launch Pro connects talented developers with high-quality U.S. clients seeking specialized expertise. Set your own rates, choose your projects, scale on your terms.</p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fadeInUp" style="animation-delay: 0.3s;"><button id="get-started-btn" class="inline-block px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-lg rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95"> Get Started Now → </button> <a href="#how-it-works" class="inline-block px-8 py-4 border border-slate-700 hover:border-emerald-500/50 bg-slate-900/40 hover:bg-slate-800/60 text-slate-100 font-semibold text-lg rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10"> How It Works </a>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fadeInUp" style="animation-delay: 0.3s;">
+         <button id="get-started-btn" class="inline-block px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-lg rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95"> Get Started Now → </button> <a href="#how-it-works" class="inline-block px-8 py-4 border border-slate-700 hover:border-emerald-500/50 bg-slate-900/40 hover:bg-slate-800/60 text-slate-100 font-semibold text-lg rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10"> How It Works </a>
         </div>
         <div class="grid sm:grid-cols-3 gap-4 mt-10 text-left">
          <div class="rounded-2xl border border-slate-800 bg-slate-900/45 p-4 animate-fadeInUp hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300" style="animation-delay: 0.4s;">
@@ -268,13 +279,143 @@
        <div class="relative">
         <div class="absolute inset-0 pulsing-aura" style="background: radial-gradient(circle at 50% 40%, rgba(16, 185, 129, 0.28), transparent 42%), radial-gradient(circle at 50% 80%, rgba(5, 150, 105, 0.14), transparent 48%); filter: blur(10px);"></div>
         <div class="relative rounded-2xl border border-slate-700/50 bg-slate-900/30 p-8 h-96 flex items-center justify-center overflow-hidden">
-         <div class="text-center">
-          <div class="w-24 h-24 rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-emerald-500/25">
-           <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-           </svg>
+         <style>
+          @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px) scale(1); opacity: 0.7; }
+            50% { transform: translateY(-12px) scale(1.05); opacity: 1; }
+          }
+          @keyframes rotateSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            position: relative;
+            width: 240px;
+            height: 240px;
+          }
+          .icon-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            animation: iconFloat 4s ease-in-out infinite;
+          }
+          .icon-item:nth-child(1) { animation-delay: 0s; }
+          .icon-item:nth-child(2) { animation-delay: 0.3s; }
+          .icon-item:nth-child(3) { animation-delay: 0.6s; }
+          .icon-item:nth-child(4) { animation-delay: 0.9s; }
+          .icon-item:nth-child(5) { animation-delay: 1.2s; }
+          .icon-item:nth-child(6) { animation-delay: 1.5s; }
+          .icon-item:nth-child(7) { animation-delay: 1.8s; }
+          .icon-item:nth-child(8) { animation-delay: 2.1s; }
+          .icon-item:nth-child(9) { animation-delay: 2.4s; }
+          .icon-item:hover {
+            border-color: rgba(16, 185, 129, 0.4);
+            background: rgba(16, 185, 129, 0.15);
+            transform: scale(1.15) !important;
+          }
+          .icon-item svg {
+            width: 32px;
+            height: 32px;
+            color: #10b981;
+          }
+          .center-ring {
+            display: none;
+          }
+         </style>
+         <div style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+          <div class="center-ring"></div>
+          <div class="icon-grid"><!-- Row 1 -->
+           <div class="icon-item" title="Claude AI">
+            <svg viewbox="0 0 24 24" fill="currentColor">
+             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3-8c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+            </svg>
+           </div>
+           <div class="icon-item" title="React">
+            <svg viewbox="0 0 24 24" fill="currentColor">
+             <circle cx="12" cy="12" r="2.5" /><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z" /><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+            </svg>
+           </div>
+           <div class="icon-item" title="Python">
+            <svg viewbox="0 0 24 24" fill="currentColor">
+             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-2-13h4v2h-4zm0 4h4v2h-4zm0 4h4v2h-4z" />
+            </svg>
+           </div><!-- Row 2 -->
+           <div class="icon-item" title="Node.js"><i data-lucide="radio" style="width:32px;height:32px;"></i>
+           </div>
+           <div class="icon-item" title="Cursor">
+            <svg viewbox="0 0 24 24" fill="currentColor">
+             <path d="M13 3L3.46 14.46C3.17 14.75 3 15.15 3 15.58C3 16.57 3.83 17.4 4.82 17.4C5.25 17.4 5.65 17.23 5.94 16.94L12 10.88L18.06 16.94C18.35 17.23 18.75 17.4 19.18 17.4C20.17 17.4 21 16.57 21 15.58C21 15.15 20.83 14.75 20.54 14.46L13 3Z" />
+            </svg>
+           </div>
+           <div class="icon-item" title="Vue">
+            <svg viewbox="0 0 24 24" fill="currentColor">
+             <polygon points="12 2 22 20 12 17 2 20 12 2" />
+            </svg>
+           </div><!-- Row 3 -->
+           <div class="icon-item" title="Rails"><i data-lucide="zap" style="width:32px;height:32px;"></i>
+           </div>
+           <div class="icon-item" title="TypeScript">
+            <svg viewbox="0 0 24 24" fill="currentColor">
+             <path d="M1 4v16h22V4H1zm8.5 13h-1V8.5h-2V7h5v1h-2v8.5zm6 0h-1v-9h-2V7h5v1h-2v9z" />
+            </svg>
+           </div>
+           <div class="icon-item" title="Git"><i data-lucide="git-branch" style="width:32px;height:32px;"></i>
+           </div>
           </div>
-          <p class="text-slate-300 text-sm">Virtual Launch Pro – Your coaching platform</p>
          </div>
+        </div>
+       </div>
+      </div>
+     </section>
+     <section class="px-6 py-20" id="features">
+      <div class="max-w-4xl mx-auto">
+       <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-bold mb-6">Why <span class="gradient-text">Developers Love Us</span></h2>
+        <p class="text-lg text-slate-400 max-w-2xl mx-auto">We handle the search so you can focus on what you do best: building amazing things.</p>
+       </div>
+       <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-12">
+        <div class="rounded-xl border border-slate-700/50 bg-slate-800/30 p-6 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 text-center">
+         <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3 border border-emerald-500/20">
+          <i data-lucide="target" style="width:20px;height:20px;color:#10b981;"></i>
+         </div>
+         <h3 class="font-semibold text-slate-100 mb-2 text-sm">Personalized Job Matches</h3>
+         <p class="text-xs text-slate-400 leading-relaxed">Projects matched to your skills, experience, and hourly rate.</p>
+        </div>
+        <div class="rounded-xl border border-slate-700/50 bg-slate-800/30 p-6 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 text-center">
+         <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3 border border-emerald-500/20">
+          <i data-lucide="users" style="width:20px;height:20px;color:#10b981;"></i>
+         </div>
+         <h3 class="font-semibold text-slate-100 mb-2 text-sm">Direct Introductions</h3>
+         <p class="text-xs text-slate-400 leading-relaxed">Warm introductions to pre-vetted U.S. clients ready to hire.</p>
+        </div>
+        <div class="rounded-xl border border-slate-700/50 bg-slate-800/30 p-6 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 text-center">
+         <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3 border border-emerald-500/20">
+          <i data-lucide="star" style="width:20px;height:20px;color:#10b981;"></i>
+         </div>
+         <h3 class="font-semibold text-slate-100 mb-2 text-sm">Profile Amplification</h3>
+         <p class="text-xs text-slate-400 leading-relaxed">Your expertise showcased to top-tier client prospects.</p>
+        </div>
+        <div class="rounded-xl border border-slate-700/50 bg-slate-800/30 p-6 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 text-center">
+         <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3 border border-emerald-500/20">
+          <i data-lucide="zap" style="width:20px;height:20px;color:#10b981;"></i>
+         </div>
+         <h3 class="font-semibold text-slate-100 mb-2 text-sm">Time-Saving Automation</h3>
+         <p class="text-xs text-slate-400 leading-relaxed">Zero cold outreach. Clients come to you.</p>
+        </div>
+        <div class="rounded-xl border border-slate-700/50 bg-slate-800/30 p-6 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 text-center">
+         <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-3 border border-emerald-500/20">
+          <i data-lucide="bell" style="width:20px;height:20px;color:#10b981;"></i>
+         </div>
+         <h3 class="font-semibold text-slate-100 mb-2 text-sm">Real-Time Notifications</h3>
+         <p class="text-xs text-slate-400 leading-relaxed">Instant alerts when new opportunities match your profile.</p>
         </div>
        </div>
       </div>
@@ -285,7 +426,8 @@
        <div class="grid md:grid-cols-3 gap-8">
         <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700/50 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 transform hover:scale-105">
          <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
          </div>
          <h3 class="text-lg font-semibold mb-2">Low-Quality Leads</h3>
@@ -293,7 +435,8 @@
         </div>
         <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700/50 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 transform hover:scale-105">
          <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
          </div>
          <h3 class="text-lg font-semibold mb-2">Rate Pressure</h3>
@@ -301,7 +444,8 @@
         </div>
         <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700/50 hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 transform hover:scale-105">
          <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4">
-          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
          </div>
          <h3 class="text-lg font-semibold mb-2">Communication Friction</h3>
@@ -319,7 +463,8 @@
        <div class="grid md:grid-cols-2 gap-8">
         <div class="flex gap-4 hover:translate-x-1 transition-transform duration-300">
          <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
          </div>
          <div>
@@ -329,7 +474,8 @@
         </div>
         <div class="flex gap-4 hover:translate-x-1 transition-transform duration-300">
          <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
          </div>
          <div>
@@ -339,7 +485,8 @@
         </div>
         <div class="flex gap-4 hover:translate-x-1 transition-transform duration-300">
          <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
          </div>
          <div>
@@ -349,7 +496,8 @@
         </div>
         <div class="flex gap-4 hover:translate-x-1 transition-transform duration-300">
          <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+          <svg class="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
          </div>
          <div>
@@ -416,7 +564,8 @@
        <div class="grid md:grid-cols-2 gap-6">
         <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700/50 text-left hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 transform hover:scale-105">
          <div class="flex items-center gap-3 mb-3">
-          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"><i data-lucide="code" style="width:20px;height:20px;color:#10b981;"></i>
+          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+           <i data-lucide="code" style="width:20px;height:20px;color:#10b981;"></i>
           </div>
           <h3 class="text-lg font-semibold">Full-Stack Developers</h3>
          </div>
@@ -424,7 +573,8 @@
         </div>
         <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700/50 text-left hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 transform hover:scale-105">
          <div class="flex items-center gap-3 mb-3">
-          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"><i data-lucide="smartphone" style="width:20px;height:20px;color:#10b981;"></i>
+          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+           <i data-lucide="smartphone" style="width:20px;height:20px;color:#10b981;"></i>
           </div>
           <h3 class="text-lg font-semibold">Mobile Specialists</h3>
          </div>
@@ -432,7 +582,8 @@
         </div>
         <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700/50 text-left hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 transform hover:scale-105">
          <div class="flex items-center gap-3 mb-3">
-          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"><i data-lucide="palette" style="width:20px;height:20px;color:#10b981;"></i>
+          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+           <i data-lucide="palette" style="width:20px;height:20px;color:#10b981;"></i>
           </div>
           <h3 class="text-lg font-semibold">Frontend Engineers</h3>
          </div>
@@ -440,7 +591,8 @@
         </div>
         <div class="p-6 rounded-2xl bg-slate-800/30 border border-slate-700/50 text-left hover:border-emerald-500/30 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300 transform hover:scale-105">
          <div class="flex items-center gap-3 mb-3">
-          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center"><i data-lucide="database" style="width:20px;height:20px;color:#10b981;"></i>
+          <div class="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+           <i data-lucide="database" style="width:20px;height:20px;color:#10b981;"></i>
           </div>
           <h3 class="text-lg font-semibold">Backend / DevOps</h3>
          </div>
@@ -451,14 +603,16 @@
      </section>
     </main>
    </div><!-- Payment Page -->
-   <div id="payment-page" class="hidden min-h-full flex flex-col"><button id="back-payment-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
+   <div id="payment-page" class="hidden min-h-full flex flex-col">
+    <button id="back-payment-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
     <main class="flex-1 px-6 py-10">
      <div class="max-w-4xl mx-auto">
       <div class="text-center mb-12">
        <h1 id="payment-headline" class="text-3xl md:text-5xl font-bold text-slate-100 tracking-tight mb-4">Choose Your Path Forward</h1>
        <p id="payment-subheadline" class="text-lg text-slate-400 max-w-2xl mx-auto">Get matched with U.S. clients faster with professional support, or manage it yourself.</p>
       </div>
-      <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto"><!-- Free Option -->
+      <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+       <!-- Free Option -->
        <div class="group relative rounded-2xl border border-slate-700/50 bg-slate-800/30 p-8 hover:border-slate-600 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300 transform hover:scale-105 animate-fadeInUp" style="animation-delay: 0.1s;">
         <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-slate-700/0 to-emerald-500/0 group-hover:from-slate-700/5 group-hover:to-emerald-500/10 transition-all duration-300 pointer-events-none"></div>
         <div class="relative z-10">
@@ -467,7 +621,8 @@
            <h2 id="free-title" class="text-2xl font-bold text-slate-100 mb-2">Virtual Launch Pro</h2>
            <p class="text-slate-400 text-sm">Free – Self-Service Matching</p>
           </div>
-          <svg class="w-8 h-8 text-slate-700 group-hover:text-emerald-500/40 transition-colors duration-300" fill="currentColor" viewbox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+          <svg class="w-8 h-8 text-slate-700 group-hover:text-emerald-500/40 transition-colors duration-300" fill="currentColor" viewbox="0 0 20 20">
+           <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
           </svg>
          </div>
          <div id="free-description" class="text-slate-400 text-sm leading-relaxed mb-8">
@@ -492,7 +647,8 @@
            <h2 id="paid-title" class="text-2xl font-bold text-slate-100 mb-2">Virtual Launch Pro</h2>
            <p class="text-emerald-400 font-semibold text-sm">$2.99 – Job Match Intro Service</p>
           </div>
-          <svg class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewbox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM14 3a1 1 0 011-1h2a1 1 0 011 1v13a1 1 0 01-1 1h-2a1 1 0 01-1-1V3z" />
+          <svg class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewbox="0 0 20 20">
+           <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM14 3a1 1 0 011-1h2a1 1 0 011 1v13a1 1 0 01-1 1h-2a1 1 0 01-1-1V3z" />
           </svg>
          </div>
          <div id="paid-description" class="text-slate-300 text-sm leading-relaxed mb-8">
@@ -514,39 +670,45 @@
    <div id="success-page" class="hidden min-h-full flex flex-col">
     <main class="flex-1 px-6 py-16 flex items-center justify-center">
      <div class="max-w-2xl mx-auto text-center">
-      <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 mb-8 shadow-2xl shadow-emerald-500/30 animate-fadeInUp"><i data-lucide="check-circle" style="width:40px;height:40px;color:white;"></i>
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 mb-8 shadow-2xl shadow-emerald-500/30 animate-fadeInUp">
+       <i data-lucide="check-circle" style="width:40px;height:40px;color:white;"></i>
       </div>
       <h1 id="success-headline" class="text-3xl md:text-5xl font-bold text-slate-100 tracking-tight mb-6 animate-fadeInUp" style="animation-delay: 0.1s;">Success! Thank you for your investment.</h1>
       <div id="success-instructions" class="text-lg text-slate-400 leading-relaxed mb-10 max-w-xl mx-auto animate-fadeInUp" style="animation-delay: 0.2s;">
        Please schedule your onboarding call below using Cal.com. We'll reach out within 24 hours with your first set of client matches. Check your email for next steps.
       </div>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fadeInUp" style="animation-delay: 0.3s;"><a href="https://cal.com/virtuallaunchpro/intro-call" target="_blank" rel="noopener noreferrer" class="inline-block px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-lg rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95"> Schedule Your Call </a> <a href="#" id="return-home-btn" class="inline-block px-8 py-4 border border-slate-700 hover:border-emerald-500/50 bg-slate-900/40 hover:bg-slate-800/60 text-slate-100 font-semibold text-lg rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10"> Return to Home </a>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fadeInUp" style="animation-delay: 0.3s;">
+       <a href="https://cal.com/virtuallaunchpro/intro-call" target="_blank" rel="noopener noreferrer" class="inline-block px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-lg rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95"> Schedule Your Call </a> <a href="#" id="return-home-btn" class="inline-block px-8 py-4 border border-slate-700 hover:border-emerald-500/50 bg-slate-900/40 hover:bg-slate-800/60 text-slate-100 font-semibold text-lg rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10"> Return to Home </a>
       </div>
       <div class="rounded-2xl border border-slate-700/50 bg-slate-900/30 p-8 space-y-6 animate-fadeInUp" style="animation-delay: 0.4s;">
        <h2 class="text-lg font-semibold text-slate-100 mb-4">Questions? Get in Touch</h2>
        <div class="grid sm:grid-cols-2 gap-4">
-        <div class="flex items-start gap-3"><i data-lucide="send" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
+        <div class="flex items-start gap-3">
+         <i data-lucide="send" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
          <div class="text-left">
           <div class="text-sm text-slate-400">
            Telegram
           </div><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-slate-100 hover:text-emerald-400 font-medium transition">@virtuallaunchpro</a>
          </div>
         </div>
-        <div class="flex items-start gap-3"><i data-lucide="phone" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
+        <div class="flex items-start gap-3">
+         <i data-lucide="phone" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
          <div class="text-left">
           <div class="text-sm text-slate-400">
            Google Voice
           </div><a href="tel:+16198005457" class="text-slate-100 hover:text-emerald-400 font-medium transition">+1 (619) 800-5457</a>
          </div>
         </div>
-        <div class="flex items-start gap-3"><i data-lucide="linkedin" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
+        <div class="flex items-start gap-3">
+         <i data-lucide="linkedin" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
          <div class="text-left">
           <div class="text-sm text-slate-400">
            LinkedIn
           </div><a href="https://www.linkedin.com/in/virtuallaunchpro/" target="_blank" rel="noopener noreferrer" class="text-slate-100 hover:text-emerald-400 font-medium transition">virtuallaunchpro</a>
          </div>
         </div>
-        <div class="flex items-start gap-3"><i data-lucide="facebook" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
+        <div class="flex items-start gap-3">
+         <i data-lucide="facebook" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
          <div class="text-left">
           <div class="text-sm text-slate-400">
            Facebook
@@ -558,15 +720,18 @@
      </div>
     </main>
    </div><!-- Support / Client Status Page -->
-   <div id="support-page" class="hidden min-h-full flex flex-col"><button id="back-support-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
+   <div id="support-page" class="hidden min-h-full flex flex-col">
+    <button id="back-support-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
     <main class="flex-1 px-6 py-16">
      <div class="max-w-2xl mx-auto">
       <div class="text-center mb-12">
        <h1 class="text-3xl md:text-5xl font-bold text-slate-100 tracking-tight mb-4">Check Your Status</h1>
        <p class="text-lg text-slate-400">Enter your client reference number to view your match status and next steps.</p>
       </div>
-      <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-8 mb-8"><label for="client-ref" class="block text-sm font-medium text-slate-300 mb-2">Client Reference Number</label>
-       <div class="flex gap-2"><input type="text" id="client-ref" placeholder="VLP-xxxxxxxxxxxx" class="field-focus flex-1 border border-slate-700 rounded-lg px-3.5 py-3 text-base text-slate-100 bg-slate-900 transition"> <button id="check-status-btn" class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95"> Check Status </button>
+      <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-8 mb-8">
+       <label for="client-ref" class="block text-sm font-medium text-slate-300 mb-2">Client Reference Number</label>
+       <div class="flex gap-2">
+        <input type="text" id="client-ref" placeholder="VLP-xxxxxxxxxxxx" class="field-focus flex-1 border border-slate-700 rounded-lg px-3.5 py-3 text-base text-slate-100 bg-slate-900 transition"> <button id="check-status-btn" class="px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95"> Check Status </button>
        </div>
       </div>
       <div id="status-result" class="hidden rounded-2xl border border-slate-700/50 bg-slate-800/30 p-8 mb-8 animate-fadeInUp">
@@ -579,28 +744,32 @@
       <div class="rounded-2xl border border-slate-700/50 bg-slate-900/30 p-8">
        <h2 class="text-lg font-semibold text-slate-100 mb-6">Need Help? Contact Us</h2>
        <div class="grid sm:grid-cols-2 gap-4">
-        <div class="flex items-start gap-3"><i data-lucide="send" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
+        <div class="flex items-start gap-3">
+         <i data-lucide="send" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
          <div class="text-left">
           <div class="text-sm text-slate-400">
            Telegram
           </div><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-slate-100 hover:text-emerald-400 font-medium transition">@virtuallaunchpro</a>
          </div>
         </div>
-        <div class="flex items-start gap-3"><i data-lucide="phone" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
+        <div class="flex items-start gap-3">
+         <i data-lucide="phone" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
          <div class="text-left">
           <div class="text-sm text-slate-400">
            Google Voice
           </div><a href="tel:+16198005457" class="text-slate-100 hover:text-emerald-400 font-medium transition">+1 (619) 800-5457</a>
          </div>
         </div>
-        <div class="flex items-start gap-3"><i data-lucide="linkedin" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
+        <div class="flex items-start gap-3">
+         <i data-lucide="linkedin" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
          <div class="text-left">
           <div class="text-sm text-slate-400">
            LinkedIn
           </div><a href="https://www.linkedin.com/in/virtuallaunchpro/" target="_blank" rel="noopener noreferrer" class="text-slate-100 hover:text-emerald-400 font-medium transition">virtuallaunchpro</a>
          </div>
         </div>
-        <div class="flex items-start gap-3"><i data-lucide="facebook" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
+        <div class="flex items-start gap-3">
+         <i data-lucide="facebook" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
          <div class="text-left">
           <div class="text-sm text-slate-400">
            Facebook
@@ -612,82 +781,140 @@
      </div>
     </main>
    </div><!-- Form Page -->
-   <div id="form-page" class="hidden min-h-full flex flex-col"><button id="back-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
+   <div id="form-page" class="hidden min-h-full flex flex-col">
+    <button id="back-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
     <main class="flex-1 px-6 py-10">
      <div class="max-w-2xl mx-auto">
       <div class="text-center mb-8">
        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 mb-4 shadow-lg shadow-emerald-500/25">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
        </div>
        <h1 id="form-title" class="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight mb-3">Launch Your Virtual Business Today</h1>
        <p id="form-instructions" class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg mx-auto">Complete this form to get started with VLP. We'll review your profile and connect you with the right coach.</p>
       </div>
-      <form id="onboarding-form" novalidate class="space-y-4"><!-- Section 1: Personal Info -->
+      <form id="onboarding-form" novalidate class="space-y-4">
+       <!-- Section 1: Personal Info -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-5 sm:p-7">
         <div class="flex items-center gap-2.5 mb-5">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="user" style="width:16px;height:16px;color:#10b981;"></i>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
+          <i data-lucide="user" style="width:16px;height:16px;color:#10b981;"></i>
          </div>
          <h2 class="font-semibold text-slate-100 text-base">Personal Information</h2>
         </div>
         <div class="grid gap-4">
-         <div><label for="f-date" class="block text-sm font-medium text-slate-300 mb-1.5">Date</label> <input type="date" id="f-date" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-3 text-base text-slate-100 bg-slate-900 transition" style="font-size: 16px; line-height: 1.5;">
+         <div>
+          <label for="f-date" class="block text-sm font-medium text-slate-300 mb-1.5">Date</label> <input type="date" id="f-date" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-3 text-base text-slate-100 bg-slate-900 transition" style="font-size: 16px; line-height: 1.5;">
          </div>
-         <div><label for="f-name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label> <input type="text" id="f-name" placeholder="Jane Smith" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label> <input type="text" id="f-name" placeholder="Jane Smith" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-country" class="block text-sm font-medium text-slate-300 mb-1.5">Country of Residence</label> <select id="f-country" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition appearance-none cursor-pointer"> <option value="" disabled selected>Select your country</option> <option value="United States">United States</option> <option value="Canada">Canada</option> <option value="United Kingdom">United Kingdom</option> <option value="Australia">Australia</option> <option value="India">India</option> <option value="Germany">Germany</option> <option value="other">Country not listed</option> </select> <input type="text" id="f-country-other" placeholder="Enter your country" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600 hidden mt-2">
+         <div>
+          <label for="f-country" class="block text-sm font-medium text-slate-300 mb-1.5">Country of Residence</label> <select id="f-country" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition appearance-none cursor-pointer"> <option value="" disabled selected>Select your country</option> <option value="United States">United States</option> <option value="Canada">Canada</option> <option value="United Kingdom">United Kingdom</option> <option value="Australia">Australia</option> <option value="India">India</option> <option value="Germany">Germany</option> <option value="other">Country not listed</option> </select> <input type="text" id="f-country-other" placeholder="Enter your country" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600 hidden mt-2">
          </div>
-         <div><label for="f-email" class="block text-sm font-medium text-slate-300 mb-1.5">Email Address</label> <input type="email" id="f-email" placeholder="jane@example.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-email" class="block text-sm font-medium text-slate-300 mb-1.5">Email Address</label> <input type="email" id="f-email" placeholder="jane@example.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
         </div>
        </div><!-- Section 2: Links & Portfolio -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-5 sm:p-7">
         <div class="flex items-center gap-2.5 mb-5">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="link" style="width:16px;height:16px;color:#10b981;"></i>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
+          <i data-lucide="link" style="width:16px;height:16px;color:#10b981;"></i>
          </div>
          <h2 class="font-semibold text-slate-100 text-base">Links &amp; Information</h2>
         </div>
         <div class="grid gap-4">
-         <div><label for="f-linkedin" class="block text-sm font-medium text-slate-300 mb-1.5">LinkedIn Profile URL</label> <input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/yourprofile" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-linkedin" class="block text-sm font-medium text-slate-300 mb-1.5">LinkedIn Profile URL</label> <input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/yourprofile" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-portfolio" class="block text-sm font-medium text-slate-300 mb-1.5">Portfolio / GitHub Link</label>
+         <div>
+          <label for="f-portfolio" class="block text-sm font-medium text-slate-300 mb-1.5">Portfolio / GitHub Link</label>
           <p class="text-xs text-slate-500 mb-1.5">Show off your best projects and code</p><input type="url" id="f-portfolio" placeholder="https://github.com/yourprofile or https://yourportfolio.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-video" class="block text-sm font-medium text-slate-300 mb-1.5">Introduction Video Link (Optional)</label>
+         <div>
+          <label for="f-video" class="block text-sm font-medium text-slate-300 mb-1.5">Introduction Video Link (Optional)</label>
           <p class="text-xs text-slate-500 mb-1.5">Record a 2-3 min intro about yourself and what you're looking for</p><input type="url" id="f-video" placeholder="https://loom.com/share/..." class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
         </div>
        </div><!-- Section 3: Business Info -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-5 sm:p-7">
         <div class="flex items-center gap-2.5 mb-5">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="briefcase" style="width:16px;height:16px;color:#10b981;"></i>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
+          <i data-lucide="briefcase" style="width:16px;height:16px;color:#10b981;"></i>
          </div>
          <h2 class="font-semibold text-slate-100 text-base">Your Skills &amp; Availability</h2>
         </div>
         <div class="grid gap-4">
-         <div><label for="f-summary" class="block text-sm font-medium text-slate-300 mb-1.5">Professional Summary</label> <textarea id="f-summary" rows="4" placeholder="Describe your main tech stack, years of experience, and what types of projects you prefer. E.g., 'Full-stack React/Node dev with 5 years building SaaS apps. Love working on APIs and real-time features.'" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
+         <div>
+          <label for="f-summary" class="block text-sm font-medium text-slate-300 mb-1.5">Professional Summary</label> <textarea id="f-summary" rows="4" placeholder="Describe your main tech stack, years of experience, and what types of projects you prefer. E.g., 'Full-stack React/Node dev with 5 years building SaaS apps. Love working on APIs and real-time features.'" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
          </div>
          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div><label for="f-rate" class="block text-sm font-medium text-slate-300 mb-1.5">Your Hourly Rate</label>
-           <div class="relative"><span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm">$</span> <input type="number" id="f-rate" placeholder="75" min="0" class="field-focus w-full border border-slate-700 rounded-lg pl-7 pr-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600"> <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm">/hr</span>
+          <div>
+           <label for="f-rate" class="block text-sm font-medium text-slate-300 mb-1.5">Your Hourly Rate</label>
+           <div class="relative">
+            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm">$</span> <input type="number" id="f-rate" placeholder="75" min="0" class="field-focus w-full border border-slate-700 rounded-lg pl-7 pr-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600"> <span class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-sm">/hr</span>
            </div>
           </div>
-          <div><label for="f-availability" class="block text-sm font-medium text-slate-300 mb-1.5">Availability</label> <select id="f-availability" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition appearance-none cursor-pointer"> <option value="" disabled selected>Select availability</option> <option>Full-time</option> <option>Part-time</option> <option>Project-based</option> <option>Flexible / Open to offers</option> </select>
+          <div>
+           <label for="f-availability" class="block text-sm font-medium text-slate-300 mb-1.5">Availability</label> <select id="f-availability" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition appearance-none cursor-pointer"> <option value="" disabled selected>Select availability</option> <option>Full-time</option> <option>Part-time</option> <option>Project-based</option> <option>Flexible / Open to offers</option> </select>
           </div>
          </div>
         </div>
        </div><!-- Confirmation -->
-       <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-5 sm:p-7"><label class="flex items-start gap-3 cursor-pointer"> <input type="checkbox" id="f-confirm" class="mt-0.5 w-4 h-4 rounded border-slate-600 text-emerald-500 accent-emerald-500"> <span class="text-sm text-slate-300 leading-relaxed">I confirm that all information provided is accurate and I'm ready to launch with expert coaching.</span> </label>
+       <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-5 sm:p-7">
+        <label class="flex items-start gap-3 cursor-pointer"> <input type="checkbox" id="f-confirm" class="mt-0.5 w-4 h-4 rounded border-slate-600 text-emerald-500 accent-emerald-500"> <span class="text-sm text-slate-300 leading-relaxed">I confirm that all information provided is accurate and I'm ready to launch with expert coaching.</span> </label>
        </div><!-- Error message -->
        <div id="form-error" class="hidden text-sm text-red-400 bg-red-950/30 border border-red-800 rounded-lg px-4 py-3"></div><!-- Submit button --> <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm py-3.5 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"> <span id="submit-text">Launch My Business</span> <span id="submit-spinner" class="hidden">
-         <svg class="animate-spin h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+         <svg class="animate-spin h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
          </svg></span> </button>
       </form><!-- Success toast -->
-      <div id="success-toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3.5 rounded-xl shadow-lg flex items-center gap-2.5 text-sm font-medium z-50 toast-enter border border-slate-700"><i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981;"></i> <span>Application submitted successfully!</span>
+      <div id="success-toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3.5 rounded-xl shadow-lg flex items-center gap-2.5 text-sm font-medium z-50 toast-enter border border-slate-700">
+       <i data-lucide="check-circle" style="width:18px;height:18px;color:#10b981;"></i> <span>Application submitted successfully!</span>
       </div>
      </div>
     </main>
-   </div>
+   </div><!-- Footer -->
+   <footer class="border-t border-slate-800/50 bg-slate-950 mt-20">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+     <div class="grid md:grid-cols-4 gap-8 mb-12">
+      <div><a href="#" id="footer-logo-link" class="flex items-center gap-3 hover:opacity-90 transition mb-4"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950">VLP</span>
+        <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro</span>
+        </div></a>
+       <p class="text-xs text-slate-500">Connecting talented developers with premium U.S. clients.</p>
+      </div>
+      <div>
+       <h3 class="font-semibold text-slate-100 mb-4 text-sm">Product</h3>
+       <ul class="space-y-2">
+        <li><a href="#features" class="text-xs text-slate-400 hover:text-emerald-400 transition">Features</a></li>
+        <li><a href="#how-it-works" class="text-xs text-slate-400 hover:text-emerald-400 transition">How It Works</a></li>
+        <li><button id="support-footer-link" class="text-xs text-slate-400 hover:text-emerald-400 transition cursor-pointer bg-none border-none p-0">Support</button></li>
+       </ul>
+      </div>
+      <div>
+       <h3 class="font-semibold text-slate-100 mb-4 text-sm">Company</h3>
+       <ul class="space-y-2">
+        <li><a href="https://www.facebook.com/jamie.l.williams.10" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">Facebook</a></li>
+        <li><a href="https://www.linkedin.com/in/virtuallaunchpro/" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">LinkedIn</a></li>
+        <li><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">Telegram</a></li>
+       </ul>
+      </div>
+      <div>
+       <h3 class="font-semibold text-slate-100 mb-4 text-sm">Support</h3>
+       <ul class="space-y-2">
+        <li><a href="tel:+16198005457" class="text-xs text-slate-400 hover:text-emerald-400 transition">+1 (619) 800-5457</a></li>
+        <li><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">@virtuallaunchpro</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row items-center justify-between">
+      <p class="text-xs text-slate-500">© 2024 Virtual Launch Pro. All rights reserved.</p>
+      <p class="text-xs text-slate-500 mt-4 md:mt-0">Helping developers launch their freelance careers with the right clients.</p>
+     </div>
+    </div>
+   </footer>
   </div>
   <script>
     // Default config
@@ -803,10 +1030,17 @@
 
     // Navigation buttons
     document.getElementById('get-started-btn').addEventListener('click', () => showPage('form'));
+    document.getElementById('header-cta-btn').addEventListener('click', () => showPage('form'));
+    document.getElementById('footer-logo-link').addEventListener('click', (e) => {
+      e.preventDefault();
+      showPage('landing');
+    });
     document.getElementById('back-btn').addEventListener('click', () => showPage('landing'));
     document.getElementById('back-payment-btn').addEventListener('click', () => showPage('form'));
     document.getElementById('back-support-btn').addEventListener('click', () => showPage('landing'));
     document.getElementById('return-home-btn').addEventListener('click', () => showPage('landing'));
+    document.getElementById('support-header-link').addEventListener('click', () => showPage('support'));
+    document.getElementById('support-footer-link').addEventListener('click', () => showPage('support'));
 
     // Country dropdown
     const countrySelect = document.getElementById('f-country');
@@ -913,5 +1147,5 @@
 
     lucide.createIcons();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9df6f3fbd0b127c9',t:'MTc3NDAzMzE1Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9df754ede3b627c9',t:'MTc3NDAzNzEyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
