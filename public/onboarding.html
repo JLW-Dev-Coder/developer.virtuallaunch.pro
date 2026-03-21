@@ -10,8 +10,6 @@
   <link rel="apple-touch-icon" href="https://virtuallaunch.pro/assets/favicon.ico">
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -136,17 +134,15 @@
     .page.hidden { display: none; }
   </style>
   <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
  </head>
- <body class="h-full bg-slate-950 text-slate-100">
-  <!-- Header -->
+ <body class="h-full bg-slate-950 text-slate-100"><!-- Header -->
   <header class="sticky top-0 z-40 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-md">
-   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    <!-- Logo --> <a href="/index.html" class="flex items-center gap-3 hover:opacity-90 transition"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20">VLP</span>
-     <div class="flex flex-col leading-tight">
-      <span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro Service</span>
+   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"><!-- Logo --> <a href="/index.html" class="flex items-center gap-3 hover:opacity-90 transition"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20">VLP</span>
+     <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro Service</span>
      </div></a> <!-- Nav Menu -->
-    <nav class="hidden md:flex items-center gap-8">
-     <a href="#features" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Features</a> <a href="#how-it-works" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">How It Works</a> <a href="/support.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Support</a>
+    <nav class="hidden md:flex items-center gap-8"><a href="#features" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Features</a> <a href="#how-it-works" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">How It Works</a> <a href="/support.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Support</a>
     </nav><!-- CTA Button --> <a href="/onboarding.html" target="_blank" rel="noopener"> <button class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95"> Get Started </button> </a>
    </div>
   </header>
@@ -156,71 +152,86 @@
    <div class="bg-blob bg-blob-3"></div>
    <div class="bg-grid"></div>
   </div>
-  <div id="app" class="w-full h-full overflow-auto flex flex-col" style="display: flex; flex-direction: column;"><!-- FORM PAGE -->
+  <div id="app" class="w-full h-full overflow-auto flex flex-col" style="display: flex; flex-direction: column;">
+   <!-- FORM PAGE -->
    <div id="form-page" class="page min-h-full flex flex-col">
     <main class="flex-1 px-6 py-10">
      <div class="max-w-2xl mx-auto">
       <div class="text-center mb-8">
        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 mb-4 shadow-lg shadow-emerald-500/25">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24">
-         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
        </div>
        <h1 id="form-title" class="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight mb-3">Launch Your Virtual Business Today</h1>
        <p id="form-instructions" class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg mx-auto">Complete this form to get started with VLP. We'll review your profile and connect you with the right coach.</p>
       </div>
-      <form id="onboarding-form" novalidate class="space-y-6"><!-- Section 1: Personal Information -->
+      <form id="onboarding-form" novalidate class="space-y-6">
+       <!-- Section 1: Personal Information -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="user" style="width:16px;height:16px;color:#10b981;"></i>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
+          <i data-lucide="user" style="width:16px;height:16px;color:#10b981;"></i>
          </div>
          <h2 class="font-semibold text-slate-100 text-base">Personal Information</h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-         <div><label for="f-name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name *</label> <input type="text" id="f-name" placeholder="Jane Smith" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name *</label> <input type="text" id="f-name" placeholder="Jane Smith" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-email" class="block text-sm font-medium text-slate-300 mb-1.5">Email Address *</label> <input type="email" id="f-email" placeholder="jane@example.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-email" class="block text-sm font-medium text-slate-300 mb-1.5">Email Address *</label> <input type="email" id="f-email" placeholder="jane@example.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-phone" class="block text-sm font-medium text-slate-300 mb-1.5">Phone / Telegram</label> <input type="text" id="f-phone" placeholder="+1 (555) 000-0000 or @telegram" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-phone" class="block text-sm font-medium text-slate-300 mb-1.5">Phone / Telegram</label> <input type="text" id="f-phone" placeholder="+1 (555) 000-0000 or @telegram" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-country" class="block text-sm font-medium text-slate-300 mb-1.5">Country of Residence</label> <input type="text" id="f-country" placeholder="e.g., India, Philippines, Canada" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-country" class="block text-sm font-medium text-slate-300 mb-1.5">Country of Residence</label> <input type="text" id="f-country" placeholder="e.g., India, Philippines, Canada" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
         </div>
        </div><!-- Section 2: Links & Profiles -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="link" style="width:16px;height:16px;color:#10b981;"></i>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
+          <i data-lucide="link" style="width:16px;height:16px;color:#10b981;"></i>
          </div>
          <h2 class="font-semibold text-slate-100 text-base">Links &amp; Profiles</h2>
         </div>
         <div class="grid gap-4">
-         <div><label for="f-linkedin" class="block text-sm font-medium text-slate-300 mb-1.5">LinkedIn Profile URL</label> <input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/yourprofile" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-linkedin" class="block text-sm font-medium text-slate-300 mb-1.5">LinkedIn Profile URL</label> <input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/yourprofile" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-github" class="block text-sm font-medium text-slate-300 mb-1.5">GitHub / Portfolio URL</label> <input type="url" id="f-github" placeholder="https://github.com/yourprofile or portfolio.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-github" class="block text-sm font-medium text-slate-300 mb-1.5">GitHub / Portfolio URL</label> <input type="url" id="f-github" placeholder="https://github.com/yourprofile or portfolio.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-portfolio" class="block text-sm font-medium text-slate-300 mb-1.5">Portfolio / Work Samples (Optional)</label>
+         <div>
+          <label for="f-portfolio" class="block text-sm font-medium text-slate-300 mb-1.5">Portfolio / Work Samples (Optional)</label>
           <p class="text-xs text-slate-500 mb-1.5">Links to past projects, apps, or samples you're proud of</p><textarea id="f-portfolio" rows="2" placeholder="Paste links to your work samples..." class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
          </div>
         </div>
        </div><!-- Section 3: Work Preferences -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="briefcase" style="width:16px;height:16px;color:#10b981;"></i>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
+          <i data-lucide="briefcase" style="width:16px;height:16px;color:#10b981;"></i>
          </div>
          <h2 class="font-semibold text-slate-100 text-base">Work Preferences</h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-         <div><label for="f-contract" class="block text-sm font-medium text-slate-300 mb-1.5">Contract Type</label> <input type="text" id="f-contract" placeholder="e.g., Full-time, Part-time, Project-based" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-contract" class="block text-sm font-medium text-slate-300 mb-1.5">Contract Type</label> <input type="text" id="f-contract" placeholder="e.g., Full-time, Part-time, Project-based" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div><label for="f-availability" class="block text-sm font-medium text-slate-300 mb-1.5">Availability (Hours/Week)</label> <input type="text" id="f-availability" placeholder="e.g., 40, 20-30, Flexible" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div>
+          <label for="f-availability" class="block text-sm font-medium text-slate-300 mb-1.5">Availability (Hours/Week)</label> <input type="text" id="f-availability" placeholder="e.g., 40, 20-30, Flexible" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
-         <div class="sm:col-span-2"><label for="f-timezone" class="block text-sm font-medium text-slate-300 mb-1.5">Timezone / Preferred Work Hours</label> <input type="text" id="f-timezone" placeholder="e.g., IST (UTC+5:30), 9 AM - 6 PM EST" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <div class="sm:col-span-2">
+          <label for="f-timezone" class="block text-sm font-medium text-slate-300 mb-1.5">Timezone / Preferred Work Hours</label> <input type="text" id="f-timezone" placeholder="e.g., IST (UTC+5:30), 9 AM - 6 PM EST" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
         </div>
        </div><!-- Section 4: Skills Rating -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="zap" style="width:16px;height:16px;color:#10b981;"></i>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
+          <i data-lucide="zap" style="width:16px;height:16px;color:#10b981;"></i>
          </div>
          <h2 class="font-semibold text-slate-100 text-base">Technical Skills (Rate 1–10)</h2>
         </div>
@@ -283,29 +294,34 @@
        </div><!-- Section 5: About Your Ideal Role -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="message-circle" style="width:16px;height:16px;color:#10b981;"></i>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
+          <i data-lucide="message-circle" style="width:16px;height:16px;color:#10b981;"></i>
          </div>
          <h2 class="font-semibold text-slate-100 text-base">Your Ideal Role</h2>
         </div><label for="f-ideal" class="block text-sm font-medium text-slate-300 mb-1.5">Tell us about your ideal project or role (Optional)</label>
         <p class="text-xs text-slate-500 mb-2">e.g., "I love working on real-time features in React", "SaaS backend architecture enthusiast"</p><textarea id="f-ideal" rows="3" placeholder="Describe what excites you about projects..." class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
        </div><!-- Consent & Checkbox -->
-       <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7"><label class="flex items-start gap-3 cursor-pointer"> <input type="checkbox" id="f-consent" class="mt-1 w-4 h-4 rounded border-slate-600 text-emerald-500 accent-emerald-500"> <span class="text-sm text-slate-300 leading-relaxed">I authorize Virtual Launch Pro to contact me and submit my profile to potential clients and opportunities. *</span> </label>
+       <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
+        <label class="flex items-start gap-3 cursor-pointer"> <input type="checkbox" id="f-consent" class="mt-1 w-4 h-4 rounded border-slate-600 text-emerald-500 accent-emerald-500"> <span class="text-sm text-slate-300 leading-relaxed">I authorize Virtual Launch Pro to contact me and submit my profile to potential clients and opportunities. *</span> </label>
        </div><!-- Error Message -->
        <div id="form-error" class="hidden text-sm text-red-400 bg-red-950/30 border border-red-800 rounded-lg px-4 py-3"></div><!-- Submit Button --> <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm py-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"> <span id="submit-text">Continue to Payment</span> <span id="submit-spinner" class="hidden">
-         <svg class="animate-spin h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+         <svg class="animate-spin h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
          </svg></span> </button>
       </form>
      </div>
     </main>
    </div><!-- PAYMENT PAGE -->
-   <div id="payment-page" class="page hidden min-h-full flex flex-col"><button id="back-payment-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
+   <div id="payment-page" class="page hidden min-h-full flex flex-col">
+    <button id="back-payment-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
     <main class="flex-1 px-6 py-10">
      <div class="max-w-4xl mx-auto">
       <div class="text-center mb-12">
        <h1 id="payment-headline" class="text-3xl md:text-5xl font-bold text-slate-100 tracking-tight mb-4">Choose Your Path Forward</h1>
        <p class="text-lg text-slate-400 max-w-2xl mx-auto">Get matched with U.S. clients faster with professional support, or manage it yourself.</p>
       </div>
-      <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto"><!-- Free Option -->
+      <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+       <!-- Free Option -->
        <div class="group relative rounded-2xl border border-slate-700/50 bg-slate-800/30 p-8 hover:border-slate-600 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300 transform hover:scale-105">
         <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-slate-700/0 to-emerald-500/0 group-hover:from-slate-700/5 group-hover:to-emerald-500/10 transition-all duration-300 pointer-events-none"></div>
         <div class="relative z-10">
@@ -314,8 +330,7 @@
            <h2 class="text-2xl font-bold text-slate-100 mb-2">Virtual Launch Pro</h2>
            <p class="text-slate-400 text-sm">Free – Self-Service Matching</p>
           </div>
-          <svg class="w-8 h-8 text-slate-700 group-hover:text-emerald-500/40 transition-colors duration-300" fill="currentColor" viewbox="0 0 20 20">
-           <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+          <svg class="w-8 h-8 text-slate-700 group-hover:text-emerald-500/40 transition-colors duration-300" fill="currentColor" viewbox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
           </svg>
          </div>
          <div class="text-slate-400 text-sm leading-relaxed mb-8">
@@ -340,8 +355,7 @@
            <h2 class="text-2xl font-bold text-slate-100 mb-2">Virtual Launch Pro</h2>
            <p class="text-emerald-400 font-semibold text-sm">$2.99 – Job Match Intro Service</p>
           </div>
-          <svg class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewbox="0 0 20 20">
-           <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM14 3a1 1 0 011-1h2a1 1 0 011 1v13a1 1 0 01-1 1h-2a1 1 0 01-1-1V3z" />
+          <svg class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewbox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM14 3a1 1 0 011-1h2a1 1 0 011 1v13a1 1 0 01-1 1h-2a1 1 0 01-1-1V3z" />
           </svg>
          </div>
          <div class="text-slate-300 text-sm leading-relaxed mb-8">
@@ -359,62 +373,13 @@
       </div>
      </div>
     </main>
-   </div><!-- SUCCESS PAGE -->
-   <div id="success-page" class="page hidden min-h-full flex flex-col">
-    <main class="flex-1 px-6 py-16 flex items-center justify-center">
-     <div class="max-w-2xl mx-auto text-center">
-      <div class="inline-flex items-center justify-center w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-600 mb-8 shadow-2xl shadow-emerald-500/30"><i data-lucide="check-circle" style="width:40px;height:40px;color:white;"></i>
-      </div>
-      <h1 id="success-headline" class="text-3xl md:text-5xl font-bold text-slate-100 tracking-tight mb-6">Success! Thank you for your investment.</h1>
-      <div class="text-lg text-slate-400 leading-relaxed mb-10 max-w-xl mx-auto">
-       Please schedule your onboarding call below using Cal.com. We'll reach out within 24 hours with your first set of client matches. Check your email for next steps.
-      </div>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12"><a href="https://cal.com/virtuallaunchpro/intro-call" target="_blank" rel="noopener noreferrer" class="inline-block px-8 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-lg rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 active:scale-95"> Schedule Your Call </a> <button id="return-home-btn" class="inline-block px-8 py-4 border border-slate-700 hover:border-emerald-500/50 bg-slate-900/40 hover:bg-slate-800/60 text-slate-100 font-semibold text-lg rounded-lg transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10"> Return to Home </button>
-      </div>
-      <div class="rounded-2xl border border-slate-700/50 bg-slate-900/30 p-8 space-y-6">
-       <h2 class="text-lg font-semibold text-slate-100 mb-4">Questions? Get in Touch</h2>
-       <div class="grid sm:grid-cols-2 gap-4">
-        <div class="flex items-start gap-3"><i data-lucide="send" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
-         <div class="text-left">
-          <div class="text-sm text-slate-400">
-           Telegram
-          </div><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-slate-100 hover:text-emerald-400 font-medium transition">@virtuallaunchpro</a>
-         </div>
-        </div>
-        <div class="flex items-start gap-3"><i data-lucide="phone" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
-         <div class="text-left">
-          <div class="text-sm text-slate-400">
-           Google Voice
-          </div><a href="tel:+16198005457" class="text-slate-100 hover:text-emerald-400 font-medium transition">+1 (619) 800-5457</a>
-         </div>
-        </div>
-        <div class="flex items-start gap-3"><i data-lucide="linkedin" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
-         <div class="text-left">
-          <div class="text-sm text-slate-400">
-           LinkedIn
-          </div><a href="https://www.linkedin.com/in/virtuallaunchpro/" target="_blank" rel="noopener noreferrer" class="text-slate-100 hover:text-emerald-400 font-medium transition">virtuallaunchpro</a>
-         </div>
-        </div>
-        <div class="flex items-start gap-3"><i data-lucide="facebook" style="width:20px;height:20px;color:#10b981;" class="flex-shrink-0 mt-0.5"></i>
-         <div class="text-left">
-          <div class="text-sm text-slate-400">
-           Facebook
-          </div><a href="https://www.facebook.com/jamie.l.williams.10" target="_blank" rel="noopener noreferrer" class="text-slate-100 hover:text-emerald-400 font-medium transition">Jamie L. Williams</a>
-         </div>
-        </div>
-       </div>
-      </div>
-     </div>
-    </main>
    </div>
   </div><!-- Footer -->
   <footer class="border-t border-slate-800/50 bg-slate-950 mt-auto">
    <div class="max-w-7xl mx-auto px-6 py-12">
     <div class="grid md:grid-cols-4 gap-8 mb-12">
-     <div>
-      <a href="#" id="footer-logo-link" class="flex items-center gap-3 hover:opacity-90 transition mb-4"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950">VLP</span>
-       <div class="flex flex-col leading-tight">
-        <span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro</span>
+     <div><a href="#" id="footer-logo-link" class="flex items-center gap-3 hover:opacity-90 transition mb-4"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950">VLP</span>
+       <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro</span>
        </div></a>
       <p class="text-xs text-slate-500">Connecting talented developers with premium U.S. clients.</p>
      </div>
@@ -450,78 +415,29 @@
   </footer>
   <script>
     document.addEventListener('DOMContentLoaded', async function() {
-      // Initialize Element SDK
-      const defaultConfig = {
-        form_title: 'Launch Your Virtual Business Today',
-        form_instructions: 'Complete this form to get started with VLP. We\'ll review your profile and connect you with the right coach.',
-        payment_title: 'Choose Your Path Forward',
-        success_title: 'Success! Thank you for your investment.'
-      };
+      lucide.createIcons();
 
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange: async (config) => {
-          const c = { ...defaultConfig, ...config };
-          document.getElementById('form-title').textContent = c.form_title;
-          document.getElementById('form-instructions').textContent = c.form_instructions;
-          document.getElementById('payment-headline').textContent = c.payment_title;
-          document.getElementById('success-headline').textContent = c.success_title;
-        },
-        mapToCapabilities: (config) => ({
-          recolorables: [],
-          borderables: [],
-          fontEditable: undefined,
-          fontSizeable: undefined
-        }),
-        mapToEditPanelValues: (config) => {
-          const c = { ...defaultConfig, ...config };
-          return new Map([
-            ['form_title', c.form_title],
-            ['form_instructions', c.form_instructions],
-            ['payment_title', c.payment_title],
-            ['success_title', c.success_title]
-          ]);
-        }
-      });
-
-      // Initialize Data SDK
-      const dataHandler = {
-        onDataChanged(data) {}
-      };
-      await window.dataSdk.init(dataHandler);
-
-      // Page navigation
       function showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
         document.getElementById(pageId).classList.remove('hidden');
         window.scrollTo(0, 0);
       }
 
-      // Back button - Payment to Form
       document.getElementById('back-payment-btn').addEventListener('click', (e) => {
         e.preventDefault();
         showPage('form-page');
       });
 
-      // Back button - Success to Home
-      document.getElementById('return-home-btn').addEventListener('click', (e) => {
-        e.preventDefault();
-        showPage('form-page');
-      });
-
-      // Skills rating system - update labels when values change
-      const skills = ['javascript', 'python', 'react', 'nodejs', 'typescript', 'aws', 'docker', 'mongodb', 'postgresql'];
+      // Skills rating update
+      const skills = ['javascript','python','react','nodejs','typescript','aws','docker','mongodb','postgresql'];
       skills.forEach(skill => {
         const input = document.getElementById(`skill-${skill}`);
         const label = document.getElementById(`skill-${skill}-label`);
         if (input && label) {
-          input.addEventListener('input', () => {
-            label.textContent = input.value || '—';
-          });
+          input.addEventListener('input', () => { label.textContent = input.value || '—'; });
         }
       });
 
-      // Form submission
       const form = document.getElementById('onboarding-form');
       const errorEl = document.getElementById('form-error');
 
@@ -530,39 +446,30 @@
         errorEl.classList.remove('hidden');
         errorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
-
-      function hideError() {
-        errorEl.classList.add('hidden');
-      }
+      function hideError() { errorEl.classList.add('hidden'); }
 
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        e.stopPropagation();
         hideError();
 
         const name = document.getElementById('f-name').value.trim();
         const email = document.getElementById('f-email').value.trim();
         const consent = document.getElementById('f-consent').checked;
 
-        if (!name || !email) {
-          showError('Please fill in your full name and email address.');
-          return;
-        }
-
-        if (!consent) {
-          showError('Please authorize us to contact you.');
-          return;
-        }
+        if (!name || !email) { showError('Please fill in your full name and email address.'); return; }
+        if (!consent) { showError('Please authorize us to contact you.'); return; }
 
         const btn = document.getElementById('submit-btn');
         const btnText = document.getElementById('submit-text');
         const spinner = document.getElementById('submit-spinner');
-
         btn.disabled = true;
         btn.style.opacity = '0.7';
         btnText.textContent = 'Submitting…';
         spinner.classList.remove('hidden');
 
-        const record = {
+        const payload = {
+          eventId: `vlp-${Date.now()}`,
           full_name: name,
           email: email,
           phone: document.getElementById('f-phone').value.trim(),
@@ -577,23 +484,39 @@
           submitted_at: new Date().toISOString()
         };
 
-        const result = await window.dataSdk.create(record);
+        try {
+          const response = await fetch('/forms/onboarding', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const result = await response.json();
 
-        btn.disabled = false;
-        btn.style.opacity = '1';
-        btnText.textContent = 'Continue to Payment';
-        spinner.classList.add('hidden');
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btnText.textContent = 'Continue to Payment';
+          spinner.classList.add('hidden');
 
-        if (result.isOk) {
-          form.reset();
-          showPage('payment-page');
-        } else {
-          showError('Submission failed. Please try again.');
+          if (result.ok) {
+            if (result.deduped) {
+              showError('You have already submitted this form.');
+            } else {
+              form.reset();
+              showPage('payment-page');
+            }
+          } else {
+            showError('Submission failed. Please try again.');
+          }
+        } catch (err) {
+          console.error(err);
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btnText.textContent = 'Continue to Payment';
+          spinner.classList.add('hidden');
+          showError('Network error. Please try again.');
         }
       });
-
-      lucide.createIcons();
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9df85c5d707527c9',t:'MTc3NDA0NzkxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9df8a7bd33b727c9',t:'MTc3NDA1MTAwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

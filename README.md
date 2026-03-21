@@ -30,13 +30,17 @@ Support page → Worker lookup → status returned
 
 ```
 /
+  /contracts
+    onboarding.json
+    registry.json   
   /public
     index.html
+    onboarding.html
     success.html
     support.html
     clientReference.js
   /worker
-    index.ts
+    index.js
   wrangler.toml
 ```
 

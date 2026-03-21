@@ -1,0 +1,88 @@
+{
+  "auth": {
+    "required": true,
+    "trustClientIdentityFields": false,
+    "type": "session"
+  },
+  "contract": {
+    "authority": ["R2_VIRTUAL_LAUNCH"],
+    "governs": "Onboarding form submission for Virtual Launch Pro developers",
+    "path": "app/contracts/forms/onboarding.contract.json",
+    "source": "Virtual Launch Pro",
+    "title": "Virtual Launch Pro — Form Contract — Onboarding",
+    "usedOnPages": [
+      "/public/onboarding.html"
+    ],
+    "validation": {
+      "enumStrict": true,
+      "normalizeCheckboxToBoolean": true,
+      "rejectUnknownValues": true,
+      "requireJsonContentType": true
+    },
+    "version": 1
+  },
+  "delivery": {
+    "endpoint": "/forms/onboarding",
+    "method": "POST",
+    "receiptKeyPattern": "receipts/{source}/{eventId}.json",
+    "receiptSource": "form",
+    "signature": {
+      "header": null,
+      "required": false,
+      "secretEnvVar": null
+    }
+  },
+  "effects": {
+    "dedupeKey": "payload.eventId",
+    "eventIdFrom": "payload.eventId",
+    "receiptAppend": {
+      "to": "receipts/{source}/{eventId}.json"
+    },
+    "canonicalPatch": {
+      "createdAt": "{system.nowIso}",
+      "eventId": "{payload.eventId}",
+      "recordId": "{payload.eventId}",
+      "status": "submitted",
+      "updatedAt": "{system.nowIso}"
+    },
+    "canonicalUpsert": {
+      "patchFrom": "effects.canonicalPatch",
+      "target": "onboarding-records/{recordId}.json"
+    },
+    "writeOrder": [
+      "receiptAppend",
+      "canonicalUpsert"
+    ],
+    "writes": [
+      "onboarding-records"
+    ]
+  },
+  "payload": {
+    "additionalProperties": false,
+    "properties": {
+      "eventId": { "minLength": 1, "type": "string" },
+      "full_name": { "minLength": 1, "type": "string" },
+      "email": { "minLength": 1, "type": "string" },
+      "phone": { "type": "string" },
+      "country": { "type": "string" },
+      "linkedin_url": { "type": "string" },
+      "portfolio_url": { "type": "string" },
+      "video_url": { "type": "string" },
+      "professional_summary": { "type": "string" },
+      "hourly_rate": { "type": "string" },
+      "availability": { "type": "string" },
+      "confirmation": { "type": "boolean" }
+    },
+    "required": ["eventId", "full_name", "email", "confirmation"],
+    "type": "object"
+  },
+  "response": {
+    "deduped": { "deduped": true, "eventId": "{effects.eventIdFrom}", "ok": true },
+    "error": { "error": "validation_failed", "ok": false },
+    "success": { "eventId": "{effects.eventIdFrom}", "ok": true, "status": "submitted" }
+  },
+  "schema": {
+    "name": "vlp_form_onboarding",
+    "version": 1
+  }
+}

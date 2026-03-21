@@ -1,0 +1,21 @@
+{
+  "contracts": [
+    {
+      "authRequired": true,
+      "category": "form",
+      "dedupeKey": "payload.eventId",
+      "endpoint": "https://api.yourdomain.com/forms/onboarding",
+      "id": "form_onboarding",
+      "method": "POST",
+      "path": "app/contracts/forms/onboarding.contract.json",
+      "receiptKeyPattern": "receipts/{source}/{eventId}.json",
+      "receiptSource": "form",
+      "signatureRequired": false,
+      "status": "active",
+      "usedOnPages": ["/public/onboarding.html"],
+      "version": 1,
+      "writes": ["onboarding-records"]
+    }
+  ],
+  "registryVersion": 1
+}

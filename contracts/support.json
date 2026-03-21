@@ -1,0 +1,23 @@
+{
+  "name": "support",
+  "route": "/forms/support/status",
+  "method": "GET",
+  "description": "Fetch onboarding status by client reference number",
+  "query": {
+    "clientRef": {
+      "type": "string",
+      "required": true,
+      "pattern": "^VLP-[a-zA-Z0-9]+$"
+    }
+  },
+  "response": {
+    "ok": "boolean",
+    "status": "string",
+    "eventId": "string",
+    "updatedAt": "string"
+  },
+  "errors": [
+    "invalid_reference",
+    "not_found"
+  ]
+}
