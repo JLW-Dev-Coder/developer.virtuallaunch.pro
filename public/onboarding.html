@@ -14,122 +14,32 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
   <style>
-    /* Reset body/html scrolling */
     html, body {
       height: 100%;
       margin: 0;
       padding: 0;
-      overflow-x: hidden;   /* no horizontal scroll */
-      overflow-y: auto;     /* vertical scroll only on body */
+      overflow-x: hidden;
+      overflow-y: auto;
     }
+    * { font-family: 'Sora', sans-serif; box-sizing: border-box; }
+    body { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
-    /* Base font and box-sizing */
-    * {
-      font-family: 'Sora', sans-serif;
-      box-sizing: border-box;
-    }
+    .site-bg-effects { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    #app, main, header, footer { position: relative; z-index: 1; }
+    .bg-blob { position: absolute; border-radius: 9999px; filter: blur(90px); will-change: transform; }
+    .bg-blob-1 { width: 36rem; height: 36rem; top: -10rem; left: -12rem; opacity: 0.18; background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, rgba(16, 185, 129, 0) 70%); animation: blobEdgeOne 32s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate; }
+    .bg-blob-2 { width: 42rem; height: 42rem; top: 24rem; right: -14rem; opacity: 0.14; background: radial-gradient(circle, rgba(59, 130, 246, 0.16) 0%, rgba(59, 130, 246, 0) 72%); animation: blobEdgeTwo 36s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate; }
+    .bg-blob-3 { width: 30rem; height: 30rem; bottom: -8rem; left: 24%; opacity: 0.12; background: radial-gradient(circle, rgba(148, 163, 184, 0.14) 0%, rgba(148, 163, 184, 0) 72%); animation: blobEdgeThree 34s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate; }
+    .bg-grid { position: absolute; inset: 0; opacity: 0.10; background-image: linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px); background-size: 72px 72px; mask-image: radial-gradient(circle at center, black 18%, transparent 85%); -webkit-mask-image: radial-gradient(circle at center, black 18%, transparent 85%); }
 
-    body {
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    .site-bg-effects {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    #app, main, header, footer {
-      position: relative;
-      z-index: 1;
-    }
-
-    .bg-blob {
-      position: absolute;
-      border-radius: 9999px;
-      filter: blur(90px);
-      will-change: transform;
-    }
-
-    .bg-blob-1 {
-      width: 36rem;
-      height: 36rem;
-      top: -10rem;
-      left: -12rem;
-      opacity: 0.18;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, rgba(16, 185, 129, 0) 70%);
-      animation: blobEdgeOne 32s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
-    }
-
-    .bg-blob-2 {
-      width: 42rem;
-      height: 42rem;
-      top: 24rem;
-      right: -14rem;
-      opacity: 0.14;
-      background: radial-gradient(circle, rgba(59, 130, 246, 0.16) 0%, rgba(59, 130, 246, 0) 72%);
-      animation: blobEdgeTwo 36s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
-    }
-
-    .bg-blob-3 {
-      width: 30rem;
-      height: 30rem;
-      bottom: -8rem;
-      left: 24%;
-      opacity: 0.12;
-      background: radial-gradient(circle, rgba(148, 163, 184, 0.14) 0%, rgba(148, 163, 184, 0) 72%);
-      animation: blobEdgeThree 34s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite alternate;
-    }
-
-    .bg-grid {
-      position: absolute;
-      inset: 0;
-      opacity: 0.10;
-      background-image:
-        linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
-      background-size: 72px 72px;
-      mask-image: radial-gradient(circle at center, black 18%, transparent 85%);
-      -webkit-mask-image: radial-gradient(circle at center, black 18%, transparent 85%);
-    }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes blobEdgeOne {
-      0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.14; }
-      25% { transform: translate3d(3rem, 2rem, 0) scale(1.04); opacity: 0.18; }
-      50% { transform: translate3d(7rem, 4rem, 0) scale(1.08); opacity: 0.22; }
-      75% { transform: translate3d(4rem, 7rem, 0) scale(1.03); opacity: 0.17; }
-      100% { transform: translate3d(9rem, 5rem, 0) scale(1.1); opacity: 0.2; }
-    }
-
-    @keyframes blobEdgeTwo {
-      0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.11; }
-      25% { transform: translate3d(-3rem, -2rem, 0) scale(1.03); opacity: 0.14; }
-      50% { transform: translate3d(-7rem, -4rem, 0) scale(1.07); opacity: 0.18; }
-      75% { transform: translate3d(-5rem, 1rem, 0) scale(1.04); opacity: 0.13; }
-      100% { transform: translate3d(-9rem, -3rem, 0) scale(1.09); opacity: 0.16; }
-    }
-
-    @keyframes blobEdgeThree {
-      0% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.1; }
-      25% { transform: translate3d(2rem, -2rem, 0) scale(1.03); opacity: 0.13; }
-      50% { transform: translate3d(5rem, -5rem, 0) scale(1.06); opacity: 0.16; }
-      75% { transform: translate3d(1rem, -3rem, 0) scale(1.02); opacity: 0.12; }
-      100% { transform: translate3d(6rem, -6rem, 0) scale(1.08); opacity: 0.15; }
-    }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes blobEdgeOne { 0% { transform: translate3d(0,0,0) scale(1); opacity:0.14; } 50% { transform: translate3d(7rem,4rem,0) scale(1.08); opacity:0.22; } 100% { transform: translate3d(9rem,5rem,0) scale(1.1); opacity:0.2; } }
+    @keyframes blobEdgeTwo { 0% { transform: translate3d(0,0,0) scale(1); opacity:0.11; } 50% { transform: translate3d(-7rem,-4rem,0) scale(1.07); opacity:0.18; } 100% { transform: translate3d(-9rem,-3rem,0) scale(1.09); opacity:0.16; } }
+    @keyframes blobEdgeThree { 0% { transform: translate3d(0,0,0) scale(1); opacity:0.1; } 50% { transform: translate3d(5rem,-5rem,0) scale(1.06); opacity:0.16; } 100% { transform: translate3d(6rem,-6rem,0) scale(1.08); opacity:0.15; } }
 
     .field-focus:focus { outline: none; border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12); }
     .toast-enter { animation: toastIn 0.35s ease-out; }
     @keyframes toastIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: translateY(0); } }
-
     .page { animation: fadeInUp 0.6s ease-out; }
     .page.hidden { display: none; }
   </style>
@@ -137,183 +47,189 @@
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
  </head>
- <body class="h-full bg-slate-950 text-slate-100"><!-- Header -->
+ <body class="h-full bg-slate-950 text-slate-100">
   <header class="sticky top-0 z-40 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-md">
-   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"><!-- Logo --> <a href="/index.html" class="flex items-center gap-3 hover:opacity-90 transition"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20">VLP</span>
-     <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro Service</span>
-     </div></a> <!-- Nav Menu -->
-    <nav class="hidden md:flex items-center gap-8"><a href="#features" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Features</a> <a href="#how-it-works" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">How It Works</a> <a href="/support.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Support</a>
-    </nav><!-- CTA Button --> <a href="/onboarding.html" target="_blank" rel="noopener"> <button class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95"> Get Started </button> </a>
+   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="/index.html" class="flex items-center gap-3 hover:opacity-90 transition">
+     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20">VLP</span>
+     <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro Service</span></div>
+    </a>
+    <nav class="hidden md:flex items-center gap-8">
+     <a href="#features" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Features</a>
+     <a href="#how-it-works" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">How It Works</a>
+     <a href="/support.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Support</a>
+    </nav>
+    <a href="/onboarding.html" target="_blank" rel="noopener">
+     <button class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95">Get Started</button>
+    </a>
    </div>
   </header>
+
   <div class="site-bg-effects" aria-hidden="true">
    <div class="bg-blob bg-blob-1"></div>
    <div class="bg-blob bg-blob-2"></div>
    <div class="bg-blob bg-blob-3"></div>
    <div class="bg-grid"></div>
   </div>
+
   <div id="app" class="w-full h-full overflow-auto flex flex-col" style="display: flex; flex-direction: column;">
+
    <!-- FORM PAGE -->
    <div id="form-page" class="page min-h-full flex flex-col">
     <main class="flex-1 px-6 py-10">
      <div class="max-w-2xl mx-auto">
       <div class="text-center mb-8">
        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 mb-4 shadow-lg shadow-emerald-500/25">
-        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
+        <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
        </div>
        <h1 id="form-title" class="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight mb-3">Launch Your Virtual Business Today</h1>
        <p id="form-instructions" class="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg mx-auto">Complete this form to get started with VLP. We'll review your profile and connect you with the right coach.</p>
       </div>
+
       <form id="onboarding-form" novalidate class="space-y-6">
        <!-- Section 1: Personal Information -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
-          <i data-lucide="user" style="width:16px;height:16px;color:#10b981;"></i>
-         </div>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="user" style="width:16px;height:16px;color:#10b981;"></i></div>
          <h2 class="font-semibold text-slate-100 text-base">Personal Information</h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
          <div>
-          <label for="f-name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name *</label> <input type="text" id="f-name" placeholder="Jane Smith" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-name" class="block text-sm font-medium text-slate-300 mb-1.5">Full Name *</label>
+          <input type="text" id="f-name" placeholder="Jane Smith" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
          <div>
-          <label for="f-email" class="block text-sm font-medium text-slate-300 mb-1.5">Email Address *</label> <input type="email" id="f-email" placeholder="jane@example.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-email" class="block text-sm font-medium text-slate-300 mb-1.5">Email Address *</label>
+          <input type="email" id="f-email" placeholder="jane@example.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
          <div>
-          <label for="f-phone" class="block text-sm font-medium text-slate-300 mb-1.5">Phone / Telegram</label> <input type="text" id="f-phone" placeholder="+1 (555) 000-0000 or @telegram" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-phone" class="block text-sm font-medium text-slate-300 mb-1.5">Phone / Telegram</label>
+          <input type="text" id="f-phone" placeholder="+1 (555) 000-0000 or @telegram" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
          <div>
-          <label for="f-country" class="block text-sm font-medium text-slate-300 mb-1.5">Country of Residence</label> <input type="text" id="f-country" placeholder="e.g., India, Philippines, Canada" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-country" class="block text-sm font-medium text-slate-300 mb-1.5">Country of Residence</label>
+          <input type="text" id="f-country" placeholder="e.g., India, Philippines, Canada" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
         </div>
-       </div><!-- Section 2: Links & Profiles -->
+       </div>
+
+       <!-- Section 2: Links & Profiles -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
-          <i data-lucide="link" style="width:16px;height:16px;color:#10b981;"></i>
-         </div>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="link" style="width:16px;height:16px;color:#10b981;"></i></div>
          <h2 class="font-semibold text-slate-100 text-base">Links &amp; Profiles</h2>
         </div>
         <div class="grid gap-4">
          <div>
-          <label for="f-linkedin" class="block text-sm font-medium text-slate-300 mb-1.5">LinkedIn Profile URL</label> <input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/yourprofile" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-linkedin" class="block text-sm font-medium text-slate-300 mb-1.5">LinkedIn Profile URL</label>
+          <input type="url" id="f-linkedin" placeholder="https://linkedin.com/in/yourprofile" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
          <div>
-          <label for="f-github" class="block text-sm font-medium text-slate-300 mb-1.5">GitHub / Portfolio URL</label> <input type="url" id="f-github" placeholder="https://github.com/yourprofile or portfolio.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-github" class="block text-sm font-medium text-slate-300 mb-1.5">GitHub / Portfolio URL</label>
+          <input type="url" id="f-github" placeholder="https://github.com/yourprofile or portfolio.com" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
          <div>
           <label for="f-portfolio" class="block text-sm font-medium text-slate-300 mb-1.5">Portfolio / Work Samples (Optional)</label>
-          <p class="text-xs text-slate-500 mb-1.5">Links to past projects, apps, or samples you're proud of</p><textarea id="f-portfolio" rows="2" placeholder="Paste links to your work samples..." class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
+          <p class="text-xs text-slate-500 mb-1.5">Links to past projects, apps, or samples you're proud of</p>
+          <textarea id="f-portfolio" rows="2" placeholder="Paste links to your work samples..." class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
          </div>
         </div>
-       </div><!-- Section 3: Work Preferences -->
+       </div>
+
+       <!-- Section 3: Work Preferences -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
-          <i data-lucide="briefcase" style="width:16px;height:16px;color:#10b981;"></i>
-         </div>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="briefcase" style="width:16px;height:16px;color:#10b981;"></i></div>
          <h2 class="font-semibold text-slate-100 text-base">Work Preferences</h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
          <div>
-          <label for="f-contract" class="block text-sm font-medium text-slate-300 mb-1.5">Contract Type</label> <input type="text" id="f-contract" placeholder="e.g., Full-time, Part-time, Project-based" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-contract" class="block text-sm font-medium text-slate-300 mb-1.5">Contract Type</label>
+          <input type="text" id="f-contract" placeholder="e.g., Full-time, Part-time, Project-based" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
          <div>
-          <label for="f-availability" class="block text-sm font-medium text-slate-300 mb-1.5">Availability (Hours/Week)</label> <input type="text" id="f-availability" placeholder="e.g., 40, 20-30, Flexible" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-availability" class="block text-sm font-medium text-slate-300 mb-1.5">Availability (Hours/Week)</label>
+          <input type="text" id="f-availability" placeholder="e.g., 40, 20-30, Flexible" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
          <div class="sm:col-span-2">
-          <label for="f-timezone" class="block text-sm font-medium text-slate-300 mb-1.5">Timezone / Preferred Work Hours</label> <input type="text" id="f-timezone" placeholder="e.g., IST (UTC+5:30), 9 AM - 6 PM EST" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+          <label for="f-timezone" class="block text-sm font-medium text-slate-300 mb-1.5">Timezone / Preferred Work Hours</label>
+          <input type="text" id="f-timezone" placeholder="e.g., IST (UTC+5:30), 9 AM - 6 PM EST" class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
          </div>
         </div>
-       </div><!-- Section 4: Skills Rating -->
+       </div>
+
+       <!-- Section 4: Skills Rating -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
-          <i data-lucide="zap" style="width:16px;height:16px;color:#10b981;"></i>
-         </div>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="zap" style="width:16px;height:16px;color:#10b981;"></i></div>
          <h2 class="font-semibold text-slate-100 text-base">Technical Skills (Rate 1–10)</h2>
         </div>
         <p class="text-xs text-slate-400 mb-6">Rate your proficiency: 1 = Beginner, 10 = Expert</p>
         <div class="overflow-x-auto">
          <table class="w-full text-sm">
-          <tbody class="space-y-2">
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">JavaScript</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-javascript" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-javascript-label">—</span>/10</td>
-           </tr>
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">Python</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-python" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-python-label">—</span>/10</td>
-           </tr>
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">React</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-react" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-react-label">—</span>/10</td>
-           </tr>
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">Node.js</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-nodejs" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-nodejs-label">—</span>/10</td>
-           </tr>
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">TypeScript</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-typescript" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-typescript-label">—</span>/10</td>
-           </tr>
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">AWS</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-aws" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-aws-label">—</span>/10</td>
-           </tr>
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">Docker</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-docker" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-docker-label">—</span>/10</td>
-           </tr>
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">MongoDB</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-mongodb" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-mongodb-label">—</span>/10</td>
-           </tr>
-           <tr class="border-b border-slate-700/30">
-            <td class="py-3 px-2 text-slate-300 font-medium">PostgreSQL</td>
-            <td class="py-3 px-2 text-right"><input type="number" id="skill-postgresql" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td>
-            <td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-postgresql-label">—</span>/10</td>
-           </tr>
-           <tr>
-            <td class="py-3 px-2 text-slate-300 font-medium">Other Skills</td>
-            <td colspan="2" class="py-3 px-2"><input type="text" id="skill-other_skills" placeholder="e.g., Flutter, Next.js, DevOps, etc." class="field-focus w-full border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900"></td>
-           </tr>
+          <tbody>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">JavaScript</td><td class="py-3 px-2 text-right"><input type="number" id="skill-javascript" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-javascript-label">—</span>/10</td></tr>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">Python</td><td class="py-3 px-2 text-right"><input type="number" id="skill-python" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-python-label">—</span>/10</td></tr>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">React</td><td class="py-3 px-2 text-right"><input type="number" id="skill-react" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-react-label">—</span>/10</td></tr>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">Node.js</td><td class="py-3 px-2 text-right"><input type="number" id="skill-nodejs" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-nodejs-label">—</span>/10</td></tr>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">TypeScript</td><td class="py-3 px-2 text-right"><input type="number" id="skill-typescript" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-typescript-label">—</span>/10</td></tr>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">AWS</td><td class="py-3 px-2 text-right"><input type="number" id="skill-aws" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-aws-label">—</span>/10</td></tr>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">Docker</td><td class="py-3 px-2 text-right"><input type="number" id="skill-docker" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-docker-label">—</span>/10</td></tr>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">MongoDB</td><td class="py-3 px-2 text-right"><input type="number" id="skill-mongodb" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-mongodb-label">—</span>/10</td></tr>
+           <tr class="border-b border-slate-700/30"><td class="py-3 px-2 text-slate-300 font-medium">PostgreSQL</td><td class="py-3 px-2 text-right"><input type="number" id="skill-postgresql" min="0" max="10" class="w-12 border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900 text-center" placeholder="—"></td><td class="py-3 px-2 text-right text-emerald-500 text-sm"><span id="skill-postgresql-label">—</span>/10</td></tr>
+           <tr><td class="py-3 px-2 text-slate-300 font-medium">Other Skills</td><td colspan="2" class="py-3 px-2"><input type="text" id="skill-other_skills" placeholder="e.g., Flutter, Next.js, DevOps, etc." class="field-focus w-full border border-slate-700 rounded px-2 py-1 text-sm text-slate-100 bg-slate-900"></td></tr>
           </tbody>
          </table>
         </div>
-       </div><!-- Section 5: About Your Ideal Role -->
+       </div>
+
+       <!-- Section 5: About Your Ideal Role -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
-         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center">
-          <i data-lucide="message-circle" style="width:16px;height:16px;color:#10b981;"></i>
-         </div>
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="message-circle" style="width:16px;height:16px;color:#10b981;"></i></div>
          <h2 class="font-semibold text-slate-100 text-base">Your Ideal Role</h2>
-        </div><label for="f-ideal" class="block text-sm font-medium text-slate-300 mb-1.5">Tell us about your ideal project or role (Optional)</label>
-        <p class="text-xs text-slate-500 mb-2">e.g., "I love working on real-time features in React", "SaaS backend architecture enthusiast"</p><textarea id="f-ideal" rows="3" placeholder="Describe what excites you about projects..." class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
-       </div><!-- Consent & Checkbox -->
+        </div>
+        <label for="f-ideal" class="block text-sm font-medium text-slate-300 mb-1.5">Tell us about your ideal project or role (Optional)</label>
+        <p class="text-xs text-slate-500 mb-2">e.g., "I love working on real-time features in React", "SaaS backend architecture enthusiast"</p>
+        <textarea id="f-ideal" rows="3" placeholder="Describe what excites you about projects..." class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
+       </div>
+
+       <!-- Consent & Checkbox -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
-        <label class="flex items-start gap-3 cursor-pointer"> <input type="checkbox" id="f-consent" class="mt-1 w-4 h-4 rounded border-slate-600 text-emerald-500 accent-emerald-500"> <span class="text-sm text-slate-300 leading-relaxed">I authorize Virtual Launch Pro to contact me and submit my profile to potential clients and opportunities. *</span> </label>
-       </div><!-- Error Message -->
-       <div id="form-error" class="hidden text-sm text-red-400 bg-red-950/30 border border-red-800 rounded-lg px-4 py-3"></div><!-- Submit Button --> <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm py-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2"> <span id="submit-text">Continue to Payment</span> <span id="submit-spinner" class="hidden">
+        <label class="flex items-start gap-3 cursor-pointer">
+         <input type="checkbox" id="f-consent" class="mt-1 w-4 h-4 rounded border-slate-600 text-emerald-500 accent-emerald-500">
+         <span class="text-sm text-slate-300 leading-relaxed">I authorize Virtual Launch Pro to contact me and submit my profile to potential clients and opportunities. *</span>
+        </label>
+       </div>
+
+       <!-- Reference number display (shown after success, before payment) -->
+       <div id="ref-display" class="hidden rounded-xl border border-emerald-500/30 bg-emerald-500/5 px-5 py-4 text-sm text-emerald-200">
+        Your reference number: <span id="ref-number" class="font-mono font-bold text-emerald-300"></span> — save this to check your status on the Support page.
+       </div>
+
+       <!-- Error Message -->
+       <div id="form-error" class="hidden text-sm text-red-400 bg-red-950/30 border border-red-800 rounded-lg px-4 py-3"></div>
+
+       <!-- Submit Button -->
+       <button type="submit" id="submit-btn" class="w-full bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm py-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2">
+        <span id="submit-text">Continue to Payment</span>
+        <span id="submit-spinner" class="hidden">
          <svg class="animate-spin h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" /> <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-         </svg></span> </button>
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+         </svg>
+        </span>
+       </button>
       </form>
      </div>
     </main>
-   </div><!-- PAYMENT PAGE -->
+   </div>
+
+   <!-- PAYMENT PAGE -->
    <div id="payment-page" class="page hidden min-h-full flex flex-col">
-    <button id="back-payment-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition"> <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span> </button>
+    <button id="back-payment-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition">
+     <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span>
+    </button>
     <main class="flex-1 px-6 py-10">
      <div class="max-w-4xl mx-auto">
       <div class="text-center mb-12">
@@ -323,64 +239,59 @@
       <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
        <!-- Free Option -->
        <div class="group relative rounded-2xl border border-slate-700/50 bg-slate-800/30 p-8 hover:border-slate-600 hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300 transform hover:scale-105">
-        <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-slate-700/0 to-emerald-500/0 group-hover:from-slate-700/5 group-hover:to-emerald-500/10 transition-all duration-300 pointer-events-none"></div>
         <div class="relative z-10">
          <div class="flex items-start justify-between mb-6">
           <div>
            <h2 class="text-2xl font-bold text-slate-100 mb-2">Virtual Launch Pro</h2>
            <p class="text-slate-400 text-sm">Free – Self-Service Matching</p>
           </div>
-          <svg class="w-8 h-8 text-slate-700 group-hover:text-emerald-500/40 transition-colors duration-300" fill="currentColor" viewbox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-          </svg>
          </div>
-         <div class="text-slate-400 text-sm leading-relaxed mb-8">
-          Access to the developer network and client database. Manage your own outreach and matching. Direct support via email and community.
-         </div>
+         <div class="text-slate-400 text-sm leading-relaxed mb-8">Access to the developer network and client database. Manage your own outreach and matching. Direct support via email and community.</div>
          <ul class="space-y-3 mb-8">
           <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>Full profile access &amp; visibility</span></li>
           <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>Browse client project postings</span></li>
           <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>Direct messaging with clients</span></li>
           <li class="flex items-center gap-3 text-sm text-slate-300"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>Community support &amp; resources</span></li>
-         </ul><a href="https://buy.stripe.com/5kQ9ANa7H4cwb1xaO673G01?client_reference_id=Virtual-Launch-Pro-Job-Match-Intro-Service-FREE" target="_blank" rel="noopener noreferrer" class="block w-full text-center px-6 py-3.5 border border-slate-700 hover:border-emerald-500/50 bg-slate-900/40 hover:bg-slate-800/60 text-slate-100 font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10 transform hover:scale-105 active:scale-95"> Get Started Free </a>
+         </ul>
+         <a href="https://buy.stripe.com/5kQ9ANa7H4cwb1xaO673G01?client_reference_id=Virtual-Launch-Pro-Job-Match-Intro-Service-FREE" target="_blank" rel="noopener noreferrer" class="block w-full text-center px-6 py-3.5 border border-slate-700 hover:border-emerald-500/50 bg-slate-900/40 hover:bg-slate-800/60 text-slate-100 font-semibold rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-emerald-500/10 transform hover:scale-105 active:scale-95">Get Started Free</a>
         </div>
-       </div><!-- Paid Option (Featured) -->
+       </div>
+       <!-- Paid Option (Featured) -->
        <div class="group relative rounded-2xl border-2 border-emerald-500/50 bg-gradient-to-br from-slate-800/60 to-emerald-950/20 p-8 hover:border-emerald-500 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-300 transform hover:scale-105 md:scale-105">
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 inline-block px-3 py-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/30">
-         RECOMMENDED
-        </div>
-        <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-emerald-500/0 group-hover:from-emerald-500/20 group-hover:to-emerald-500/5 transition-all duration-300 pointer-events-none"></div>
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2 inline-block px-3 py-1 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xs font-bold rounded-full shadow-lg shadow-emerald-500/30">RECOMMENDED</div>
         <div class="relative z-10">
          <div class="flex items-start justify-between mb-6">
           <div>
            <h2 class="text-2xl font-bold text-slate-100 mb-2">Virtual Launch Pro</h2>
            <p class="text-emerald-400 font-semibold text-sm">$2.99 – Job Match Intro Service</p>
           </div>
-          <svg class="w-8 h-8 text-emerald-500 group-hover:scale-110 transition-transform duration-300" fill="currentColor" viewbox="0 0 20 20"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1H9a1 1 0 01-1-1V4zM14 3a1 1 0 011-1h2a1 1 0 011 1v13a1 1 0 01-1 1h-2a1 1 0 01-1-1V3z" />
-          </svg>
          </div>
-         <div class="text-slate-300 text-sm leading-relaxed mb-8">
-          Professional vetting and curated client matching. Expert support every step of the way. Priority access to high-value projects.
-         </div>
+         <div class="text-slate-300 text-sm leading-relaxed mb-8">Professional vetting and curated client matching. Expert support every step of the way. Priority access to high-value projects.</div>
          <ul class="space-y-3 mb-8">
           <li class="flex items-center gap-3 text-sm text-slate-100"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>Everything in Free, plus:</span></li>
           <li class="flex items-center gap-3 text-sm text-slate-100"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>Personal profile review &amp; optimization</span></li>
           <li class="flex items-center gap-3 text-sm text-slate-100"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>Curated client introductions (3–5 per month)</span></li>
           <li class="flex items-center gap-3 text-sm text-slate-100"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>1-on-1 kickoff consultation</span></li>
           <li class="flex items-center gap-3 text-sm text-slate-100"><i data-lucide="check" style="width:18px;height:18px;color:#10b981;"></i> <span>Priority email &amp; Slack support</span></li>
-         </ul><a href="https://buy.stripe.com/cNi5kx2FfaAU8TpaO673G00?client_reference_id=Virtual-Launch-Pro-Job-Match-Intro-Service-299" target="_blank" rel="noopener noreferrer" class="block w-full text-center px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transform hover:scale-105 active:scale-95"> Unlock Premium Matching </a>
+         </ul>
+         <a href="https://buy.stripe.com/cNi5kx2FfaAU8TpaO673G00?client_reference_id=Virtual-Launch-Pro-Job-Match-Intro-Service-299" target="_blank" rel="noopener noreferrer" class="block w-full text-center px-6 py-3.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 transform hover:scale-105 active:scale-95">Unlock Premium Matching</a>
         </div>
        </div>
       </div>
      </div>
     </main>
    </div>
-  </div><!-- Footer -->
+  </div>
+
+  <!-- Footer -->
   <footer class="border-t border-slate-800/50 bg-slate-950 mt-auto">
    <div class="max-w-7xl mx-auto px-6 py-12">
     <div class="grid md:grid-cols-4 gap-8 mb-12">
-     <div><a href="#" id="footer-logo-link" class="flex items-center gap-3 hover:opacity-90 transition mb-4"> <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950">VLP</span>
-       <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro</span>
-       </div></a>
+     <div>
+      <a href="#" class="flex items-center gap-3 hover:opacity-90 transition mb-4">
+       <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950">VLP</span>
+       <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro</span></div>
+      </a>
       <p class="text-xs text-slate-500">Connecting talented developers with premium U.S. clients.</p>
      </div>
      <div>
@@ -388,7 +299,7 @@
       <ul class="space-y-2">
        <li><a href="#features" class="text-xs text-slate-400 hover:text-emerald-400 transition">Features</a></li>
        <li><a href="#how-it-works" class="text-xs text-slate-400 hover:text-emerald-400 transition">How It Works</a></li>
-       <li><a href="/support.html" id="support-footer-link" class="text-xs text-slate-400 hover:text-emerald-400 transition cursor-pointer bg-none border-none p-0">Support</a></li>
+       <li><a href="/support.html" class="text-xs text-slate-400 hover:text-emerald-400 transition">Support</a></li>
       </ul>
      </div>
      <div>
@@ -413,9 +324,20 @@
     </div>
    </div>
   </footer>
+
   <script>
     document.addEventListener('DOMContentLoaded', async function() {
       lucide.createIcons();
+
+      // ─── generateEventId ──────────────────────────────────────────────────────
+      // Produces "VLP-" + alphanumeric only — no hyphens inside the ID part —
+      // so it passes the /^VLP-[a-zA-Z0-9]+$/ regex on both the Worker and
+      // the support page status lookup.
+      function generateEventId() {
+        const ts  = Date.now().toString(36).toUpperCase();           // base-36 timestamp
+        const rnd = Math.random().toString(36).slice(2, 7).toUpperCase(); // 5-char random
+        return `VLP-${ts}${rnd}`;
+      }
 
       function showPage(pageId) {
         document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
@@ -428,7 +350,7 @@
         showPage('form-page');
       });
 
-      // Skills rating update
+      // Skills rating live labels
       const skills = ['javascript','python','react','nodejs','typescript','aws','docker','mongodb','postgresql'];
       skills.forEach(skill => {
         const input = document.getElementById(`skill-${skill}`);
@@ -438,7 +360,7 @@
         }
       });
 
-      const form = document.getElementById('onboarding-form');
+      const form    = document.getElementById('onboarding-form');
       const errorEl = document.getElementById('form-error');
 
       function showError(msg) {
@@ -453,14 +375,14 @@
         e.stopPropagation();
         hideError();
 
-        const name = document.getElementById('f-name').value.trim();
-        const email = document.getElementById('f-email').value.trim();
+        const name    = document.getElementById('f-name').value.trim();
+        const email   = document.getElementById('f-email').value.trim();
         const consent = document.getElementById('f-consent').checked;
 
         if (!name || !email) { showError('Please fill in your full name and email address.'); return; }
-        if (!consent) { showError('Please authorize us to contact you.'); return; }
+        if (!consent)        { showError('Please authorize us to contact you.'); return; }
 
-        const btn = document.getElementById('submit-btn');
+        const btn     = document.getElementById('submit-btn');
         const btnText = document.getElementById('submit-text');
         const spinner = document.getElementById('submit-spinner');
         btn.disabled = true;
@@ -468,20 +390,22 @@
         btnText.textContent = 'Submitting…';
         spinner.classList.remove('hidden');
 
+        // Build payload — only fields defined in onboarding.json contract.
+        // No extra properties (additionalProperties: false would cause rejection).
         const payload = {
-          eventId: `vlp-${Date.now()}`,
-          full_name: name,
-          email: email,
-          phone: document.getElementById('f-phone').value.trim(),
-          country: document.getElementById('f-country').value.trim(),
-          linkedin_url: document.getElementById('f-linkedin').value.trim(),
-          portfolio_url: document.getElementById('f-github').value.trim(),
-          video_url: document.getElementById('f-portfolio').value.trim(),
+          eventId:              generateEventId(),   // VLP-<alphanum> — matches /^VLP-[a-zA-Z0-9]+$/
+          full_name:            name,
+          email:                email,
+          phone:                document.getElementById('f-phone').value.trim(),
+          country:              document.getElementById('f-country').value.trim(),
+          linkedin_url:         document.getElementById('f-linkedin').value.trim(),
+          portfolio_url:        document.getElementById('f-github').value.trim(),
+          video_url:            document.getElementById('f-portfolio').value.trim(),
           professional_summary: document.getElementById('f-contract').value.trim(),
-          hourly_rate: document.getElementById('f-availability').value.trim(),
-          availability: document.getElementById('f-timezone').value.trim(),
-          confirmation: true,
-          submitted_at: new Date().toISOString()
+          hourly_rate:          document.getElementById('f-availability').value.trim(),
+          availability:         document.getElementById('f-timezone').value.trim(),
+          confirmation:         true
+          // ↑ No `submitted_at` — not in the contract schema
         };
 
         try {
@@ -499,13 +423,19 @@
 
           if (result.ok) {
             if (result.deduped) {
-              showError('You have already submitted this form.');
+              showError('You have already submitted this form. Your previous submission is on file.');
             } else {
+              // Show the reference number so the user can look it up on Support
+              const refDisplay = document.getElementById('ref-display');
+              document.getElementById('ref-number').textContent = payload.eventId;
+              refDisplay.classList.remove('hidden');
+
               form.reset();
-              showPage('payment-page');
+              // Small delay so the user sees the reference before the page switches
+              setTimeout(() => showPage('payment-page'), 1800);
             }
           } else {
-            showError('Submission failed. Please try again.');
+            showError('Submission failed: ' + (result.error || 'unknown_error') + '. Please try again.');
           }
         } catch (err) {
           console.error(err);
@@ -513,10 +443,10 @@
           btn.style.opacity = '1';
           btnText.textContent = 'Continue to Payment';
           spinner.classList.add('hidden');
-          showError('Network error. Please try again.');
+          showError('Network error. Please check your connection and try again.');
         }
       });
     });
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9df8a7bd33b727c9',t:'MTc3NDA1MTAwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ </body>
 </html>

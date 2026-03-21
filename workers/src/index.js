@@ -1,11 +1,21 @@
-// index.js
+// workers/src/index.js
 // Cloudflare Worker for onboarding + support status lookup with R2 storage
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',          // tighten to your domain in production
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Accept'
+};
 
 export default {
   async fetch(request, env) {
+    // Handle CORS preflight
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: CORS_HEADERS });
+    }
+
     const url = new URL(request.url);
 
-    // Route switch
     if (url.pathname === '/forms/onboarding' && request.method === 'POST') {
       return handleOnboarding(request, env);
     }
@@ -30,12 +40,17 @@ async function handleOnboarding(request, env) {
     const requiredFields = ['confirmation', 'email', 'eventId', 'full_name'];
 
     for (const field of requiredFields) {
-      if (!payload[field]) {
+      if (payload[field] === undefined || payload[field] === null || payload[field] === '') {
         return json({ ok: false, error: 'validation_failed' }, 400);
       }
     }
 
-    const recordId = payload.eventId;
+    // confirmation must be boolean true
+    if (payload.confirmation !== true) {
+      return json({ ok: false, error: 'validation_failed' }, 400);
+    }
+
+    const recordId  = payload.eventId;
     const recordKey = buildRecordKey(recordId);
 
     // Dedup check
@@ -55,7 +70,7 @@ async function handleOnboarding(request, env) {
     const record = {
       ...payload,
       createdAt: now,
-      status: 'submitted',
+      status:    'submitted',
       updatedAt: now
     };
 
@@ -63,8 +78,8 @@ async function handleOnboarding(request, env) {
 
     return json({
       eventId: recordId,
-      ok: true,
-      status: 'submitted'
+      ok:      true,
+      status:  'submitted'
     });
 
   } catch (err) {
@@ -79,7 +94,7 @@ async function handleOnboarding(request, env) {
  * =========================
  */
 async function handleSupportStatus(request, env) {
-  const url = new URL(request.url);
+  const url       = new URL(request.url);
   const clientRef = url.searchParams.get('clientRef');
 
   if (!clientRef || !isValidClientRef(clientRef)) {
@@ -87,32 +102,30 @@ async function handleSupportStatus(request, env) {
   }
 
   const recordKey = buildRecordKey(clientRef);
-  const record = await getRecord(env, recordKey);
+  const record    = await getRecord(env, recordKey);
 
   if (!record) {
     return json({ ok: false, error: 'not_found' }, 404);
   }
 
   return json({
-    eventId: clientRef,
-    ok: true,
-    status: record.status || 'submitted',
+    eventId:   clientRef,
+    ok:        true,
+    status:    record.status    || 'submitted',
     updatedAt: record.updatedAt || record.createdAt
   });
 }
 
 /**
  * =========================
- * Helpers (Tooling)
+ * Helpers
  * =========================
  */
 
-// Build R2 key
 function buildRecordKey(eventId) {
   return `onboarding-records/${eventId}.json`;
 }
 
-// Fetch record from R2
 async function getRecord(env, key) {
   if (!env.ONBOARDING_R2) {
     console.warn('ONBOARDING_R2 binding missing');
@@ -120,7 +133,6 @@ async function getRecord(env, key) {
   }
 
   const obj = await env.ONBOARDING_R2.get(key);
-
   if (!obj) return null;
 
   try {
@@ -130,7 +142,6 @@ async function getRecord(env, key) {
   }
 }
 
-// Store record in R2
 async function putRecord(env, key, data) {
   if (!env.ONBOARDING_R2) {
     console.warn('ONBOARDING_R2 binding missing');
@@ -140,25 +151,22 @@ async function putRecord(env, key, data) {
   await env.ONBOARDING_R2.put(
     key,
     JSON.stringify(data),
-    {
-      httpMetadata: {
-        contentType: 'application/json'
-      }
-    }
+    { httpMetadata: { contentType: 'application/json' } }
   );
 }
 
-// Validate reference format
+// Matches VLP- followed by one or more alphanumeric chars (no interior hyphens).
+// The onboarding page now generates IDs in this format: VLP-<base36ts><base36rnd>
 function isValidClientRef(ref) {
   return /^VLP-[a-zA-Z0-9]+$/.test(ref);
 }
 
-// Standard JSON response
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...CORS_HEADERS
     }
   });
 }
