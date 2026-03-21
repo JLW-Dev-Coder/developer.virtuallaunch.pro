@@ -1,0 +1,124 @@
+{
+  "auth": {
+    "required": true,
+    "trustClientIdentityFields": false,
+    "type": "session"
+  },
+  "contract": {
+    "authority": [
+      "R2_VIRTUAL_LAUNCH"
+    ],
+    "governs": "Developer review submissions for Virtual Launch Pro",
+    "path": "app/contracts/forms/review-submit.contract.json",
+    "source": "Virtual Launch Pro",
+    "title": "Virtual Launch Pro — Form Contract — Review Submit",
+    "usedOnPages": [
+      "/reviews.html"
+    ],
+    "validation": {
+      "enumStrict": true,
+      "normalizeCheckboxToBoolean": true,
+      "rejectUnknownValues": true,
+      "requireJsonContentType": true
+    },
+    "version": 1
+  },
+  "delivery": {
+    "endpoint": "/forms/review-submit",
+    "method": "POST",
+    "receiptKeyPattern": "receipts/{source}/{eventId}.json",
+    "receiptSource": "form",
+    "signature": {
+      "header": null,
+      "required": false,
+      "secretEnvVar": null
+    }
+  },
+  "effects": {
+    "dedupeKey": "payload.eventId",
+    "eventIdFrom": "payload.eventId",
+    "receiptAppend": {
+      "to": "receipts/{source}/{eventId}.json"
+    },
+    "canonicalPatch": {
+      "createdAt": "{system.nowIso}",
+      "eventId": "{payload.eventId}",
+      "recordId": "{payload.eventId}",
+      "status": "submitted",
+      "updatedAt": "{system.nowIso}"
+    },
+    "canonicalUpsert": {
+      "patchFrom": "effects.canonicalPatch",
+      "target": "reviews/{recordId}.json"
+    },
+    "writeOrder": [
+      "receiptAppend",
+      "canonicalUpsert"
+    ],
+    "writes": [
+      "reviews"
+    ]
+  },
+  "payload": {
+    "additionalProperties": false,
+    "properties": {
+      "eventId": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "author_name": {
+        "minLength": 1,
+        "maxLength": 100,
+        "type": "string"
+      },
+      "author_email": {
+        "format": "email",
+        "type": "string"
+      },
+      "author_role": {
+        "minLength": 1,
+        "maxLength": 100,
+        "type": "string"
+      },
+      "rating": {
+        "minimum": 1,
+        "maximum": 5,
+        "type": "integer"
+      },
+      "review_text": {
+        "minLength": 1,
+        "maxLength": 5000,
+        "type": "string"
+      }
+    },
+    "required": [
+      "eventId",
+      "author_name",
+      "author_email",
+      "author_role",
+      "rating",
+      "review_text"
+    ],
+    "type": "object"
+  },
+  "response": {
+    "deduped": {
+      "deduped": true,
+      "eventId": "{effects.eventIdFrom}",
+      "ok": true
+    },
+    "error": {
+      "error": "validation_failed",
+      "ok": false
+    },
+    "success": {
+      "eventId": "{effects.eventIdFrom}",
+      "ok": true,
+      "status": "submitted"
+    }
+  },
+  "schema": {
+    "name": "vlp_form_review_submit",
+    "version": 1
+  }
+}
