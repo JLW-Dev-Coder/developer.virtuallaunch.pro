@@ -1,7 +1,5 @@
 ﻿// functions/forms/support/status.js
 // Pages Function — handles GET /forms/support/status?clientRef=VLP-xxxxx
-// Requires R2 binding "ONBOARDING_R2" set in:
-//   Cloudflare Dashboard → Pages → your-project → Settings → Functions → R2 bucket bindings
 
 export async function onRequestGet({ request, env }) {
   const CORS = corsHeaders(request);
@@ -13,7 +11,7 @@ export async function onRequestGet({ request, env }) {
   }
 
   const recordKey = `onboarding-records/${clientRef}.json`;
-  const record = await getRecord(env, recordKey);
+  const record    = await getRecord(env, recordKey);
 
   if (!record) {
     return json({ ok: false, error: 'not_found' }, 404, CORS);
@@ -34,10 +32,10 @@ export async function onRequestOptions({ request }) {
 function corsHeaders(request) {
   const origin = request.headers.get('Origin') || '*';
   return {
-    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Origin':  origin,
     'Access-Control-Allow-Methods': 'GET, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Accept',
-    'Access-Control-Max-Age': '86400'
+    'Access-Control-Max-Age':       '86400'
   };
 }
 
