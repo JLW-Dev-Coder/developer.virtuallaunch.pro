@@ -1,23 +1,95 @@
 {
-  "name": "support",
-  "route": "/forms/support/status",
-  "method": "GET",
-  "description": "Fetch onboarding status by client reference number",
-  "query": {
-    "clientRef": {
-      "type": "string",
-      "required": true,
-      "pattern": "^VLP-[a-zA-Z0-9]+$"
+  "auth": {
+    "required": true,
+    "trustClientIdentityFields": false,
+    "type": "session"
+  },
+  "contract": {
+    "authority": ["R2_VIRTUAL_LAUNCH"],
+    "governs": "Fetch support and application status by client reference number",
+    "path": "app/contracts/forms/support-status.contract.json",
+    "source": "Virtual Launch Pro",
+    "title": "Virtual Launch Pro — Support Status Check",
+    "usedOnPages": [
+      "/support.html"
+    ],
+    "validation": {
+      "enumStrict": true,
+      "normalizeCheckboxToBoolean": true,
+      "rejectUnknownValues": true,
+      "requireJsonContentType": true
+    },
+    "version": 1
+  },
+  "delivery": {
+    "endpoint": "/forms/support/status",
+    "method": "GET",
+    "receiptKeyPattern": "receipts/{source}/{eventId}.json",
+    "receiptSource": "support",
+    "signature": {
+      "header": null,
+      "required": false,
+      "secretEnvVar": null
     }
   },
-  "response": {
-    "ok": "boolean",
-    "status": "string",
-    "eventId": "string",
-    "updatedAt": "string"
+  "effects": {
+    "dedupeKey": "payload.clientRef",
+    "eventIdFrom": "payload.clientRef",
+    "receiptAppend": {
+      "to": "receipts/{source}/{eventId}.json"
+    },
+    "canonicalPatch": {
+      "updatedAt": "{system.nowIso}",
+      "status": "{payload.status}",
+      "eventId": "{payload.clientRef}"
+    },
+    "canonicalUpsert": {
+      "patchFrom": "effects.canonicalPatch",
+      "target": "support-status/{eventId}.json"
+    },
+    "writeOrder": ["receiptAppend", "canonicalUpsert"],
+    "writes": ["support-status"]
   },
-  "errors": [
-    "invalid_reference",
-    "not_found"
-  ]
+  "payload": {
+    "additionalProperties": false,
+    "properties": {
+      "clientRef": {
+        "type": "string",
+        "pattern": "^VLP-[a-zA-Z0-9]+$",
+        "minLength": 1
+      }
+    },
+    "required": ["clientRef"],
+    "type": "object"
+  },
+  "response": {
+    "deduped": {
+      "deduped": true,
+      "eventId": "{effects.eventIdFrom}",
+      "ok": true
+    },
+    "error": {
+      "error": "invalid_reference",
+      "ok": false
+    },
+    "success": {
+      "eventId": "{effects.eventIdFrom}",
+      "ok": true,
+      "status": "{effects.canonicalPatch.status}",
+      "updatedAt": "{effects.canonicalPatch.updatedAt}",
+      "posts": [
+        {
+          "posterName": "string",
+          "postContent": "string",
+          "postUrl": "string",
+          "createdAt": "string",
+          "dueDate": "string"
+        }
+      ]
+    }
+  },
+  "schema": {
+    "name": "vlp_form_support_status",
+    "version": 1
+  }
 }

@@ -5,23 +5,19 @@
     "type": "session"
   },
   "contract": {
-    "authority": [
-      "R2_VIRTUAL_LAUNCH"
-    ],
-    "governs": "Operator dashboard access and management of form submissions, posts, developers, and analytics.",
+    "authority": ["R2_VIRTUAL_LAUNCH"],
+    "governs": "Operator dashboard for managing submissions, posts, developers, analytics, and operator-adjustable scheduled notifications.",
     "path": "app/contracts/dashboard/dashboard.contract.json",
     "source": "Virtual Launch Pro",
     "title": "Virtual Launch Pro — Dashboard Contract",
-    "usedOnPages": [
-      "/dashboard.html"
-    ],
+    "usedOnPages": ["/dashboard.html"],
     "validation": {
       "enumStrict": true,
       "normalizeCheckboxToBoolean": true,
       "rejectUnknownValues": true,
       "requireJsonContentType": true
     },
-    "version": 1
+    "version": 2
   },
   "delivery": {
     "endpoint": "/forms/dashboard",
@@ -37,9 +33,7 @@
   "effects": {
     "dedupeKey": "payload.eventId",
     "eventIdFrom": "payload.eventId",
-    "receiptAppend": {
-      "to": "receipts/{source}/{eventId}.json"
-    },
+    "receiptAppend": { "to": "receipts/{source}/{eventId}.json" },
     "canonicalPatch": {
       "createdAt": "{system.nowIso}",
       "eventId": "{payload.eventId}",
@@ -51,82 +45,41 @@
       "patchFrom": "effects.canonicalPatch",
       "target": "dashboard-records/{recordId}.json"
     },
-    "writeOrder": [
-      "receiptAppend",
-      "canonicalUpsert"
-    ],
-    "writes": [
-      "dashboard-records"
-    ]
+    "writeOrder": ["receiptAppend","canonicalUpsert"],
+    "writes": ["dashboard-records"]
   },
   "payload": {
     "additionalProperties": false,
     "properties": {
-      "eventId": {
-        "minLength": 1,
-        "type": "string"
-      },
-      "developerRef": {
-        "minLength": 1,
-        "type": "string"
-      },
-      "developerName": {
-        "minLength": 1,
-        "type": "string"
-      },
-      "posterName": {
-        "minLength": 1,
-        "type": "string"
-      },
-      "postContent": {
-        "minLength": 1,
-        "maxLength": 5000,
-        "type": "string"
-      },
-      "postUrl": {
-        "minLength": 1,
-        "type": "string"
-      },
-      "status": {
-        "enum": ["complete", "pending", "upcoming"],
-        "type": "string"
-      },
-      "createdAt": {
+      "eventId": { "minLength": 1, "type": "string" },
+      "developerRef": { "minLength": 1, "type": "string" },
+      "developerName": { "minLength": 1, "type": "string" },
+      "posterName": { "minLength": 1, "type": "string" },
+      "postContent": { "minLength": 1, "maxLength": 5000, "type": "string" },
+      "postUrl": { "minLength": 1, "type": "string" },
+      "status": { "enum": ["complete","pending","upcoming"], "type": "string" },
+      "createdAt": { "format": "date-time", "type": "string" },
+      "dueDate": {
         "format": "date-time",
-        "type": "string"
+        "type": "string",
+        "description": "Next scheduled action or notification date; operator-editable."
       },
-      "nextNotificationDue": {
-        "format": "date-time",
-        "type": "string"
-      }
+      "cronSchedule": {
+        "type": "string",
+        "pattern": "^(?:\\*|[0-5]?\\d) (?:\\*|1?\\d|2[0-3]) (?:\\*|0?[1-9]|[12]\\d|3[01]) (?:\\*|0?[1-9]|1[0-2]) (?:\\*|[0-6])$",
+        "description": "CRON expression for auto-calculating dueDate (default every 3 days)"
+      },
+      "nextNotificationDue": { "format": "date-time", "type": "string" }
     },
     "required": [
-      "eventId",
-      "developerRef",
-      "developerName",
-      "status",
-      "createdAt"
+      "eventId","developerRef","developerName","status","createdAt","dueDate","cronSchedule"
     ],
     "type": "object"
   },
   "response": {
-    "deduped": {
-      "deduped": true,
-      "eventId": "{effects.eventIdFrom}",
-      "ok": true
-    },
-    "error": {
-      "error": "validation_failed",
-      "ok": false
-    },
-    "success": {
-      "eventId": "{effects.eventIdFrom}",
-      "ok": true,
-      "status": "submitted"
-    }
+    "deduped": { "deduped": true, "eventId": "{effects.eventIdFrom}", "ok": true },
+    "error": { "error": "validation_failed", "ok": false },
+    "success": { "eventId": "{effects.eventIdFrom}", "ok": true, "status": "submitted" }
   },
-  "schema": {
-    "name": "vlp_dashboard_flow",
-    "version": 1
-  }
+  "schema": { "name": "vlp_dashboard_flow", "version": 2 }
 }

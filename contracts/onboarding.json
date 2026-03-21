@@ -10,9 +10,7 @@
     "path": "app/contracts/forms/onboarding.contract.json",
     "source": "Virtual Launch Pro",
     "title": "Virtual Launch Pro — Form Contract — Onboarding",
-    "usedOnPages": [
-      "/public/onboarding.html"
-    ],
+    "usedOnPages": ["/public/onboarding.html"],
     "validation": {
       "enumStrict": true,
       "normalizeCheckboxToBoolean": true,
@@ -35,9 +33,7 @@
   "effects": {
     "dedupeKey": "payload.eventId",
     "eventIdFrom": "payload.eventId",
-    "receiptAppend": {
-      "to": "receipts/{source}/{eventId}.json"
-    },
+    "receiptAppend": { "to": "receipts/{source}/{eventId}.json" },
     "canonicalPatch": {
       "createdAt": "{system.nowIso}",
       "eventId": "{payload.eventId}",
@@ -49,13 +45,8 @@
       "patchFrom": "effects.canonicalPatch",
       "target": "onboarding-records/{recordId}.json"
     },
-    "writeOrder": [
-      "receiptAppend",
-      "canonicalUpsert"
-    ],
-    "writes": [
-      "onboarding-records"
-    ]
+    "writeOrder": ["receiptAppend", "canonicalUpsert"],
+    "writes": ["onboarding-records"]
   },
   "payload": {
     "additionalProperties": false,
@@ -71,6 +62,19 @@
       "professional_summary": { "type": "string" },
       "hourly_rate": { "type": "string" },
       "availability": { "type": "string" },
+      "contract_type": { "type": "string" },
+      "timezone": { "type": "string" },
+      "skill_javascript": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_python": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_react": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_nodejs": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_typescript": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_aws": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_docker": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_mongodb": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_postgresql": { "type": "number", "minimum": 0, "maximum": 10 },
+      "skill_other_skills": { "type": "string" },
+      "ideal_role": { "type": "string" },
       "confirmation": { "type": "boolean" }
     },
     "required": ["eventId", "full_name", "email", "confirmation"],
@@ -83,6 +87,6 @@
   },
   "schema": {
     "name": "vlp_form_onboarding",
-    "version": 1
+    "version": 2
   }
 }
