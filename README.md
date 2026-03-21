@@ -32,8 +32,10 @@ Support page → Worker lookup → status returned
 /
   /contracts
     onboarding.json
-    registry.json   
+    registry.json  
+    support.json 
   /public
+    clientReference.js
     index.html
     onboarding.html
     success.html
@@ -41,6 +43,7 @@ Support page → Worker lookup → status returned
     clientReference.js
   /worker
     index.js
+  README
   wrangler.toml
 ```
 
