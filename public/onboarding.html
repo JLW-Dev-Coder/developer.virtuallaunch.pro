@@ -248,7 +248,8 @@
           <!-- Task 1b: hidden input preserves value for form submission since disabled elements are excluded -->
           <input type="hidden" id="f-status-hidden" name="status" value="">
          </div>
-         <div id="cron-field" class="hidden">
+         <!-- Fix 1: cron-field visible and editable for candidate -->
+         <div id="cron-field">
           <!-- Task 1B: cronSchedule is editable by candidate -->
           <label for="f-cronSchedule" class="block text-sm font-medium text-slate-300 mb-1.5">Job Match Notification Frequency</label>
           <select id="f-cronSchedule" name="cronSchedule"

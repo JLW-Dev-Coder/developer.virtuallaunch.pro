@@ -9,6 +9,29 @@
   let filterableFields = [];
   let debounceTimer = null;
 
+  // Fix 2: URL filter field definitions
+  const URL_FILTER_FIELDS = [
+    { name: 'linkedin_url',  label: 'LinkedIn' },
+    { name: 'portfolio_url', label: 'Portfolio' },
+    { name: 'video_url',     label: 'Video' }
+  ];
+
+  // Fix 2: skill filter definitions with labels (includes 1+ option)
+  const SKILL_FIELDS = [
+    { key: 'javascript', label: 'JavaScript' },
+    { key: 'python',     label: 'Python' },
+    { key: 'react',      label: 'React' },
+    { key: 'nodejs',     label: 'Node.js' },
+    { key: 'typescript', label: 'TypeScript' },
+    { key: 'aws',        label: 'AWS' },
+    { key: 'docker',     label: 'Docker' },
+    { key: 'mongodb',    label: 'MongoDB' },
+    { key: 'postgresql', label: 'PostgreSQL' }
+  ];
+
+  // Fix 2: fields handled as explicit single-select dropdowns — exclude from schema multi-select loop
+  const EXPLICIT_SELECT_FIELDS = ['availability', 'contract_type', 'country', 'timezone'];
+
   // ── Bootstrap ─────────────────────────────────────────────────────────────────
   async function init() {
     try {
@@ -19,8 +42,10 @@
       const schemaData = await schemaRes.json();
       const devsData   = await devsRes.json();
 
+      // Fix 2: exclude publish_profile and the 4 explicitly handled select fields
       filterableFields = (schemaData.filterable_fields || []).filter(f =>
-        f.name !== 'publish_profile' // already filtered server-side, skip from UI
+        f.name !== 'publish_profile' &&
+        !EXPLICIT_SELECT_FIELDS.includes(f.name)
       );
 
       allDevelopers = (devsData.developers || []).filter(d => d.publish_profile === true);
@@ -34,25 +59,18 @@
     }
   }
 
-  // Task 2: URL and skill filter constants
-  const URL_FILTER_FIELDS = [
-    { name: 'linkedin_url',  label: 'LinkedIn' },
-    { name: 'portfolio_url', label: 'Portfolio' },
-    { name: 'video_url',     label: 'Video' }
-  ];
-  const SKILL_FIELDS = [
-    'javascript','python','react','nodejs','typescript',
-    'aws','docker','mongodb','postgresql'
-  ];
-
   // ── Filter UI ─────────────────────────────────────────────────────────────────
   function buildFilterUI() {
     const sidebar = document.getElementById('filter-sidebar');
     if (!sidebar) return;
 
+    // Fix 2: helper to get distinct non-empty values from the loaded dataset
+    const distinct = (field) =>
+      [...new Set(allDevelopers.map(d => d[field]).filter(Boolean))].sort();
+
     let html = '';
 
-    // Keyword search for professional_summary
+    // ── Keyword search ────────────────────────────────────────────────────────────
     html += `
       <div class="mb-6">
         <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Keyword Search</label>
@@ -61,10 +79,82 @@
                  focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30">
       </div>`;
 
-    // Hourly rate range
+    // ── Section: Availability / URLs ──────────────────────────────────────────────
+    // Fix 2: group availability select and URL toggle radios together
+    html += `<div class="border-t border-slate-700/40 pt-5 mb-4"><p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Availability / URLs</p></div>`;
+
+    // Fix 2: availability single-select, dynamically populated from dataset
+    const availOpts = distinct('availability');
+    html += `
+      <div class="mb-5">
+        <label class="block text-xs font-semibold text-slate-300 mb-2">Availability</label>
+        <select id="filter-availability"
+          class="w-full border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 bg-slate-900 transition
+                 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30">
+          <option value="">Any</option>
+          ${availOpts.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('')}
+        </select>
+      </div>`;
+
+    // Fix 2: URL availability toggles — has_linkedin, has_portfolio, has_video
+    for (const f of URL_FILTER_FIELDS) {
+      html += `
+        <div class="mb-5">
+          <label class="block text-xs font-semibold text-slate-300 mb-2">${esc(f.label)}</label>
+          <div class="flex flex-wrap gap-3">
+            ${[['any','Any'],['has','Available'],['none','Not provided']].map(([v, lbl], i) => `
+              <label class="flex items-center gap-1.5 cursor-pointer text-xs text-slate-300 hover:text-slate-100">
+                <input type="radio" name="filter-url-${f.name}" value="${v}" ${i === 0 ? 'checked' : ''}
+                  class="accent-emerald-500"> ${esc(lbl)}
+              </label>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    // ── Section: Skills ───────────────────────────────────────────────────────────
+    // Fix 2: all 9 skill radios with options Any / 1+ / 3+ / 5+ / 7+ / 9+, in 2-column grid
+    html += `<div class="border-t border-slate-700/40 pt-5 mb-4"><p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Skills (min. rating)</p></div>`;
+    html += `<div class="grid grid-cols-2 gap-x-4 mb-2">`;
+    for (const s of SKILL_FIELDS) {
+      html += `
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">${esc(s.label)}</label>
+          <div class="flex flex-wrap gap-1.5">
+            ${[['any','Any'],['1','1+'],['3','3+'],['5','5+'],['7','7+'],['9','9+']].map(([v, lbl], i) => `
+              <label class="flex items-center gap-1 cursor-pointer text-xs text-slate-400 hover:text-slate-200">
+                <input type="radio" name="filter-skill-${s.key}" value="${v}" ${i === 0 ? 'checked' : ''}
+                  class="accent-emerald-500"> ${esc(lbl)}
+              </label>`).join('')}
+          </div>
+        </div>`;
+    }
+    html += `</div>`;
+
+    // ── Section: Profile Details ──────────────────────────────────────────────────
+    // Fix 2: contract_type, country, timezone single-selects + hourly rate range
+    html += `<div class="border-t border-slate-700/40 pt-5 mb-4"><p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Profile Details</p></div>`;
+
+    // Fix 2: contract_type, country, timezone — dynamically populated single-select dropdowns
+    const selectLabels = { contract_type: 'Contract Type', country: 'Country', timezone: 'Timezone' };
+    for (const fieldName of ['contract_type', 'country', 'timezone']) {
+      const opts = distinct(fieldName);
+      const label = selectLabels[fieldName];
+      html += `
+        <div class="mb-5">
+          <label class="block text-xs font-semibold text-slate-300 mb-2">${esc(label)}</label>
+          <select id="filter-${fieldName}"
+            class="w-full border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 bg-slate-900 transition
+                   focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30">
+            <option value="">Any</option>
+            ${opts.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('')}
+          </select>
+        </div>`;
+    }
+
+    // Fix 2: hourly rate range in Profile Details section
     html += `
       <div class="mb-6">
-        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Hourly Rate (USD)</label>
+        <label class="block text-xs font-semibold text-slate-300 mb-2">Hourly Rate (USD)</label>
         <div class="flex gap-2 items-center">
           <input type="number" id="filter-rate-min" placeholder="Min" min="0"
             class="w-full border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 bg-slate-900 transition
@@ -76,11 +166,10 @@
         </div>
       </div>`;
 
-    // Filterable fields from contract (skip booleans and fields without clear enum or values)
+    // ── Remaining schema filterable fields (multi-select, excludes explicitly handled ones) ──
     for (const field of filterableFields) {
       if (field.type === 'boolean') continue;
 
-      // Collect unique values from loaded data for multi-select
       const values = field.enum
         ? field.enum
         : [...new Set(allDevelopers.map(d => d[field.name]).filter(Boolean))].sort();
@@ -103,47 +192,12 @@
         </div>`;
     }
 
-    // Task 2: URL availability filters (linkedin_url, portfolio_url, video_url)
-    html += `<div class="border-t border-slate-700/40 pt-5 mb-1"><p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Profile Links</p></div>`;
-    for (const f of URL_FILTER_FIELDS) {
-      html += `
-        <div class="mb-5">
-          <label class="block text-xs font-semibold text-slate-300 mb-2">${esc(f.label)}</label>
-          <div class="flex flex-wrap gap-3">
-            ${[['any','Any'],['has','Available'],['none','Not provided']].map(([v, lbl], i) => `
-              <label class="flex items-center gap-1.5 cursor-pointer text-xs text-slate-300 hover:text-slate-100">
-                <input type="radio" name="filter-url-${f.name}" value="${v}" ${i === 0 ? 'checked' : ''}
-                  class="accent-emerald-500"> ${esc(lbl)}
-              </label>`).join('')}
-          </div>
-        </div>`;
-    }
-
-    // Task 2: Skill threshold filters
-    html += `<div class="border-t border-slate-700/40 pt-5 mb-1"><p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Skills (min. rating)</p></div>`;
-    for (const s of SKILL_FIELDS) {
-      const label = s === 'nodejs' ? 'Node.js'
-                  : s === 'aws'    ? 'AWS'
-                  : s.charAt(0).toUpperCase() + s.slice(1);
-      html += `
-        <div class="mb-4">
-          <label class="block text-xs font-semibold text-slate-300 mb-1.5">${esc(label)}</label>
-          <div class="flex flex-wrap gap-2">
-            ${[['any','Any'],['3','3+'],['5','5+'],['7','7+'],['9','9+']].map(([v, lbl], i) => `
-              <label class="flex items-center gap-1 cursor-pointer text-xs text-slate-400 hover:text-slate-200">
-                <input type="radio" name="filter-skill-${s}" value="${v}" ${i === 0 ? 'checked' : ''}
-                  class="accent-emerald-500"> ${esc(lbl)}
-              </label>`).join('')}
-          </div>
-        </div>`;
-    }
-
     // Clear filters button
     html += `<div class="border-t border-slate-700/40 pt-4 mt-2"><button id="clear-filters" class="w-full px-4 py-2.5 border border-slate-700 hover:border-emerald-500/50 text-slate-300 hover:text-slate-100 text-sm font-medium rounded-lg transition-all duration-200">Clear All Filters</button></div>`;
 
     sidebar.innerHTML = html;
 
-    // Bind events
+    // ── Bind events ───────────────────────────────────────────────────────────────
     const debouncedFilter = () => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(applyFilters, 200);
@@ -153,37 +207,49 @@
     document.getElementById('filter-rate-min').addEventListener('input', debouncedFilter);
     document.getElementById('filter-rate-max').addEventListener('input', debouncedFilter);
 
+    // Fix 2: bind explicit single-select dropdowns (availability + profile details)
+    [...EXPLICIT_SELECT_FIELDS].forEach(field => {
+      const el = document.getElementById(`filter-${field}`);
+      if (el) el.addEventListener('change', debouncedFilter);
+    });
+
     for (const field of filterableFields) {
       if (field.type === 'boolean') continue;
       const el = document.getElementById(`filter-${field.name}`);
       if (el) el.addEventListener('change', debouncedFilter);
     }
 
-    // Task 2: bind URL and skill radio groups
+    // Fix 2: bind URL and skill radio groups
     for (const f of URL_FILTER_FIELDS) {
       sidebar.querySelectorAll(`input[name="filter-url-${f.name}"]`).forEach(r =>
         r.addEventListener('change', debouncedFilter));
     }
     for (const s of SKILL_FIELDS) {
-      sidebar.querySelectorAll(`input[name="filter-skill-${s}"]`).forEach(r =>
+      sidebar.querySelectorAll(`input[name="filter-skill-${s.key}"]`).forEach(r =>
         r.addEventListener('change', debouncedFilter));
     }
 
+    // Fix 2: clear-all resets every input including newly added ones
     document.getElementById('clear-filters').addEventListener('click', () => {
       document.getElementById('filter-keyword').value = '';
       document.getElementById('filter-rate-min').value = '';
       document.getElementById('filter-rate-max').value = '';
+      // Fix 2: reset explicit single-select dropdowns
+      [...EXPLICIT_SELECT_FIELDS].forEach(field => {
+        const el = document.getElementById(`filter-${field}`);
+        if (el) el.value = '';
+      });
       for (const field of filterableFields) {
         const el = document.getElementById(`filter-${field.name}`);
         if (el) Array.from(el.options).forEach(o => (o.selected = false));
       }
-      // Task 2: reset URL and skill radios to "any"
+      // Fix 2: reset URL and skill radios to "any"
       for (const f of URL_FILTER_FIELDS) {
         const el = sidebar.querySelector(`input[name="filter-url-${f.name}"][value="any"]`);
         if (el) el.checked = true;
       }
       for (const s of SKILL_FIELDS) {
-        const el = sidebar.querySelector(`input[name="filter-skill-${s}"][value="any"]`);
+        const el = sidebar.querySelector(`input[name="filter-skill-${s.key}"][value="any"]`);
         if (el) el.checked = true;
       }
       renderCards(allDevelopers);
@@ -216,7 +282,14 @@
       });
     }
 
-    // Multi-select filterable fields
+    // Fix 2: explicit single-select dropdown filters — AND logic, exact match
+    [...EXPLICIT_SELECT_FIELDS].forEach(field => {
+      const el = document.getElementById(`filter-${field}`);
+      const val = el ? el.value : '';
+      if (val) results = results.filter(d => String(d[field] || '') === val);
+    });
+
+    // Multi-select filterable fields from schema (OR within field, AND across fields)
     for (const field of filterableFields) {
       if (field.type === 'boolean') continue;
       const el = document.getElementById(`filter-${field.name}`);
@@ -227,7 +300,7 @@
       }
     }
 
-    // Task 2: URL availability filters
+    // Fix 2: URL availability filters (has_linkedin, has_portfolio, has_video)
     for (const f of URL_FILTER_FIELDS) {
       const checked = document.querySelector(`input[name="filter-url-${f.name}"]:checked`);
       const val = checked ? checked.value : 'any';
@@ -238,13 +311,13 @@
       }
     }
 
-    // Task 2: skill minimum threshold filters
+    // Fix 2: skill minimum threshold filters (Any / 1+ / 3+ / 5+ / 7+ / 9+)
     for (const s of SKILL_FIELDS) {
-      const checked = document.querySelector(`input[name="filter-skill-${s}"]:checked`);
+      const checked = document.querySelector(`input[name="filter-skill-${s.key}"]:checked`);
       const val = checked ? checked.value : 'any';
       if (val !== 'any') {
         const min = parseInt(val, 10);
-        results = results.filter(d => typeof d[`skill_${s}`] === 'number' && d[`skill_${s}`] >= min);
+        results = results.filter(d => typeof d[`skill_${s.key}`] === 'number' && d[`skill_${s.key}`] >= min);
       }
     }
 
@@ -257,7 +330,6 @@
     const count = document.getElementById('dev-count');
     if (!grid) return;
 
-    // Task 2: show "Showing X of Y developers" count
     if (count) {
       const total = allDevelopers.length;
       const shown = developers.length;
