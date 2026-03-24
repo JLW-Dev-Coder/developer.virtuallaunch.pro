@@ -24,6 +24,14 @@ export async function onRequestPost({ request, env }) {
       return json({ ok: false, error: 'validation_failed' }, 400, CORS);
     }
 
+    // Validate publish_profile: must be present and boolean
+    if (payload.publish_profile === undefined || payload.publish_profile === null) {
+      return json({ ok: false, error: 'validation_failed', field: 'publish_profile' }, 400, CORS);
+    }
+    if (typeof payload.publish_profile !== 'boolean') {
+      return json({ ok: false, error: 'validation_failed', field: 'publish_profile' }, 400, CORS);
+    }
+
     const recordKey = `onboarding-records/${payload.eventId}.json`;
 
     const existing = await getRecord(env, recordKey);
@@ -35,12 +43,24 @@ export async function onRequestPost({ request, env }) {
     }
 
     const now = new Date().toISOString();
-    await putRecord(env, recordKey, {
+    const record = {
       ...payload,
       createdAt: now,
-      status: 'submitted',
+      recordStatus: 'submitted',
       updatedAt: now
-    });
+    };
+
+    // Compute nextNotificationDue when status = complete and cronSchedule is set
+    if (payload.status === 'complete' && payload.cronSchedule) {
+      const days = parseInt(payload.cronSchedule, 10);
+      if (!isNaN(days)) {
+        const due = new Date();
+        due.setDate(due.getDate() + days);
+        record.nextNotificationDue = due.toISOString();
+      }
+    }
+
+    await putRecord(env, recordKey, record);
 
     // Send confirmation email (non-blocking — don't fail submission if email fails)
     try {
@@ -57,8 +77,120 @@ export async function onRequestPost({ request, env }) {
   }
 }
 
+// PATCH /forms/onboarding — update existing record by ref_number
+export async function onRequestPatch({ request, env }) {
+  const CORS = {
+    'Access-Control-Allow-Origin':  request.headers.get('Origin') || '*',
+    'Access-Control-Allow-Methods': 'PATCH, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Accept',
+    'Access-Control-Max-Age':       '86400'
+  };
+
+  try {
+    const payload = await request.json();
+    const { ref_number, ...updates } = payload;
+
+    if (!ref_number) {
+      return json({ ok: false, error: 'ref_number_required' }, 400, CORS);
+    }
+
+    const recordKey = `onboarding-records/${ref_number}.json`;
+    const existing = await getRecord(env, recordKey);
+    if (!existing) {
+      return json({ ok: false, error: 'not_found' }, 404, CORS);
+    }
+
+    // Validate publish_profile if provided
+    if ('publish_profile' in updates && typeof updates.publish_profile !== 'boolean') {
+      return json({ ok: false, error: 'validation_failed', field: 'publish_profile' }, 400, CORS);
+    }
+
+    const now = new Date().toISOString();
+    const updated = { ...existing, ...updates, updatedAt: now };
+
+    // Compute nextNotificationDue when status = complete and cronSchedule is set
+    if (updated.status === 'complete' && updated.cronSchedule) {
+      const days = parseInt(updated.cronSchedule, 10);
+      if (!isNaN(days)) {
+        const due = new Date();
+        due.setDate(due.getDate() + days);
+        updated.nextNotificationDue = due.toISOString();
+      }
+    }
+
+    await putRecord(env, recordKey, updated);
+
+    return json({ ok: true, eventId: ref_number, status: updated.status || 'updated' }, 200, CORS);
+
+  } catch (err) {
+    console.error(err);
+    return json({ ok: false, error: 'invalid_json' }, 400, CORS);
+  }
+}
+
+// GET /forms/onboarding?ref=VLP-xxx — fetch record for form pre-fill
+export async function onRequestGet({ request, env }) {
+  const url    = new URL(request.url);
+  const ref    = url.searchParams.get('ref');
+  const origin = request.headers.get('Origin') || '*';
+  const CORS   = {
+    'Access-Control-Allow-Origin':  origin,
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Accept',
+    'Access-Control-Max-Age':       '86400'
+  };
+
+  if (!ref) return json({ ok: false, error: 'ref_required' }, 400, CORS);
+
+  const recordKey = `onboarding-records/${ref}.json`;
+  const record = await getRecord(env, recordKey);
+  if (!record) return json({ ok: false, error: 'not_found' }, 404, CORS);
+
+  // Return only safe-to-expose fields for form pre-fill
+  return json({
+    ok: true,
+    data: {
+      full_name:            record.full_name            || '',
+      email:                record.email               || '',
+      phone:                record.phone               || '',
+      country:              record.country             || '',
+      linkedin_url:         record.linkedin_url        || '',
+      portfolio_url:        record.portfolio_url       || '',
+      video_url:            record.video_url           || '',
+      professional_summary: record.professional_summary || '',
+      hourly_rate:          record.hourly_rate         || '',
+      availability:         record.availability        || '',
+      contract_type:        record.contract_type       || '',
+      timezone:             record.timezone            || '',
+      ideal_role:           record.ideal_role          || '',
+      publish_profile:      record.publish_profile     === true,
+      status:               record.status              || '',
+      cronSchedule:         record.cronSchedule        || '',
+      skill_javascript:     record.skill_javascript,
+      skill_python:         record.skill_python,
+      skill_react:          record.skill_react,
+      skill_nodejs:         record.skill_nodejs,
+      skill_typescript:     record.skill_typescript,
+      skill_aws:            record.skill_aws,
+      skill_docker:         record.skill_docker,
+      skill_mongodb:        record.skill_mongodb,
+      skill_postgresql:     record.skill_postgresql,
+      skill_other_skills:   record.skill_other_skills  || ''
+    }
+  }, 200, CORS);
+}
+
 export async function onRequestOptions({ request }) {
-  return new Response(null, { status: 204, headers: corsHeaders(request) });
+  const origin = request.headers.get('Origin') || '*';
+  return new Response(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin':  origin,
+      'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Accept',
+      'Access-Control-Max-Age':       '86400'
+    }
+  });
 }
 
 // ── Email ──────────────────────────────────────────────────────────────────────

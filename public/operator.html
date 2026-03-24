@@ -137,6 +137,15 @@
           <button class="tab-btn" data-tab="analytics">
             <span class="flex items-center gap-1.5"><i data-lucide="bar-chart-2" style="width:14px;height:14px;"></i> Analytics</span>
           </button>
+          <button class="tab-btn" data-tab="profiles">
+            <span class="flex items-center gap-1.5"><i data-lucide="user-check" style="width:14px;height:14px;"></i> Profiles</span>
+          </button>
+          <button class="tab-btn" data-tab="jobposts">
+            <span class="flex items-center gap-1.5"><i data-lucide="briefcase" style="width:14px;height:14px;"></i> Job Posts</span>
+          </button>
+          <button class="tab-btn" data-tab="bulkemail">
+            <span class="flex items-center gap-1.5"><i data-lucide="mail" style="width:14px;height:14px;"></i> Bulk Email</span>
+          </button>
         </div>
       </div>
 
@@ -264,6 +273,184 @@
             </div>
           </div>
 
+          <!-- ── TAB 5: Profiles ── -->
+          <div id="tab-profiles" class="tab-panel">
+            <div class="flex flex-wrap gap-3 mb-6">
+              <input type="text" id="prof-search" placeholder="Search by name…"
+                class="field-focus border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 bg-slate-900 placeholder-slate-600 w-52 transition">
+              <select id="prof-filter-publish"
+                class="field-focus border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
+                <option value="">All Profiles</option>
+                <option value="true">Published</option>
+                <option value="false">Not Published</option>
+              </select>
+              <select id="prof-filter-status"
+                class="field-focus border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
+                <option value="">All Statuses</option>
+                <option value="complete">Complete</option>
+                <option value="pending">Pending</option>
+                <option value="upcoming">Upcoming</option>
+              </select>
+              <select id="prof-filter-cron"
+                class="field-focus border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
+                <option value="">All Schedules</option>
+                <option value="3 days">3 days</option>
+                <option value="7 days">7 days</option>
+                <option value="14 days">14 days</option>
+              </select>
+            </div>
+            <div id="prof-table-wrap" class="rounded-2xl border border-slate-700/50 bg-slate-800/20 overflow-hidden">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-slate-700/50 bg-slate-800/40">
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Reference</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Name</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Schedule</th>
+                    <th class="text-left px-5 py-3.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">Published</th>
+                  </tr>
+                </thead>
+                <tbody id="prof-table-body">
+                  <tr><td colspan="5" class="px-5 py-8 text-center text-slate-500 text-sm">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ── TAB 6: Job Posts ── -->
+          <div id="tab-jobposts" class="tab-panel">
+            <div class="grid lg:grid-cols-2 gap-8">
+              <!-- Create form -->
+              <div>
+                <h2 class="text-lg font-semibold text-slate-100 mb-6 flex items-center gap-2">
+                  <i data-lucide="plus-circle" style="width:18px;height:18px;color:#10b981;"></i> Create Job Post
+                </h2>
+                <form id="job-form" class="space-y-4" novalidate>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Job Title *</label>
+                    <input type="text" id="jf-title" placeholder="e.g. Senior React Developer"
+                      class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 placeholder-slate-600 transition">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Job Description *</label>
+                    <textarea id="jf-desc" rows="5" placeholder="Describe the role, responsibilities, and requirements…"
+                      class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 placeholder-slate-600 resize-y transition"></textarea>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Hourly Rate Range *</label>
+                    <input type="text" id="jf-rate" placeholder="e.g. $50–$80/hr"
+                      class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 placeholder-slate-600 transition">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Required Skills * <span class="font-normal text-slate-500">(comma-separated)</span></label>
+                    <input type="text" id="jf-skills" placeholder="e.g. React, Node.js, PostgreSQL"
+                      class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 placeholder-slate-600 transition">
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1.5">Contact / How to Apply *</label>
+                    <input type="text" id="jf-contact" placeholder="e.g. email@company.com or link"
+                      class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 placeholder-slate-600 transition">
+                  </div>
+                  <div id="jf-error" class="hidden text-sm text-red-400 bg-red-950/30 border border-red-800/50 rounded-lg px-4 py-3"></div>
+                  <button type="submit" id="jf-submit"
+                    class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/25 flex items-center gap-2">
+                    <span id="jf-submit-text">Post Job</span>
+                    <span id="jf-spinner" class="hidden">
+                      <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                      </svg>
+                    </span>
+                  </button>
+                </form>
+              </div>
+              <!-- Existing jobs list -->
+              <div>
+                <h2 class="text-lg font-semibold text-slate-100 mb-6 flex items-center gap-2">
+                  <i data-lucide="list" style="width:18px;height:18px;color:#10b981;"></i> Existing Job Posts
+                </h2>
+                <div id="jobs-list" class="space-y-3">
+                  <p class="text-slate-500 text-sm">Loading…</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── TAB 7: Bulk Email ── -->
+          <div id="tab-bulkemail" class="tab-panel">
+            <div class="max-w-2xl">
+              <h2 class="text-lg font-semibold text-slate-100 mb-6 flex items-center gap-2">
+                <i data-lucide="send" style="width:18px;height:18px;color:#10b981;"></i> Send Bulk Email
+              </h2>
+              <form id="email-form" class="space-y-5" novalidate>
+                <!-- Template selection -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-300 mb-1.5">Email Template *</label>
+                  <select id="ef-template" class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 transition">
+                    <option value="">-- Select template --</option>
+                    <option value="consentPublish">consentPublish — Profile consent reminder</option>
+                    <option value="welcomeAboard">welcomeAboard — New member welcome</option>
+                    <option value="clientMatch">clientMatch — New client matches</option>
+                  </select>
+                </div>
+                <!-- Job post (for clientMatch) -->
+                <div id="ef-job-wrap" class="hidden">
+                  <label class="block text-sm font-medium text-slate-300 mb-1.5">Job Post (for clientMatch)</label>
+                  <select id="ef-jobpost" class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 transition">
+                    <option value="">-- Select job post --</option>
+                  </select>
+                </div>
+                <!-- Filters -->
+                <fieldset class="border border-slate-700/50 rounded-xl p-5">
+                  <legend class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2">Filter Recipients</legend>
+                  <div class="grid sm:grid-cols-2 gap-4 mt-3">
+                    <div>
+                      <label class="block text-xs text-slate-400 mb-1">Status</label>
+                      <select id="ef-filter-status" class="field-focus w-full border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
+                        <option value="">Any</option>
+                        <option value="complete">Complete</option>
+                        <option value="pending">Pending</option>
+                        <option value="upcoming">Upcoming</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label class="block text-xs text-slate-400 mb-1">Notification Schedule</label>
+                      <select id="ef-filter-cron" class="field-focus w-full border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
+                        <option value="">Any</option>
+                        <option value="3 days">3 days</option>
+                        <option value="7 days">7 days</option>
+                        <option value="14 days">14 days</option>
+                      </select>
+                    </div>
+                  </div>
+                </fieldset>
+                <!-- Preview -->
+                <div id="ef-preview" class="hidden rounded-xl border border-slate-700/50 bg-slate-900/50 p-5">
+                  <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Preview</p>
+                  <p class="text-xs text-slate-400 mb-1"><span class="text-slate-300">Subject:</span> <span id="ef-preview-subject"></span></p>
+                  <pre id="ef-preview-body" class="text-xs text-slate-400 whitespace-pre-wrap leading-relaxed mt-2"></pre>
+                </div>
+                <div class="flex gap-3">
+                  <button type="button" id="ef-preview-btn"
+                    class="px-5 py-2.5 border border-slate-700 hover:border-emerald-500/50 text-slate-300 font-medium text-sm rounded-lg transition-all duration-200">
+                    Preview
+                  </button>
+                  <button type="submit" id="ef-submit"
+                    class="px-8 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 shadow-lg shadow-emerald-500/25 flex items-center gap-2">
+                    <span id="ef-submit-text">Send Emails</span>
+                    <span id="ef-spinner" class="hidden">
+                      <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                      </svg>
+                    </span>
+                  </button>
+                </div>
+                <div id="ef-result" class="hidden rounded-lg px-4 py-3 text-sm"></div>
+              </form>
+            </div>
+          </div>
+
           <!-- ── TAB 4: Analytics ── -->
           <div id="tab-analytics" class="tab-panel">
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8" id="analytics-cards">
@@ -339,7 +526,10 @@
   <script>
   // ── State ─────────────────────────────────────────────────────────────────────
   let token = sessionStorage.getItem('vlp_operator_token');
+  let operatorKey = sessionStorage.getItem('vlp_operator_key') || '';
   let allDevelopers = [];
+  let allProfiles = [];
+  let allJobPosts = [];
 
   // ── Init ──────────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
@@ -406,6 +596,23 @@
     document.getElementById('dev-search').addEventListener('input', renderDevCards);
     document.getElementById('dev-filter-status').addEventListener('change', renderDevCards);
     document.getElementById('dev-filter-date').addEventListener('change', renderDevCards);
+
+    // Profile filters
+    document.getElementById('prof-search').addEventListener('input', renderProfRows);
+    document.getElementById('prof-filter-publish').addEventListener('change', renderProfRows);
+    document.getElementById('prof-filter-status').addEventListener('change', renderProfRows);
+    document.getElementById('prof-filter-cron').addEventListener('change', renderProfRows);
+
+    // Job post form
+    document.getElementById('job-form').addEventListener('submit', handleJobSubmit);
+
+    // Bulk email form
+    document.getElementById('ef-template').addEventListener('change', () => {
+      const tmpl = document.getElementById('ef-template').value;
+      document.getElementById('ef-job-wrap').classList.toggle('hidden', tmpl !== 'clientMatch');
+    });
+    document.getElementById('ef-preview-btn').addEventListener('click', showEmailPreview);
+    document.getElementById('email-form').addEventListener('submit', handleEmailSend);
   });
 
   // ── Auth helpers ──────────────────────────────────────────────────────────────
@@ -422,6 +629,35 @@
       return null;
     }
     if (res.status === 401) { logout(); return null; }
+    return res;
+  }
+
+  // x-operator-key auth for new endpoints
+  async function keyApiFetch(url, options = {}) {
+    if (!operatorKey) {
+      const k = prompt('Enter your Operator API Key:');
+      if (!k) return null;
+      operatorKey = k;
+      sessionStorage.setItem('vlp_operator_key', k);
+    }
+    const headers = {
+      'Content-Type': 'application/json',
+      'x-operator-key': operatorKey,
+      ...(options.headers || {})
+    };
+    let res;
+    try {
+      res = await fetch(url, { ...options, headers });
+    } catch {
+      return null;
+    }
+    if (res.status === 401) {
+      const k = prompt('Invalid operator key. Re-enter your Operator API Key:');
+      if (!k) return null;
+      operatorKey = k;
+      sessionStorage.setItem('vlp_operator_key', k);
+      return keyApiFetch(url, options);
+    }
     return res;
   }
 
@@ -445,9 +681,12 @@
   function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tab));
-    if (tab === 'developers') loadDevelopers();
-    if (tab === 'analytics')  loadAnalytics();
+    if (tab === 'developers')  loadDevelopers();
+    if (tab === 'analytics')   loadAnalytics();
     if (tab === 'submissions') loadSubmissions();
+    if (tab === 'profiles')    loadProfiles();
+    if (tab === 'jobposts')    loadJobPosts();
+    if (tab === 'bulkemail')   loadJobsForEmailForm();
     lucide.createIcons();
   }
 
@@ -649,6 +888,231 @@
 
   function toggleDevCard(el) {
     el.classList.toggle('open');
+  }
+
+  // ── TAB 5: Profiles ──────────────────────────────────────────────────────────
+  async function loadProfiles() {
+    const tbody = document.getElementById('prof-table-body');
+    tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-slate-500 text-sm">Loading…</td></tr>';
+
+    const res = await keyApiFetch('/operator/profiles');
+    if (!res) return;
+    const data = await res.json();
+    if (!data.ok) {
+      tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-red-400 text-sm">Error loading profiles</td></tr>';
+      return;
+    }
+    allProfiles = data.profiles || [];
+    renderProfRows();
+  }
+
+  function renderProfRows() {
+    const tbody      = document.getElementById('prof-table-body');
+    const search     = document.getElementById('prof-search').value.toLowerCase();
+    const filterPub  = document.getElementById('prof-filter-publish').value;
+    const filterSt   = document.getElementById('prof-filter-status').value;
+    const filterCron = document.getElementById('prof-filter-cron').value;
+
+    const filtered = allProfiles.filter(p => {
+      if (search && !(p.full_name || '').toLowerCase().includes(search)) return false;
+      if (filterPub === 'true'  && p.publish_profile !== true)  return false;
+      if (filterPub === 'false' && p.publish_profile === true)  return false;
+      if (filterSt   && p.status       !== filterSt)   return false;
+      if (filterCron && p.cronSchedule !== filterCron)  return false;
+      return true;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-slate-500 text-sm">No profiles match the filters.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(p => `
+      <tr class="border-b border-slate-800/40 hover:bg-slate-800/20 transition-colors">
+        <td class="px-5 py-3.5 font-mono text-xs text-emerald-400">${esc(p.eventId)}</td>
+        <td class="px-5 py-3.5 text-slate-200 text-sm">${esc(p.full_name)}</td>
+        <td class="px-5 py-3.5">${badgeHtml(p.status || 'pending')}</td>
+        <td class="px-5 py-3.5 text-slate-400 text-xs">${esc(p.cronSchedule || '—')}</td>
+        <td class="px-5 py-3.5">
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" class="sr-only peer" ${p.publish_profile ? 'checked' : ''}
+              onchange="togglePublish('${esc(p.eventId)}', this.checked, this)">
+            <div class="w-10 h-5 bg-slate-700 peer-focus:ring-2 peer-focus:ring-emerald-500/30 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+          </label>
+        </td>
+      </tr>`).join('');
+    lucide.createIcons();
+  }
+
+  async function togglePublish(id, value, checkboxEl) {
+    const res = await keyApiFetch('/operator/profiles', {
+      method: 'PATCH',
+      body: JSON.stringify({ id, publish_profile: value })
+    });
+    if (!res || res.status !== 200) {
+      checkboxEl.checked = !value; // revert
+      showToast('Failed to update publish status.');
+      return;
+    }
+    showToast(`Profile ${value ? 'published' : 'unpublished'}.`);
+    // Update local cache
+    const p = allProfiles.find(x => x.eventId === id);
+    if (p) p.publish_profile = value;
+  }
+
+  // ── TAB 6: Job Posts ─────────────────────────────────────────────────────────
+  async function loadJobPosts() {
+    const listEl = document.getElementById('jobs-list');
+    listEl.innerHTML = '<p class="text-slate-500 text-sm">Loading…</p>';
+
+    const res = await keyApiFetch('/operator/jobs');
+    if (!res) { listEl.innerHTML = '<p class="text-red-400 text-sm">Error loading jobs.</p>'; return; }
+    const data = await res.json();
+    allJobPosts = data.jobs || [];
+    renderJobList();
+  }
+
+  function renderJobList() {
+    const listEl = document.getElementById('jobs-list');
+    if (allJobPosts.length === 0) {
+      listEl.innerHTML = '<p class="text-slate-500 text-sm">No job posts yet.</p>';
+      return;
+    }
+    listEl.innerHTML = allJobPosts.map(j => {
+      const skills = Array.isArray(j.required_skills) ? j.required_skills.join(', ') : (j.required_skills || '');
+      return `
+        <div class="rounded-xl border border-slate-700/50 bg-slate-800/20 p-4">
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <h3 class="font-semibold text-slate-100 text-sm">${esc(j.job_title)}</h3>
+            <span class="text-xs text-slate-500 whitespace-nowrap">${fmtDate(j.posted_date)}</span>
+          </div>
+          <p class="text-xs text-emerald-400 font-medium mb-1">${esc(j.hourly_rate_range)}</p>
+          <p class="text-xs text-slate-400 line-clamp-2">${esc(j.job_description)}</p>
+          ${skills ? `<p class="text-xs text-slate-500 mt-2">Skills: ${esc(skills)}</p>` : ''}
+        </div>`;
+    }).join('');
+  }
+
+  async function handleJobSubmit(e) {
+    e.preventDefault();
+    const errEl = document.getElementById('jf-error');
+    errEl.classList.add('hidden');
+
+    const job_title         = document.getElementById('jf-title').value.trim();
+    const job_description   = document.getElementById('jf-desc').value.trim();
+    const hourly_rate_range = document.getElementById('jf-rate').value.trim();
+    const skillsRaw         = document.getElementById('jf-skills').value.trim();
+    const contact_method    = document.getElementById('jf-contact').value.trim();
+
+    if (!job_title || !job_description || !hourly_rate_range || !skillsRaw || !contact_method) {
+      errEl.textContent = 'All fields are required.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+
+    const required_skills = skillsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+    document.getElementById('jf-submit-text').textContent = 'Posting…';
+    document.getElementById('jf-spinner').classList.remove('hidden');
+    document.getElementById('jf-submit').disabled = true;
+
+    const res = await keyApiFetch('/operator/jobs', {
+      method: 'POST',
+      body: JSON.stringify({ job_title, job_description, hourly_rate_range, required_skills, contact_method })
+    });
+
+    document.getElementById('jf-submit-text').textContent = 'Post Job';
+    document.getElementById('jf-spinner').classList.add('hidden');
+    document.getElementById('jf-submit').disabled = false;
+
+    if (res) {
+      const data = await res.json();
+      if (data.ok) {
+        showToast('Job post created successfully.');
+        document.getElementById('job-form').reset();
+        await loadJobPosts();
+      } else {
+        errEl.textContent = data.error || 'Failed to create job post.';
+        errEl.classList.remove('hidden');
+      }
+    }
+  }
+
+  // ── TAB 7: Bulk Email ────────────────────────────────────────────────────────
+  async function loadJobsForEmailForm() {
+    const sel = document.getElementById('ef-jobpost');
+    const res = await keyApiFetch('/operator/jobs');
+    if (!res) return;
+    const data = await res.json();
+    const jobs = data.jobs || [];
+    sel.innerHTML = '<option value="">-- Select job post --</option>' +
+      jobs.map(j => `<option value="${esc(j.postId)}">${esc(j.job_title)} (${fmtDate(j.posted_date)})</option>`).join('');
+  }
+
+  const EMAIL_PREVIEWS = {
+    consentPublish: {
+      subject: 'Your Developer Profile on Virtual Launch Pro',
+      body: `Dear [developerName],\n\nTo view your postings, go to the link below and enter your reference number [developerRef].\n\nhttps://developers.virtuallaunch.pro/support.html\n\nThank you for trusting me with providing you with personalized vetted matches.\n\nDon't forget to leave your review:\nhttps://developers.virtuallaunch.pro/reviews.html\n\nYour EA turned professional connector,\nJLW\nVirtual Launch Pro\ndevelopers.virtuallaunch.pro`
+    },
+    welcomeAboard: {
+      subject: "Welcome Aboard — You're Now Listed on Virtual Launch Pro",
+      body: `Dear [developerName],\n\nCongratulations, you have joined a membership that gets you vetted people who want to work with your specific skills. Look out in your email in the next three days for your next lists of client matches. To view your matches, go to the link below and enter your reference number [developerRef].\n\nhttps://developers.virtuallaunch.pro/support.html\n\nThank you for trusting me with providing you with personalized vetted matches.\n\nDon't forget to leave your review:\nhttps://developers.virtuallaunch.pro/reviews.html\n\nLet's get you matched.\n\nYour EA turned professional connector,\nJLW\nVirtual Launch Pro\ndevelopers.virtuallaunch.pro`
+    },
+    clientMatch: {
+      subject: 'New Client Matches Found for You',
+      body: `Dear [developerName],\n\nWe found some client matches who are looking for the exact skills and expertise you offer. To view your matches, go to the link below and enter your reference number [developerRef].\n\nhttps://developers.virtuallaunch.pro/support.html\n\nThank you for trusting me with personally vetted matches.\n\nDon't forget to leave your review:\nhttps://developers.virtuallaunch.pro/reviews.html\n\nLet's get you matched.\n\nYour EA turned professional connector,\nJLW\nVirtual Launch Pro\ndevelopers.virtuallaunch.pro`
+    }
+  };
+
+  function showEmailPreview() {
+    const tmpl = document.getElementById('ef-template').value;
+    const previewDiv = document.getElementById('ef-preview');
+    if (!tmpl || !EMAIL_PREVIEWS[tmpl]) { previewDiv.classList.add('hidden'); return; }
+    document.getElementById('ef-preview-subject').textContent = EMAIL_PREVIEWS[tmpl].subject;
+    document.getElementById('ef-preview-body').textContent    = EMAIL_PREVIEWS[tmpl].body;
+    previewDiv.classList.remove('hidden');
+  }
+
+  async function handleEmailSend(e) {
+    e.preventDefault();
+    const resultEl = document.getElementById('ef-result');
+    resultEl.classList.add('hidden');
+
+    const template   = document.getElementById('ef-template').value;
+    const jobPostId  = document.getElementById('ef-jobpost').value;
+    const filterStatus = document.getElementById('ef-filter-status').value;
+    const filterCron   = document.getElementById('ef-filter-cron').value;
+
+    if (!template) { resultEl.textContent = 'Please select a template.'; resultEl.className = 'mt-2 rounded-lg px-4 py-3 text-sm text-red-400 bg-red-950/30 border border-red-800/50'; resultEl.classList.remove('hidden'); return; }
+
+    document.getElementById('ef-submit-text').textContent = 'Sending…';
+    document.getElementById('ef-spinner').classList.remove('hidden');
+    document.getElementById('ef-submit').disabled = true;
+
+    const filters = {};
+    if (filterStatus) filters.status       = filterStatus;
+    if (filterCron)   filters.cronSchedule = filterCron;
+
+    const res = await keyApiFetch('/operator/email', {
+      method: 'POST',
+      body: JSON.stringify({ template, filters, jobPostId: jobPostId || undefined })
+    });
+
+    document.getElementById('ef-submit-text').textContent = 'Send Emails';
+    document.getElementById('ef-spinner').classList.add('hidden');
+    document.getElementById('ef-submit').disabled = false;
+
+    if (res) {
+      const data = await res.json();
+      if (data.ok) {
+        resultEl.textContent = `Done — ${data.sent} sent, ${data.skipped} skipped${data.errors?.length ? `, ${data.errors.length} failed` : ''}.`;
+        resultEl.className = 'mt-2 rounded-lg px-4 py-3 text-sm text-emerald-400 bg-emerald-950/30 border border-emerald-800/50';
+      } else {
+        resultEl.textContent = data.error || 'Failed to send emails.';
+        resultEl.className = 'mt-2 rounded-lg px-4 py-3 text-sm text-red-400 bg-red-950/30 border border-red-800/50';
+      }
+      resultEl.classList.remove('hidden');
+    }
   }
 
   // ── TAB 4: Analytics ─────────────────────────────────────────────────────────

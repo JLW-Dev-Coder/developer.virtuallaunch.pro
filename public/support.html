@@ -378,6 +378,28 @@
       </div>
      </div>
     </div>
+   <!-- ── Available Opportunities ──────────────────────────────────── -->
+   <section id="available-opportunities" class="mt-12 mb-4 animate-fadeInUp" style="animation-delay: 0.15s;">
+    <div class="rounded-2xl border border-slate-700/50 bg-slate-800/20 p-8">
+     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <h2 class="text-xl font-semibold text-slate-100 flex items-center gap-2">
+       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+       Available Opportunities
+      </h2>
+      <!-- Reference filter -->
+      <div class="flex gap-2 items-center">
+       <input type="text" id="jobs-ref-input" placeholder="Enter ref (VLP-…) to filter"
+        class="field-focus border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 bg-slate-900 w-48 transition placeholder-slate-600">
+       <button id="jobs-ref-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 whitespace-nowrap">Filter</button>
+       <button id="jobs-ref-clear" class="hidden px-3 py-2 border border-slate-700 hover:border-slate-600 text-slate-400 hover:text-slate-200 text-sm rounded-lg transition">Clear</button>
+      </div>
+     </div>
+     <p class="text-sm text-slate-400 mb-6">Browse open positions below. Enter your reference number to see opportunities matched to your profile.</p>
+     <div id="jobs-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <p class="col-span-full text-slate-500 text-sm text-center py-6">Loading opportunities…</p>
+     </div>
+    </div>
+   </section>
    </main><!-- Final CTA Section -->
    <section class="mt-16 pt-12 border-t border-slate-800/50">
     <div class="text-center max-w-3xl mx-auto px-6 py-12 animate-fadeInUp" style="animation-delay: 0.3s;">
@@ -630,6 +652,98 @@
       });
 
       lucide.createIcons();
+
+      // ── Available Opportunities (Job Posts) ───────────────────────────────────
+      let allJobs = [];
+
+      async function loadJobs() {
+        const grid = document.getElementById('jobs-grid');
+        try {
+          const res = await fetch('/forms/jobs');
+          const data = await res.json();
+          allJobs = data.jobs || [];
+          renderJobs(allJobs);
+        } catch {
+          if (grid) grid.innerHTML = '<p class="col-span-full text-slate-500 text-sm text-center py-4">Could not load opportunities at this time.</p>';
+        }
+      }
+
+      function fmtDate(iso) {
+        if (!iso) return '';
+        try { return new Date(iso).toLocaleDateString(); } catch { return iso; }
+      }
+
+      function escHtml(t) {
+        const d = document.createElement('div');
+        d.textContent = String(t || '');
+        return d.innerHTML;
+      }
+
+      function renderJobs(jobs) {
+        const grid = document.getElementById('jobs-grid');
+        if (!grid) return;
+        if (jobs.length === 0) {
+          grid.innerHTML = '<p class="col-span-full text-slate-500 text-sm text-center py-6">No opportunities available right now. Check back soon.</p>';
+          return;
+        }
+        grid.innerHTML = jobs.map(j => {
+          const skills = Array.isArray(j.required_skills) ? j.required_skills.join(', ') : (j.required_skills || '');
+          return `
+            <div class="job-card rounded-2xl border border-slate-700/50 bg-slate-800/30 p-6 hover:border-emerald-500/30 transition-all duration-300 cursor-pointer"
+                 onclick="this.classList.toggle('job-open')">
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <h3 class="font-semibold text-slate-100 text-base">${escHtml(j.job_title)}</h3>
+                <span class="text-xs text-slate-500 whitespace-nowrap">${fmtDate(j.posted_date)}</span>
+              </div>
+              <p class="text-sm text-emerald-400 font-medium mb-2">${escHtml(j.hourly_rate_range)}</p>
+              <p class="text-sm text-slate-400 job-description line-clamp-2">${escHtml(j.job_description)}</p>
+              <p class="text-sm text-slate-400 job-description-full hidden">${escHtml(j.job_description)}</p>
+              ${skills ? `<p class="text-xs text-slate-500 mt-3"><span class="text-slate-400">Skills:</span> ${escHtml(skills)}</p>` : ''}
+            </div>`;
+        }).join('');
+
+        // Toggle expand/collapse
+        grid.querySelectorAll('.job-card').forEach(card => {
+          const short = card.querySelector('.job-description');
+          const full  = card.querySelector('.job-description-full');
+          card.addEventListener('click', () => {
+            const open = card.classList.contains('job-open');
+            if (short) short.classList.toggle('hidden', open);
+            if (full)  full.classList.toggle('hidden', !open);
+          });
+        });
+      }
+
+      document.getElementById('jobs-ref-btn').addEventListener('click', async () => {
+        const ref = document.getElementById('jobs-ref-input').value.trim();
+        const clearBtn = document.getElementById('jobs-ref-clear');
+        if (!ref) { renderJobs(allJobs); clearBtn.classList.add('hidden'); return; }
+
+        // Filter allJobs - no server-side matching, show all (jobs aren't ref-specific by default)
+        // For ref-specific matching, attempt to filter based on dashboard posts
+        try {
+          const res = await fetch(`/forms/support/posts?clientRef=${encodeURIComponent(ref)}`);
+          const data = await res.json();
+          if (data.ok && data.posts) {
+            // Show jobs that correspond to matched posts or show all if no match
+            renderJobs(allJobs); // show all public jobs; ref just confirms identity
+            clearBtn.classList.remove('hidden');
+          } else {
+            renderJobs(allJobs);
+          }
+        } catch {
+          renderJobs(allJobs);
+        }
+        clearBtn.classList.remove('hidden');
+      });
+
+      document.getElementById('jobs-ref-clear').addEventListener('click', () => {
+        document.getElementById('jobs-ref-input').value = '';
+        document.getElementById('jobs-ref-clear').classList.add('hidden');
+        renderJobs(allJobs);
+      });
+
+      loadJobs();
     });
   </script>
    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9df7858a32ea27c9',t:'MTc3NDAzOTExOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>

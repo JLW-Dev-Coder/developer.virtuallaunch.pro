@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Available Developers — Virtual Launch Pro</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://virtuallaunch.pro/favicon.ico" sizes="any">
+  <link rel="icon" href="https://virtuallaunch.pro/assets/favicon.ico" sizes="any">
+  <link rel="icon" type="image/svg+xml" href="https://virtuallaunch.pro/assets/favicon.svg">
+  <link rel="apple-touch-icon" href="https://virtuallaunch.pro/assets/favicon.ico">
+  <style>
+    html, body { height: 100%; margin: 0; padding: 0; overflow-x: hidden; overflow-y: auto; }
+    * { font-family: 'Sora', sans-serif; box-sizing: border-box; }
+    body { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+    .site-bg-effects { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+    #app, main, header, footer { position: relative; z-index: 1; }
+    .bg-blob { position: absolute; border-radius: 9999px; filter: blur(90px); will-change: transform; }
+    .bg-blob-1 { width: 36rem; height: 36rem; top: -10rem; left: -12rem; opacity: 0.18; background: radial-gradient(circle, rgba(16,185,129,0.24) 0%, rgba(16,185,129,0) 70%); animation: blobEdgeOne 32s cubic-bezier(0.45,0.05,0.55,0.95) infinite alternate; }
+    .bg-blob-2 { width: 42rem; height: 42rem; top: 24rem; right: -14rem; opacity: 0.14; background: radial-gradient(circle, rgba(59,130,246,0.16) 0%, rgba(59,130,246,0) 72%); animation: blobEdgeTwo 36s cubic-bezier(0.45,0.05,0.55,0.95) infinite alternate; }
+    .bg-blob-3 { width: 30rem; height: 30rem; bottom: -8rem; left: 24%; opacity: 0.12; background: radial-gradient(circle, rgba(148,163,184,0.14) 0%, rgba(148,163,184,0) 72%); animation: blobEdgeThree 34s cubic-bezier(0.45,0.05,0.55,0.95) infinite alternate; }
+    .bg-grid { position: absolute; inset: 0; opacity: 0.10; background-image: linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px); background-size: 72px 72px; mask-image: radial-gradient(circle at center, black 18%, transparent 85%); -webkit-mask-image: radial-gradient(circle at center, black 18%, transparent 85%); }
+
+    @keyframes blobEdgeOne  { 0%{transform:translate3d(0,0,0) scale(1);opacity:.14} 50%{transform:translate3d(7rem,4rem,0) scale(1.08);opacity:.22} 100%{transform:translate3d(9rem,5rem,0) scale(1.1);opacity:.2} }
+    @keyframes blobEdgeTwo  { 0%{transform:translate3d(0,0,0) scale(1);opacity:.11} 50%{transform:translate3d(-7rem,-4rem,0) scale(1.07);opacity:.18} 100%{transform:translate3d(-9rem,-3rem,0) scale(1.09);opacity:.16} }
+    @keyframes blobEdgeThree{ 0%{transform:translate3d(0,0,0) scale(1);opacity:.1}  50%{transform:translate3d(5rem,-5rem,0) scale(1.06);opacity:.16} 100%{transform:translate3d(6rem,-6rem,0) scale(1.08);opacity:.15} }
+    @keyframes fadeInUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+    .animate-fadeInUp { animation: fadeInUp 0.6s ease-out; }
+  </style>
+ </head>
+ <body class="h-full bg-slate-950 text-slate-100">
+
+  <div class="site-bg-effects" aria-hidden="true">
+   <div class="bg-blob bg-blob-1"></div>
+   <div class="bg-blob bg-blob-2"></div>
+   <div class="bg-blob bg-blob-3"></div>
+   <div class="bg-grid"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-md">
+   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <a href="/index.html" class="flex items-center gap-3 hover:opacity-90 transition">
+     <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20">VLP</span>
+     <div class="flex flex-col leading-tight">
+      <span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span>
+      <span class="text-xs text-slate-400">Job Match &amp; Intro Service</span>
+     </div>
+    </a>
+    <nav class="hidden md:flex items-center gap-8">
+     <a href="/index.html#features" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Features</a>
+     <a href="/index.html#how-it-works" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">How It Works</a>
+     <a href="/reviews.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Reviews</a>
+     <a href="/support.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Support</a>
+     <a href="/find-developers.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Find Developers</a>
+    </nav>
+    <a href="/onboarding.html">
+     <button class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95">Get Started</button>
+    </a>
+   </div>
+  </header>
+
+  <div id="app">
+   <main class="max-w-7xl mx-auto px-6 py-10 animate-fadeInUp">
+
+    <!-- Page header -->
+    <div class="mb-8">
+     <h1 class="text-3xl font-bold text-slate-100 tracking-tight mb-2">Available Developers</h1>
+     <p class="text-slate-400">Browse vetted developer profiles available for freelance and contract work.</p>
+     <p class="text-sm text-slate-500 mt-1"><span id="dev-count">Loading…</span></p>
+    </div>
+
+    <div class="flex flex-col lg:flex-row gap-8">
+
+     <!-- Filter sidebar -->
+     <aside class="w-full lg:w-64 flex-shrink-0">
+      <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-5">
+       <h2 class="font-semibold text-slate-100 text-sm mb-5 flex items-center gap-2">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+        Filter Developers
+       </h2>
+       <div id="filter-sidebar">
+        <p class="text-slate-500 text-sm">Loading filters…</p>
+       </div>
+      </div>
+     </aside>
+
+     <!-- Developer grid -->
+     <section class="flex-1">
+      <div id="dev-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+       <p class="col-span-full text-slate-400 text-center py-12">Loading developer profiles…</p>
+      </div>
+     </section>
+
+    </div>
+   </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800/50 bg-slate-950 mt-auto">
+   <div class="max-w-7xl mx-auto px-6 py-12">
+    <div class="grid md:grid-cols-4 gap-8 mb-12">
+     <div>
+      <a href="/index.html" class="flex items-center gap-3 hover:opacity-90 transition mb-4">
+       <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950">VLP</span>
+       <div class="flex flex-col leading-tight"><span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span> <span class="text-xs text-slate-400">Job Match &amp; Intro</span></div>
+      </a>
+      <p class="text-xs text-slate-500">Connecting talented developers with premium U.S. clients.</p>
+     </div>
+     <div>
+      <h3 class="font-semibold text-slate-100 mb-4 text-sm">Product</h3>
+      <ul class="space-y-2">
+       <li><a href="/index.html#features" class="text-xs text-slate-400 hover:text-emerald-400 transition">Features</a></li>
+       <li><a href="/index.html#how-it-works" class="text-xs text-slate-400 hover:text-emerald-400 transition">How It Works</a></li>
+       <li><a href="/reviews.html" class="text-xs text-slate-400 hover:text-emerald-400 transition">Reviews</a></li>
+       <li><a href="/support.html" class="text-xs text-slate-400 hover:text-emerald-400 transition">Support</a></li>
+      </ul>
+     </div>
+     <div>
+      <h3 class="font-semibold text-slate-100 mb-4 text-sm">Company</h3>
+      <ul class="space-y-2">
+       <li><a href="https://www.facebook.com/jamie.l.williams.10" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">Facebook</a></li>
+       <li><a href="https://www.linkedin.com/in/virtuallaunchpro/" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">LinkedIn</a></li>
+       <li><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">Telegram</a></li>
+      </ul>
+     </div>
+     <div>
+      <h3 class="font-semibold text-slate-100 mb-4 text-sm">Support</h3>
+      <ul class="space-y-2">
+       <li><a href="tel:+16198005457" class="text-xs text-slate-400 hover:text-emerald-400 transition">+1 (619) 800-5457</a></li>
+       <li><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">@virtuallaunchpro</a></li>
+      </ul>
+     </div>
+    </div>
+    <div class="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row items-center justify-between">
+     <p class="text-xs text-slate-500">© 2024 Virtual Launch Pro. All rights reserved.</p>
+     <p class="text-xs text-slate-500 mt-4 md:mt-0">Helping developers launch their freelance careers with the right clients.</p>
+    </div>
+   </div>
+  </footer>
+
+  <script src="/js/developers.js"></script>
+ </body>
+</html>

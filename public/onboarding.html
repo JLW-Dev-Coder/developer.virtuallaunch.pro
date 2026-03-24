@@ -93,6 +93,31 @@
       </div>
 
       <form id="onboarding-form" novalidate class="space-y-6">
+
+       <!-- Reference Lookup (update existing profile) -->
+       <div id="reference-lookup" class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
+        <div class="flex items-center gap-2.5 mb-4">
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="refresh-cw" style="width:16px;height:16px;color:#10b981;"></i></div>
+         <h2 class="font-semibold text-slate-100 text-base">Already Submitted?</h2>
+        </div>
+        <label for="ref_number" class="block text-sm font-medium text-slate-300 mb-1.5">Have a reference number? Enter it to update your profile:</label>
+        <div class="flex gap-2 mt-2">
+         <input type="text" id="ref_number" name="ref_number" placeholder="e.g. VLP-1234"
+          class="field-focus flex-1 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition placeholder-slate-600">
+         <button type="button" id="load-profile-btn"
+          class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-slate-100 font-medium text-sm rounded-lg transition-all duration-200 flex items-center gap-2">
+          <span id="load-text">Load My Profile</span>
+          <span id="load-spinner" class="hidden">
+           <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+           </svg>
+          </span>
+         </button>
+        </div>
+        <div id="load-result" class="hidden mt-3 text-sm"></div>
+       </div>
+
        <!-- Section 1: Personal Information -->
        <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
         <div class="flex items-center gap-2.5 mb-6">
@@ -200,11 +225,45 @@
         <textarea id="f-ideal" rows="3" placeholder="Describe what excites you about projects..." class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition resize-y placeholder-slate-600"></textarea>
        </div>
 
+       <!-- Onboarding Status & Notification Schedule -->
+       <div id="status-section" class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
+        <div class="flex items-center gap-2.5 mb-6">
+         <div class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center"><i data-lucide="bell" style="width:16px;height:16px;color:#10b981;"></i></div>
+         <h2 class="font-semibold text-slate-100 text-base">Status &amp; Notifications</h2>
+        </div>
+        <div class="space-y-4">
+         <div>
+          <label for="f-status" class="block text-sm font-medium text-slate-300 mb-1.5">Onboarding Status</label>
+          <select id="f-status" name="status"
+           class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
+           <option value="">-- Select status --</option>
+           <option value="pending">Pending</option>
+           <option value="upcoming">Upcoming</option>
+           <option value="complete">Complete</option>
+          </select>
+         </div>
+         <div id="cron-field" class="hidden">
+          <label for="f-cronSchedule" class="block text-sm font-medium text-slate-300 mb-1.5">Job Match Notification Frequency</label>
+          <select id="f-cronSchedule" name="cronSchedule"
+           class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
+           <option value="">-- Select notification frequency --</option>
+           <option value="3 days">Every 3 days</option>
+           <option value="7 days">Every 7 days</option>
+           <option value="14 days">Every 14 days</option>
+          </select>
+         </div>
+        </div>
+       </div>
+
        <!-- Consent & Checkbox -->
-       <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7">
+       <div class="rounded-2xl border border-slate-700/50 bg-slate-800/30 p-7 space-y-4">
         <label class="flex items-start gap-3 cursor-pointer">
          <input type="checkbox" id="f-consent" class="mt-1 w-4 h-4 rounded border-slate-600 text-emerald-500 accent-emerald-500">
          <span class="text-sm text-slate-300 leading-relaxed">I authorize Virtual Launch Pro to contact me and submit my profile to potential clients and opportunities. *</span>
+        </label>
+        <label class="flex items-start gap-3 cursor-pointer">
+         <input type="checkbox" id="f-publish" name="publish_profile" class="mt-1 w-4 h-4 rounded border-slate-600 text-emerald-500 accent-emerald-500">
+         <span class="text-sm text-slate-300 leading-relaxed">I consent to my developer profile being publicly listed on the Virtual Launch Pro developers directory.</span>
         </label>
        </div>
 
@@ -374,6 +433,99 @@
         }
       });
 
+      // ── cronSchedule visibility: show only when status = complete ─────────────
+      const statusSelect = document.getElementById('f-status');
+      const cronField    = document.getElementById('cron-field');
+      if (statusSelect && cronField) {
+        statusSelect.addEventListener('change', () => {
+          cronField.classList.toggle('hidden', statusSelect.value !== 'complete');
+          if (statusSelect.value !== 'complete') {
+            document.getElementById('f-cronSchedule').value = '';
+          }
+        });
+      }
+
+      // ── Reference lookup: load existing profile ───────────────────────────────
+      const loadBtn     = document.getElementById('load-profile-btn');
+      const loadResult  = document.getElementById('load-result');
+      const loadText    = document.getElementById('load-text');
+      const loadSpinner = document.getElementById('load-spinner');
+
+      function prefillForm(data) {
+        const set = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+        const setChk = (id, val) => { const el = document.getElementById(id); if (el) el.checked = !!val; };
+        set('f-name',          data.full_name);
+        set('f-email',         data.email);
+        set('f-phone',         data.phone);
+        set('f-country',       data.country);
+        set('f-linkedin',      data.linkedin_url);
+        set('f-github',        data.portfolio_url);
+        set('f-portfolio',     data.video_url);
+        set('f-contract',      data.professional_summary);
+        set('f-availability',  data.hourly_rate);
+        set('f-timezone',      data.availability);
+        set('f-ideal',         data.ideal_role);
+        set('f-status',        data.status);
+        setChk('f-publish',    data.publish_profile);
+        if (data.status === 'complete') {
+          cronField.classList.remove('hidden');
+          set('f-cronSchedule', data.cronSchedule);
+        }
+        // Skills
+        const skillKeys = ['javascript','python','react','nodejs','typescript','aws','docker','mongodb','postgresql'];
+        skillKeys.forEach(s => {
+          const el = document.getElementById(`skill-${s}`);
+          const lb = document.getElementById(`skill-${s}-label`);
+          const val = data[`skill_${s}`];
+          if (el && val !== undefined && val !== null) {
+            el.value = val;
+            if (lb) lb.textContent = String(val);
+          }
+        });
+        const otherEl = document.getElementById('skill-other_skills');
+        if (otherEl) otherEl.value = data.skill_other_skills || '';
+      }
+
+      if (loadBtn) {
+        loadBtn.addEventListener('click', async () => {
+          const ref = document.getElementById('ref_number').value.trim();
+          if (!ref) {
+            loadResult.textContent = 'Please enter a reference number.';
+            loadResult.className = 'mt-3 text-sm text-amber-400';
+            loadResult.classList.remove('hidden');
+            return;
+          }
+
+          loadText.textContent = 'Loading…';
+          loadSpinner.classList.remove('hidden');
+          loadBtn.disabled = true;
+
+          try {
+            const res  = await fetch(`https://developers.virtuallaunch.pro/forms/onboarding?ref=${encodeURIComponent(ref)}`);
+            const data = await res.json();
+
+            if (data.ok && data.data) {
+              prefillForm(data.data);
+              loadResult.textContent = 'Profile loaded. Make your changes and submit to update.';
+              loadResult.className = 'mt-3 text-sm text-emerald-400';
+            } else {
+              loadResult.textContent = 'Reference number not found. Please check and try again.';
+              loadResult.className = 'mt-3 text-sm text-red-400';
+            }
+            loadResult.classList.remove('hidden');
+          } catch {
+            loadResult.textContent = 'Network error. Please try again.';
+            loadResult.className = 'mt-3 text-sm text-red-400';
+            loadResult.classList.remove('hidden');
+          } finally {
+            loadText.textContent = 'Load My Profile';
+            loadSpinner.classList.add('hidden');
+            loadBtn.disabled = false;
+          }
+        });
+      }
+
+      // ── Form submit ───────────────────────────────────────────────────────────
       const form    = document.getElementById('onboarding-form');
       const errorEl = document.getElementById('form-error');
 
@@ -392,6 +544,7 @@
         const name    = document.getElementById('f-name').value.trim();
         const email   = document.getElementById('f-email').value.trim();
         const consent = document.getElementById('f-consent').checked;
+        const refNum  = document.getElementById('ref_number').value.trim();
 
         if (!name || !email) { showError('Please fill in your full name and email address.'); return; }
         if (!consent)        { showError('Please authorize us to contact you.'); return; }
@@ -401,63 +554,117 @@
         const spinner = document.getElementById('submit-spinner');
         btn.disabled = true;
         btn.style.opacity = '0.7';
-        btnText.textContent = 'Submitting…';
         spinner.classList.remove('hidden');
 
-        // Build payload — only fields defined in onboarding.json contract.
-        // No extra properties (additionalProperties: false would cause rejection).
-        const payload = {
-          eventId:              generateEventId(),   // VLP-<alphanum> — matches /^VLP-[a-zA-Z0-9]+$/
-          full_name:            name,
-          email:                email,
-          phone:                document.getElementById('f-phone').value.trim(),
-          country:              document.getElementById('f-country').value.trim(),
-          linkedin_url:         document.getElementById('f-linkedin').value.trim(),
-          portfolio_url:        document.getElementById('f-github').value.trim(),
-          video_url:            document.getElementById('f-portfolio').value.trim(),
-          professional_summary: document.getElementById('f-contract').value.trim(),
-          hourly_rate:          document.getElementById('f-availability').value.trim(),
-          availability:         document.getElementById('f-timezone').value.trim(),
-          confirmation:         true
-          // ↑ No `submitted_at` — not in the contract schema
-        };
+        const statusVal      = document.getElementById('f-status').value;
+        const cronScheduleVal = document.getElementById('f-cronSchedule').value;
 
-        try {
-          const response = await fetch('https://developers.virtuallaunch.pro/forms/onboarding', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-          const result = await response.json();
+        // PATCH (update) if ref_number is present; POST (create) otherwise
+        if (refNum) {
+          btnText.textContent = 'Updating…';
+          const patchPayload = {
+            ref_number:           refNum,
+            full_name:            name,
+            email:                email,
+            phone:                document.getElementById('f-phone').value.trim(),
+            country:              document.getElementById('f-country').value.trim(),
+            linkedin_url:         document.getElementById('f-linkedin').value.trim(),
+            portfolio_url:        document.getElementById('f-github').value.trim(),
+            video_url:            document.getElementById('f-portfolio').value.trim(),
+            professional_summary: document.getElementById('f-contract').value.trim(),
+            hourly_rate:          document.getElementById('f-availability').value.trim(),
+            availability:         document.getElementById('f-timezone').value.trim(),
+            publish_profile:      document.getElementById('f-publish').checked,
+            confirmation:         true
+          };
+          if (statusVal)       patchPayload.status       = statusVal;
+          if (cronScheduleVal) patchPayload.cronSchedule = cronScheduleVal;
 
-          btn.disabled = false;
-          btn.style.opacity = '1';
-          btnText.textContent = 'Continue to Payment';
-          spinner.classList.add('hidden');
+          try {
+            const response = await fetch('https://developers.virtuallaunch.pro/forms/onboarding', {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(patchPayload)
+            });
+            const result = await response.json();
 
-          if (result.ok) {
-            if (result.deduped) {
-              showError('You have already submitted this form. Your previous submission is on file.');
-            } else {
-              // Show the reference number so the user can look it up on Support
-              const refDisplay = document.getElementById('ref-display');
-              document.getElementById('ref-number').textContent = payload.eventId;
-              refDisplay.classList.remove('hidden');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btnText.textContent = 'Continue to Payment';
+            spinner.classList.add('hidden');
 
-              form.reset();
-              // Small delay so the user sees the reference before the page switches
+            if (result.ok) {
               showPage('payment-page');
+            } else if (result.error === 'not_found') {
+              showError('Reference number not found. Please check and try again.');
+            } else {
+              showError('Update failed: ' + (result.error || 'unknown_error') + '. Please try again.');
             }
-          } else {
-            showError('Submission failed: ' + (result.error || 'unknown_error') + '. Please try again.');
+          } catch (err) {
+            console.error(err);
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btnText.textContent = 'Continue to Payment';
+            spinner.classList.add('hidden');
+            showError('Network error. Please check your connection and try again.');
           }
-        } catch (err) {
-          console.error(err);
-          btn.disabled = false;
-          btn.style.opacity = '1';
-          btnText.textContent = 'Continue to Payment';
-          spinner.classList.add('hidden');
-          showError('Network error. Please check your connection and try again.');
+        } else {
+          // ── New submission (POST) ───────────────────────────────────────────
+          btnText.textContent = 'Submitting…';
+
+          const payload = {
+            eventId:              generateEventId(),
+            full_name:            name,
+            email:                email,
+            phone:                document.getElementById('f-phone').value.trim(),
+            country:              document.getElementById('f-country').value.trim(),
+            linkedin_url:         document.getElementById('f-linkedin').value.trim(),
+            portfolio_url:        document.getElementById('f-github').value.trim(),
+            video_url:            document.getElementById('f-portfolio').value.trim(),
+            professional_summary: document.getElementById('f-contract').value.trim(),
+            hourly_rate:          document.getElementById('f-availability').value.trim(),
+            availability:         document.getElementById('f-timezone').value.trim(),
+            publish_profile:      document.getElementById('f-publish').checked,
+            confirmation:         true
+          };
+          if (statusVal)       payload.status       = statusVal;
+          if (cronScheduleVal) payload.cronSchedule = cronScheduleVal;
+
+          try {
+            const response = await fetch('https://developers.virtuallaunch.pro/forms/onboarding', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btnText.textContent = 'Continue to Payment';
+            spinner.classList.add('hidden');
+
+            if (result.ok) {
+              if (result.deduped) {
+                showError('You have already submitted this form. Your previous submission is on file.');
+              } else {
+                const refDisplay = document.getElementById('ref-display');
+                document.getElementById('ref-number').textContent = payload.eventId;
+                refDisplay.classList.remove('hidden');
+
+                form.reset();
+                showPage('payment-page');
+              }
+            } else {
+              showError('Submission failed: ' + (result.error || 'unknown_error') + '. Please try again.');
+            }
+          } catch (err) {
+            console.error(err);
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btnText.textContent = 'Continue to Payment';
+            spinner.classList.add('hidden');
+            showError('Network error. Please check your connection and try again.');
+          }
         }
       });
     });

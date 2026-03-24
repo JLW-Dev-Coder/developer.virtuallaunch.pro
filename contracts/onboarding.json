@@ -75,9 +75,13 @@
       "skill_postgresql": { "type": "integer", "minimum": 0, "maximum": 10 },
       "skill_other_skills": { "type": "string" },
       "ideal_role": { "type": "string" },
-      "confirmation": { "type": "boolean" }
+      "confirmation": { "type": "boolean" },
+      "publish_profile": { "type": "boolean", "default": false, "filterable": true, "description": "Consent to publicly list developer profile" },
+      "cronSchedule": { "type": "string", "enum": ["3 days", "7 days", "14 days"], "description": "How often to send job match notifications" },
+      "status": { "type": "string", "enum": ["complete", "pending", "upcoming"], "description": "Candidate onboarding status" },
+      "nextNotificationDue": { "type": "string", "format": "date-time", "description": "Computed from cronSchedule when status = complete" }
     },
-    "required": ["eventId", "full_name", "email", "confirmation"],
+    "required": ["eventId", "full_name", "email", "confirmation", "publish_profile"],
     "type": "object"
   },
   "response": {
