@@ -207,6 +207,21 @@
                     class="w-full border border-slate-700/50 rounded-lg px-4 py-3 text-sm text-slate-400 bg-slate-900/50 cursor-not-allowed">
                 </div>
                 <div>
+                  <!-- Task 1B: cronSchedule is read-only for operator -->
+                  <label for="f-cronSchedule" class="block text-sm font-medium text-slate-300 mb-1.5">
+                    Job Match Notification Frequency
+                    <span class="inline-flex items-center gap-1 text-slate-500 text-xs ml-1"><i data-lucide="lock" style="width:11px;height:11px;display:inline;"></i> read-only</span>
+                  </label>
+                  <select id="f-cronSchedule" name="cronSchedule" disabled
+                    class="w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-400 bg-slate-900/60 transition opacity-60 cursor-not-allowed">
+                    <option value="">— Auto-populated —</option>
+                    <option value="3 days">Every 3 days</option>
+                    <option value="7 days">Every 7 days</option>
+                    <option value="14 days">Every 14 days</option>
+                  </select>
+                  <input type="hidden" id="f-cronSchedule-hidden" name="cronSchedule" value="">
+                </div>
+                <div>
                   <label for="pf-poster" class="block text-sm font-medium text-slate-300 mb-1.5">Poster Name</label>
                   <input type="text" id="pf-poster" placeholder="Company or person posting the opportunity"
                     class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 placeholder-slate-600 transition">
@@ -581,6 +596,12 @@
       if (!res) return;
       const data = await res.json();
       document.getElementById('pf-name').value = data.ok ? data.name : '';
+      // Task 1B: populate read-only cronSchedule display and sync hidden input
+      const cronVal = data.ok && data.cronSchedule ? data.cronSchedule : '';
+      const cronSelect = document.getElementById('f-cronSchedule');
+      const cronHidden = document.getElementById('f-cronSchedule-hidden');
+      if (cronSelect) cronSelect.value = cronVal;
+      if (cronHidden) cronHidden.value = cronVal;
     });
 
     // Post form — update status badge on due-date change

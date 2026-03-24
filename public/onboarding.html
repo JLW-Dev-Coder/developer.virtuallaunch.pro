@@ -76,7 +76,7 @@
    <div class="bg-grid"></div>
   </div>
 
-  <div id="app" class="w-full h-full overflow-auto flex flex-col" style="display: flex; flex-direction: column;">
+  <div id="app" class="w-full flex flex-col" style="display: flex; flex-direction: column;">
 
    <!-- FORM PAGE -->
    <div id="form-page" class="page min-h-full flex flex-col">
@@ -249,6 +249,7 @@
           <input type="hidden" id="f-status-hidden" name="status" value="">
          </div>
          <div id="cron-field" class="hidden">
+          <!-- Task 1B: cronSchedule is editable by candidate -->
           <label for="f-cronSchedule" class="block text-sm font-medium text-slate-300 mb-1.5">Job Match Notification Frequency</label>
           <select id="f-cronSchedule" name="cronSchedule"
            class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
