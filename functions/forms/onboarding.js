@@ -24,10 +24,14 @@ export async function onRequestPost({ request, env }) {
       return json({ ok: false, error: 'validation_failed' }, 400, CORS);
     }
 
-    // Validate publish_profile: must be present and boolean
-    if (payload.publish_profile === undefined || payload.publish_profile === null) {
-      return json({ ok: false, error: 'validation_failed', field: 'publish_profile' }, 400, CORS);
+    // Normalize publish_profile from checkbox/string values to boolean
+    if (payload.publish_profile === 'on' || payload.publish_profile === 'true') {
+      payload.publish_profile = true;
+    } else if (payload.publish_profile === undefined || payload.publish_profile === null || payload.publish_profile === 'false' || payload.publish_profile === '') {
+      payload.publish_profile = false;
     }
+
+    // Validate publish_profile: must be present and boolean
     if (typeof payload.publish_profile !== 'boolean') {
       return json({ ok: false, error: 'validation_failed', field: 'publish_profile' }, 400, CORS);
     }
