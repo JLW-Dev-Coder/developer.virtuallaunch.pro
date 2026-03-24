@@ -317,7 +317,13 @@
       const val = checked ? checked.value : 'any';
       if (val !== 'any') {
         const min = parseInt(val, 10);
-        results = results.filter(d => typeof d[`skill_${s.key}`] === 'number' && d[`skill_${s.key}`] >= min);
+        // Fix C: treat missing skill fields as 0 for threshold comparison
+        results = results.filter(d => {
+          const skillValue = typeof d[`skill_${s.key}`] === 'number'
+            ? d[`skill_${s.key}`]
+            : (parseInt(d[`skill_${s.key}`], 10) || 0);
+          return skillValue >= min;
+        });
       }
     }
 

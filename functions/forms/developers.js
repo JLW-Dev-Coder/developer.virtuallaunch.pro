@@ -40,6 +40,7 @@ export async function onRequestGet({ request, env }) {
     // Only expose records where publish_profile is explicitly true
     if (record.publish_profile !== true) continue;
 
+    // Fix A: skill_* fields included in developer response
     developers.push({
       eventId:              record.eventId,
       full_name:            record.full_name            || '',
@@ -54,7 +55,16 @@ export async function onRequestGet({ request, env }) {
       timezone:             record.timezone             || '',
       status:               record.status               || '',
       cronSchedule:         record.cronSchedule         || '',
-      publish_profile:      true
+      publish_profile:      true,
+      skill_javascript:     record.skill_javascript  ?? 0,
+      skill_python:         record.skill_python       ?? 0,
+      skill_react:          record.skill_react        ?? 0,
+      skill_nodejs:         record.skill_nodejs       ?? 0,
+      skill_typescript:     record.skill_typescript   ?? 0,
+      skill_aws:            record.skill_aws          ?? 0,
+      skill_docker:         record.skill_docker       ?? 0,
+      skill_mongodb:        record.skill_mongodb      ?? 0,
+      skill_postgresql:     record.skill_postgresql   ?? 0
     });
   }
 
