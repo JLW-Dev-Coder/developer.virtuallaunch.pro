@@ -801,8 +801,19 @@
     const container = document.getElementById('dev-cards');
     container.innerHTML = '<p class="text-slate-500 text-sm col-span-3">Loading…</p>';
 
-    const res = await keyApiFetch('/operator/developers');
-    if (!res) return;
+    // Task 3: use direct fetch instead of keyApiFetch to suppress the
+    // "Invalid operator key" prompt — login screen already gates access.
+    let res;
+    try {
+      res = await fetch('/operator/developers', {
+        headers: { 'Content-Type': 'application/json', 'x-operator-key': operatorKey }
+      });
+    } catch {
+      container.innerHTML = '<p class="text-red-400 text-sm col-span-3">Error loading developers.</p>';
+      return;
+    }
+    if (!res.ok) { container.innerHTML = '<p class="text-red-400 text-sm col-span-3">Error loading developers.</p>'; return; }
+
     const data = await res.json();
     if (!data.ok) { container.innerHTML = '<p class="text-red-400 text-sm col-span-3">Error loading developers.</p>'; return; }
 

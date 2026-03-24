@@ -34,6 +34,17 @@
     }
   }
 
+  // Task 2: URL and skill filter constants
+  const URL_FILTER_FIELDS = [
+    { name: 'linkedin_url',  label: 'LinkedIn' },
+    { name: 'portfolio_url', label: 'Portfolio' },
+    { name: 'video_url',     label: 'Video' }
+  ];
+  const SKILL_FIELDS = [
+    'javascript','python','react','nodejs','typescript',
+    'aws','docker','mongodb','postgresql'
+  ];
+
   // ── Filter UI ─────────────────────────────────────────────────────────────────
   function buildFilterUI() {
     const sidebar = document.getElementById('filter-sidebar');
@@ -74,7 +85,10 @@
         ? field.enum
         : [...new Set(allDevelopers.map(d => d[field.name]).filter(Boolean))].sort();
 
-      if (values.length === 0) continue;
+      if (values.length === 0) {
+        console.warn(`[developers.js] Filter field "${field.name}" has no values in listing data — skipping.`);
+        continue;
+      }
 
       const label = field.description || field.name.replace(/_/g, ' ');
       html += `
@@ -89,8 +103,43 @@
         </div>`;
     }
 
+    // Task 2: URL availability filters (linkedin_url, portfolio_url, video_url)
+    html += `<div class="border-t border-slate-700/40 pt-5 mb-1"><p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Profile Links</p></div>`;
+    for (const f of URL_FILTER_FIELDS) {
+      html += `
+        <div class="mb-5">
+          <label class="block text-xs font-semibold text-slate-300 mb-2">${esc(f.label)}</label>
+          <div class="flex flex-wrap gap-3">
+            ${[['any','Any'],['has','Available'],['none','Not provided']].map(([v, lbl], i) => `
+              <label class="flex items-center gap-1.5 cursor-pointer text-xs text-slate-300 hover:text-slate-100">
+                <input type="radio" name="filter-url-${f.name}" value="${v}" ${i === 0 ? 'checked' : ''}
+                  class="accent-emerald-500"> ${esc(lbl)}
+              </label>`).join('')}
+          </div>
+        </div>`;
+    }
+
+    // Task 2: Skill threshold filters
+    html += `<div class="border-t border-slate-700/40 pt-5 mb-1"><p class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Skills (min. rating)</p></div>`;
+    for (const s of SKILL_FIELDS) {
+      const label = s === 'nodejs' ? 'Node.js'
+                  : s === 'aws'    ? 'AWS'
+                  : s.charAt(0).toUpperCase() + s.slice(1);
+      html += `
+        <div class="mb-4">
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">${esc(label)}</label>
+          <div class="flex flex-wrap gap-2">
+            ${[['any','Any'],['3','3+'],['5','5+'],['7','7+'],['9','9+']].map(([v, lbl], i) => `
+              <label class="flex items-center gap-1 cursor-pointer text-xs text-slate-400 hover:text-slate-200">
+                <input type="radio" name="filter-skill-${s}" value="${v}" ${i === 0 ? 'checked' : ''}
+                  class="accent-emerald-500"> ${esc(lbl)}
+              </label>`).join('')}
+          </div>
+        </div>`;
+    }
+
     // Clear filters button
-    html += `<button id="clear-filters" class="w-full mt-2 px-4 py-2.5 border border-slate-700 hover:border-emerald-500/50 text-slate-300 hover:text-slate-100 text-sm font-medium rounded-lg transition-all duration-200">Clear Filters</button>`;
+    html += `<div class="border-t border-slate-700/40 pt-4 mt-2"><button id="clear-filters" class="w-full px-4 py-2.5 border border-slate-700 hover:border-emerald-500/50 text-slate-300 hover:text-slate-100 text-sm font-medium rounded-lg transition-all duration-200">Clear All Filters</button></div>`;
 
     sidebar.innerHTML = html;
 
@@ -110,6 +159,16 @@
       if (el) el.addEventListener('change', debouncedFilter);
     }
 
+    // Task 2: bind URL and skill radio groups
+    for (const f of URL_FILTER_FIELDS) {
+      sidebar.querySelectorAll(`input[name="filter-url-${f.name}"]`).forEach(r =>
+        r.addEventListener('change', debouncedFilter));
+    }
+    for (const s of SKILL_FIELDS) {
+      sidebar.querySelectorAll(`input[name="filter-skill-${s}"]`).forEach(r =>
+        r.addEventListener('change', debouncedFilter));
+    }
+
     document.getElementById('clear-filters').addEventListener('click', () => {
       document.getElementById('filter-keyword').value = '';
       document.getElementById('filter-rate-min').value = '';
@@ -117,6 +176,15 @@
       for (const field of filterableFields) {
         const el = document.getElementById(`filter-${field.name}`);
         if (el) Array.from(el.options).forEach(o => (o.selected = false));
+      }
+      // Task 2: reset URL and skill radios to "any"
+      for (const f of URL_FILTER_FIELDS) {
+        const el = sidebar.querySelector(`input[name="filter-url-${f.name}"][value="any"]`);
+        if (el) el.checked = true;
+      }
+      for (const s of SKILL_FIELDS) {
+        const el = sidebar.querySelector(`input[name="filter-skill-${s}"][value="any"]`);
+        if (el) el.checked = true;
       }
       renderCards(allDevelopers);
     });
@@ -159,6 +227,27 @@
       }
     }
 
+    // Task 2: URL availability filters
+    for (const f of URL_FILTER_FIELDS) {
+      const checked = document.querySelector(`input[name="filter-url-${f.name}"]:checked`);
+      const val = checked ? checked.value : 'any';
+      if (val === 'has') {
+        results = results.filter(d => d[f.name] && String(d[f.name]).trim());
+      } else if (val === 'none') {
+        results = results.filter(d => !d[f.name] || !String(d[f.name]).trim());
+      }
+    }
+
+    // Task 2: skill minimum threshold filters
+    for (const s of SKILL_FIELDS) {
+      const checked = document.querySelector(`input[name="filter-skill-${s}"]:checked`);
+      const val = checked ? checked.value : 'any';
+      if (val !== 'any') {
+        const min = parseInt(val, 10);
+        results = results.filter(d => typeof d[`skill_${s}`] === 'number' && d[`skill_${s}`] >= min);
+      }
+    }
+
     renderCards(results);
   }
 
@@ -168,7 +257,12 @@
     const count = document.getElementById('dev-count');
     if (!grid) return;
 
-    if (count) count.textContent = developers.length === 1 ? '1 developer' : `${developers.length} developers`;
+    // Task 2: show "Showing X of Y developers" count
+    if (count) {
+      const total = allDevelopers.length;
+      const shown = developers.length;
+      count.textContent = `Showing ${shown} of ${total} developer${total !== 1 ? 's' : ''}`;
+    }
 
     if (developers.length === 0) {
       grid.innerHTML = '<p class="col-span-full text-slate-400 text-center py-12">No developer profiles match the current filters.</p>';

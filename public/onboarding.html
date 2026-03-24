@@ -233,14 +233,20 @@
         </div>
         <div class="space-y-4">
          <div>
-          <label for="f-status" class="block text-sm font-medium text-slate-300 mb-1.5">Onboarding Status</label>
-          <select id="f-status" name="status"
-           class="field-focus w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-100 bg-slate-900 transition">
+          <!-- Task 1b: status field set to read-only (disabled + hidden input pattern) -->
+          <label for="f-status" class="block text-sm font-medium text-slate-300 mb-1.5">
+           Onboarding Status
+           <span class="inline-flex items-center gap-1 text-slate-500 text-xs ml-1"><i data-lucide="lock" style="width:11px;height:11px;display:inline;"></i> read-only</span>
+          </label>
+          <select id="f-status" name="status" disabled
+           class="w-full border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-slate-400 bg-slate-900/60 transition opacity-60 cursor-not-allowed">
            <option value="">-- Select status --</option>
            <option value="pending">Pending</option>
            <option value="upcoming">Upcoming</option>
            <option value="complete">Complete</option>
           </select>
+          <!-- Task 1b: hidden input preserves value for form submission since disabled elements are excluded -->
+          <input type="hidden" id="f-status-hidden" name="status" value="">
          </div>
          <div id="cron-field" class="hidden">
           <label for="f-cronSchedule" class="block text-sm font-medium text-slate-300 mb-1.5">Job Match Notification Frequency</label>
@@ -288,9 +294,12 @@
 
    <!-- PAYMENT PAGE -->
    <div id="payment-page" class="page hidden min-h-full flex flex-col">
-    <button id="back-payment-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm mt-8 ml-6 transition">
-     <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span>
-    </button>
+    <!-- Task 1a: wrap in max-w-7xl px-6 container to align with header menu icon -->
+    <div class="max-w-7xl mx-auto w-full px-6 pt-8">
+     <button id="back-payment-btn" class="flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium text-sm transition">
+      <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> <span>Back</span>
+     </button>
+    </div>
     <main class="flex-1 px-6 py-10">
      <div class="max-w-4xl mx-auto">
       <div class="text-center mb-12">
@@ -466,6 +475,9 @@
         set('f-timezone',      data.availability);
         set('f-ideal',         data.ideal_role);
         set('f-status',        data.status);
+        // Task 1b: sync hidden input so value is submitted if form is posted natively
+        const hiddenStatus = document.getElementById('f-status-hidden');
+        if (hiddenStatus) hiddenStatus.value = data.status || '';
         setChk('f-publish',    data.publish_profile);
         if (data.status === 'complete') {
           cronField.classList.remove('hidden');
