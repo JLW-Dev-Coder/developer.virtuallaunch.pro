@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="h-full">
+<html lang="en">
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +23,7 @@
     }
 
     html, body {
-      height: 100%;
+      /* Fix 4: inner scroll removed — no height lock on html/body */
       background-color: #0f172a;
       color: #f1f5f9;
     }
@@ -36,7 +36,7 @@
     .app-wrapper {
       display: flex;
       flex-direction: column;
-      height: 100%;
+      /* Fix 4: inner scroll removed — no height lock on app-wrapper */
       width: 100%;
     }
 
@@ -125,15 +125,27 @@
 
     .main-container {
       display: flex;
-      flex: 1;
-      overflow: hidden;
+      /* Fix 3: width constrained — matches max-w-7xl mx-auto px-6 pattern */
+      max-width: 80rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+      padding-top: 2rem;
+      width: 100%;
+      /* Fix 4: inner scroll removed — no overflow:hidden trapping scroll */
     }
 
     .sidebar {
       width: 300px;
-      background-color: rgba(30, 41, 59, 0.3); /* Theme fix: matched to site token — bg-slate-800/30 */
-      border-right: 1px solid rgba(100, 116, 139, 0.3); /* Theme fix: matched to site token — border-slate-600/30 */
-      overflow-y: auto;
+      background-color: rgba(30, 41, 59, 0.3); /* bg-slate-800/30 */
+      border: 1px solid rgba(100, 116, 139, 0.5); /* border-slate-700/50 */
+      border-radius: 1rem; /* rounded-2xl */
+      overflow: hidden;
+      /* Fix 4: inner scroll removed — sticky sidebar, browser scroll only */
+      position: sticky;
+      top: 88px;
+      align-self: flex-start;
       padding: 24px;
       flex-shrink: 0;
     }
@@ -340,7 +352,7 @@
 
     .content {
       flex: 1;
-      overflow-y: auto;
+      /* Fix 4: inner scroll removed — normal document flow, no overflow-y */
       padding: 32px;
     }
 
@@ -605,12 +617,19 @@
     ::-webkit-scrollbar-thumb:hover {
       background: #475569;
     }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeInUp {
+      animation: fadeInUp 0.5s ease-out both;
+    }
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
   <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
  </head>
- <body class="bg-slate-950 text-slate-100 h-full"><!-- Theme fix: matched to site token — bg-slate-950 text-slate-100 -->
+ <body class="bg-slate-950 text-slate-100"><!-- Theme fix: matched to site token — bg-slate-950 text-slate-100 -->
   <!-- Theme fix: matched to site token — site-bg-effects block, same as onboarding.html / operator.html -->
   <div class="site-bg-effects" aria-hidden="true">
     <div class="bg-blob bg-blob-1"></div>
@@ -618,18 +637,43 @@
     <div class="bg-blob bg-blob-3"></div>
     <div class="bg-grid"></div>
   </div>
-  <div class="app-wrapper"><!-- HEADER -->
-   <header class="header">
-    <div class="logo">
-     Virtual Launch <span class="logo-accent">Pro</span>
+  <div class="app-wrapper">
+   <!-- Fix 1: matched header to site -->
+   <!-- Header -->
+   <header class="sticky top-0 z-40 w-full border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+     <a href="/index.html" class="flex items-center gap-3 hover:opacity-90 transition">
+      <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20">VLP</span>
+      <div class="flex flex-col leading-tight">
+       <span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span>
+       <span class="text-xs text-slate-400">Job Match &amp; Intro Service</span>
+      </div>
+     </a>
+     <nav class="hidden md:flex items-center gap-8">
+      <a href="/index.html#features" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Features</a>
+      <a href="/index.html#how-it-works" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">How It Works</a>
+      <a href="/reviews.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Reviews</a>
+      <a href="/support.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Support</a>
+      <a href="/find-developers.html" class="text-sm font-medium text-slate-300 hover:text-emerald-400 transition">Find Developers</a>
+     </nav>
+     <a href="/onboarding.html">
+      <button class="px-6 py-2.5 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95">
+       Get Started
+      </button>
+     </a>
     </div>
-    <nav class="nav-center"><a href="#" class="nav-link">Browse Developers</a> <a href="#" class="nav-link">How It Works</a> <a href="#" class="nav-link">Pricing</a> <a href="#" class="nav-link">Resources</a>
-    </nav>
-    <div class="nav-right"><button class="btn-ghost">Operator Login</button> <button class="btn-primary">Get Started</button>
+   </header>
+   <!-- Hero Section -->
+   <div class="text-center mb-12 animate-fadeInUp" style="max-width:80rem;margin-left:auto;margin-right:auto;padding-left:1.5rem;padding-right:1.5rem;padding-top:3rem;">
+    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500 to-emerald-600 mb-4 shadow-lg shadow-emerald-500/25">
+     <i data-lucide="users" class="w-7 h-7" style="color:white;width:1.75rem;height:1.75rem;stroke:white;"></i>
     </div>
-   </header><!-- MAIN CONTAINER -->
+    <h1 class="text-3xl md:text-5xl font-bold text-slate-100 tracking-tight mb-4">Available Developers</h1>
+    <p class="text-lg text-slate-400 max-w-2xl mx-auto">Browse vetted developer profiles available for freelance and contract work. Filter by skills, rate, and availability to find your perfect match.</p>
+   </div>
+   <!-- MAIN CONTAINER -->
    <div class="main-container"><!-- SIDEBAR FILTER (Desktop: sticky, Mobile: hidden toggle) -->
-    <aside class="sidebar" id="filterSidebar">
+    <aside class="sidebar" id="filter-sidebar">
      <div class="filter-title"><i data-lucide="filter" class="filter-icon"></i> Filter Developers
      </div><!-- Section 1: Keyword Search -->
      <div class="filter-section"><input type="text" class="search-input" placeholder="Search by summary…" id="searchInput">
@@ -713,126 +757,82 @@
      <div class="filter-section"><label class="section-label">Profile Details</label> <select class="dropdown"> <option>Contract Type</option> <option>Full-time</option> <option>Part-time</option> <option>Contract</option> <option>Freelance</option> </select> <select class="dropdown"> <option>Country</option> <option>United States</option> <option>Canada</option> <option>United Kingdom</option> <option>India</option> <option>Australia</option> </select> <select class="dropdown"> <option>Timezone</option> <option>EST</option> <option>CST</option> <option>MST</option> <option>PST</option> <option>GMT</option> <option>IST</option> <option>AEST</option> </select>
      </div><!-- Section 5: Hourly Rate -->
      <div class="filter-section"><label class="section-label">Hourly Rate (USD)</label>
-      <div class="rate-inputs"><input type="number" class="rate-input" placeholder="Min" min="0"> <span class="rate-sep">–</span> <input type="number" class="rate-input" placeholder="Max" min="0">
+      <div style="display:flex;flex-direction:column;gap:8px;width:100%"><input id="filter-rate-min" type="number" class="rate-input" style="width:100%" placeholder="Min (USD)" min="0"> <input id="filter-rate-max" type="number" class="rate-input" style="width:100%" placeholder="Max (USD)" min="0">
       </div>
      </div><button class="clear-filters-btn" onclick="clearFilters()">Clear Filters</button>
     </aside><!-- CONTENT AREA -->
     <main class="content">
-     <div class="results-header">
-      Showing 4 of 12 developers
+     <div class="results-header" id="dev-count">
+      Loading developers…
      </div>
-     <div class="dev-grid"><!-- Developer Card 1 -->
-      <div class="dev-card">
-       <div class="card-top">
-        <div class="avatar">
-         AJ
-        </div>
-        <div class="card-header-info">
-         <div class="dev-name">
-          Alex Johnson
-         </div>
-         <div class="dev-location">
-          San Francisco, CA
-         </div>
-        </div>
-        <div class="availability-badge">
-         Available
-        </div>
-       </div>
-       <div class="card-summary">
-        Full-stack engineer with 8+ years building scalable web applications. Expert in React, Node.js, and cloud infrastructure.
-       </div>
-       <div class="skills-row"><span class="skill-pill">React</span> <span class="skill-pill">Node.js</span> <span class="skill-pill">AWS</span> <span class="skill-pill">TypeScript</span>
-       </div>
-       <div class="card-bottom"><span class="rate-info">$95/hr</span> <span class="contract-badge">Full-time</span>
-        <div class="card-icons"><i data-lucide="linkedin" class="icon-link"></i> <i data-lucide="globe" class="icon-link"></i> <i data-lucide="play-circle" class="icon-link"></i>
-        </div>
-       </div>
-      </div><!-- Developer Card 2 -->
-      <div class="dev-card">
-       <div class="card-top">
-        <div class="avatar">
-         MK
-        </div>
-        <div class="card-header-info">
-         <div class="dev-name">
-          Mira Kapoor
-         </div>
-         <div class="dev-location">
-          Bangalore, India
-         </div>
-        </div>
-        <div class="availability-badge">
-         Available
-        </div>
-       </div>
-       <div class="card-summary">
-        Backend specialist with strong Python and PostgreSQL expertise. Passionate about system design and database optimization.
-       </div>
-       <div class="skills-row"><span class="skill-pill">Python</span> <span class="skill-pill">PostgreSQL</span> <span class="skill-pill">Docker</span> <span class="skill-pill">Django</span>
-       </div>
-       <div class="card-bottom"><span class="rate-info">$52/hr</span> <span class="contract-badge">Contract</span>
-        <div class="card-icons"><i data-lucide="linkedin" class="icon-link"></i> <i data-lucide="globe" class="icon-link"></i>
-        </div>
-       </div>
-      </div><!-- Developer Card 3 -->
-      <div class="dev-card">
-       <div class="card-top">
-        <div class="avatar">
-         RL
-        </div>
-        <div class="card-header-info">
-         <div class="dev-name">
-          Ryan Liu
-         </div>
-         <div class="dev-location">
-          Toronto, Canada
-         </div>
-        </div>
-        <div class="availability-badge">
-         Available
-        </div>
-       </div>
-       <div class="card-summary">
-        Frontend architect specializing in React and modern JavaScript. 6 years building responsive, accessible, high-performance UIs.
-       </div>
-       <div class="skills-row"><span class="skill-pill">React</span> <span class="skill-pill">JavaScript</span> <span class="skill-pill">TypeScript</span> <span class="skill-pill">UI/UX</span>
-       </div>
-       <div class="card-bottom"><span class="rate-info">$78/hr</span> <span class="contract-badge">Freelance</span>
-        <div class="card-icons"><i data-lucide="linkedin" class="icon-link"></i> <i data-lucide="globe" class="icon-link"></i> <i data-lucide="play-circle" class="icon-link"></i>
-        </div>
-       </div>
-      </div><!-- Developer Card 4 -->
-      <div class="dev-card">
-       <div class="card-top">
-        <div class="avatar">
-         SC
-        </div>
-        <div class="card-header-info">
-         <div class="dev-name">
-          Sofia Chen
-         </div>
-         <div class="dev-location">
-          Sydney, Australia
-         </div>
-        </div>
-        <div class="availability-badge">
-         Available
-        </div>
-       </div>
-       <div class="card-summary">
-        Full-stack developer with cloud-native architecture expertise. MongoDB and Node.js specialist. 5+ years in SaaS products.
-       </div>
-       <div class="skills-row"><span class="skill-pill">MongoDB</span> <span class="skill-pill">Node.js</span> <span class="skill-pill">AWS</span> <span class="skill-pill">JavaScript</span>
-       </div>
-       <div class="card-bottom"><span class="rate-info">$68/hr</span> <span class="contract-badge">Contract</span>
-        <div class="card-icons"><i data-lucide="linkedin" class="icon-link"></i> <i data-lucide="globe" class="icon-link"></i>
-        </div>
-       </div>
-      </div>
-     </div>
+     <div class="dev-grid" id="dev-grid"></div>
     </main>
    </div>
+    <!-- Final CTA Section -->
+    <section class="mt-16 pt-12 border-t border-slate-800/50">
+      <div class="text-center max-w-3xl mx-auto px-6 py-12 animate-fadeInUp" style="animation-delay: 0.3s;">
+        <h2 class="text-3xl md:text-4xl font-bold text-slate-100 tracking-tight mb-4">Not finding the talent you need?</h2>
+        <p class="text-lg text-slate-400 mb-8 leading-relaxed">
+          Let us help you connect with vetted U.S. developers who match your project requirements. Browse profiles, submit your request, and get matched faster.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <a href="/public/find-developers.html" target="_blank" rel="noopener">
+            <button class="px-8 py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-slate-950 font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg shadow-emerald-500/25 active:scale-95">
+              Submit Your Request
+            </button>
+          </a>
+          <a href="/public/index.html/#how-it-works" class="px-8 py-3 border border-slate-700 hover:border-emerald-500/50 text-slate-100 font-semibold rounded-lg transition-all duration-200 hover:bg-emerald-500/5">
+            How It Works
+          </a>
+        </div>
+      </div>
+    </section>
+   <!-- Fix 2: matched footer to site -->
+   <!-- Footer -->
+   <footer class="border-t border-slate-800/50 bg-slate-950 mt-auto">
+    <div class="max-w-7xl mx-auto px-6 py-12">
+     <div class="grid md:grid-cols-4 gap-8 mb-12">
+      <div>
+       <a href="#" id="footer-logo-link" class="flex items-center gap-3 hover:opacity-90 transition mb-4">
+        <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-sm font-bold text-slate-950">VLP</span>
+        <div class="flex flex-col leading-tight">
+         <span class="font-semibold tracking-tight text-white text-sm">Virtual Launch Pro</span>
+         <span class="text-xs text-slate-400">Job Match &amp; Intro</span>
+        </div>
+       </a>
+       <p class="text-xs text-slate-500">Connecting talented developers with premium U.S. clients.</p>
+      </div>
+      <div>
+       <h3 class="font-semibold text-slate-100 mb-4 text-sm">Product</h3>
+       <ul class="space-y-2">
+        <li><a href="#features" class="text-xs text-slate-400 hover:text-emerald-400 transition">Features</a></li>
+        <li><a href="#how-it-works" class="text-xs text-slate-400 hover:text-emerald-400 transition">How It Works</a></li>
+        <li><a href="/reviews.html" class="text-xs text-slate-400 hover:text-emerald-400 transition">Reviews</a></li>
+        <li><a href="/support.html" id="support-footer-link" class="text-xs text-slate-400 hover:text-emerald-400 transition cursor-pointer bg-none border-none p-0">Support</a></li>
+       </ul>
+      </div>
+      <div>
+       <h3 class="font-semibold text-slate-100 mb-4 text-sm">Company</h3>
+       <ul class="space-y-2">
+        <li><a href="https://www.facebook.com/jamie.l.williams.10" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">Facebook</a></li>
+        <li><a href="https://www.linkedin.com/in/virtuallaunchpro/" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">LinkedIn</a></li>
+        <li><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">Telegram</a></li>
+       </ul>
+      </div>
+      <div>
+       <h3 class="font-semibold text-slate-100 mb-4 text-sm">Support</h3>
+       <ul class="space-y-2">
+        <li><a href="tel:+16198005457" class="text-xs text-slate-400 hover:text-emerald-400 transition">+1 (619) 800-5457</a></li>
+        <li><a href="https://t.me/virtuallaunchpro" target="_blank" rel="noopener noreferrer" class="text-xs text-slate-400 hover:text-emerald-400 transition">@virtuallaunchpro</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="border-t border-slate-800/50 pt-8 flex flex-col md:flex-row items-center justify-between">
+      <p class="text-xs text-slate-500">© 2024 Virtual Launch Pro. All rights reserved.</p>
+      <p class="text-xs text-slate-500 mt-4 md:mt-0">Helping developers launch their freelance careers with the right clients.</p>
+     </div>
+    </div>
+   </footer>
   </div><!-- Mobile Filter Toggle Button (only visible on mobile) -->
   <div id="mobileFilterToggle" style="display: none; position: fixed; top: 64px; left: 0; right: 0; z-index: 5; background-color: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(30, 41, 59, 0.5);"><!-- Theme fix: matched to site token --><button class="filter-toggle-btn" onclick="toggleMobileFilter()"> <i data-lucide="filter" style="width: 18px; height: 18px;"></i> <span>Filters</span> <span class="filter-badge" id="filterBadge">0</span> </button>
   </div>
@@ -848,7 +848,7 @@
     }
 
     function toggleMobileFilter() {
-      const sidebar = document.getElementById('filterSidebar');
+      const sidebar = document.getElementById('filter-sidebar');
       sidebar.classList.toggle('open');
     }
 
@@ -871,7 +871,7 @@
 
     function setupMobileView() {
       const mobileToggle = document.getElementById('mobileFilterToggle');
-      const sidebar = document.getElementById('filterSidebar');
+      const sidebar = document.getElementById('filter-sidebar');
       
       if (window.innerWidth <= 768) {
         mobileToggle.style.display = 'block';
@@ -888,5 +888,7 @@
     // Initialize Lucide icons
     lucide.createIcons();
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e19ed0061ca6a30',t:'MTc3NDM5OTg3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <script src="/js/developers.js" defer></script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e19ed0061ca6a30',t:'MTc3NDM5OTg3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body>
 </html>
