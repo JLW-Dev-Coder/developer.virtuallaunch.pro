@@ -6,7 +6,6 @@
   <title>Developers.Virtual Launch Pro - Success</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -69,7 +68,6 @@
     .copy-btn.copied { background: rgba(16,185,129,.3); color: #fff; border-color: #10b981; }
     .ref-hint { font-size: .75rem; color: #64748b; text-align: center; margin-bottom: 28px; }
   </style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
  </head>
  <body class="h-full bg-slate-950 text-slate-100">
   <div class="site-bg-effects" aria-hidden="true">
@@ -226,19 +224,23 @@
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      window.elementSdk.init({
-        defaultConfig: { success_headline: 'Success! Thank you for your investment.' },
-        onConfigChange: (config) => {
-          const el = document.getElementById('success-headline');
-          if (el && el.dataset.managed !== 'polling') {
-            el.textContent = config.success_headline || 'Success! Thank you for your investment.';
-          }
-        },
-        mapToCapabilities: () => ({ recolorables: [], borderables: [] }),
-        mapToEditPanelValues: () => new Map([])
-      });
+      if (window.elementSdk?.init) {
+        window.elementSdk.init({
+          defaultConfig: { success_headline: 'Success! Thank you for your investment.' },
+          onConfigChange: (config) => {
+            const el = document.getElementById('success-headline');
+            if (el && el.dataset.managed !== 'polling') {
+              el.textContent = config.success_headline || 'Success! Thank you for your investment.';
+            }
+          },
+          mapToCapabilities: () => ({ recolorables: [], borderables: [] }),
+          mapToEditPanelValues: () => new Map([])
+        });
+      }
 
-      window.dataSdk.init({ onDataChanged() {} });
+      if (window.dataSdk?.init) {
+        window.dataSdk.init({ onDataChanged() {} });
+      }
 
       document.getElementById('return-home-btn').addEventListener('click', (e) => {
         e.preventDefault();
@@ -348,7 +350,7 @@
         }
         if (subtext) subtext.style.display = '';
         if (refSection) {
-          const ref = opts_.vlp_ref || null;
+          const ref = opts_.vlp_ref || sessionStorage.getItem('vlp_ref') || null;
           if (ref) {
             refSection.style.display = '';
             document.getElementById('ref-display').textContent = ref;

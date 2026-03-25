@@ -162,6 +162,24 @@ The coupon is never applied to the free plan.
   Pages serves success.html at /success via its built-in Pretty URLs feature (strips .html)
   No routing change needed — noted in Key Files
 
+### 2026-03-25 — Fix MIME errors, TypeError crash, and reference number display on success.html
+- Files modified: `public/success.html`, `.claude/CLAUDE.md`
+- Changes:
+  - Bug 1 — Removed two broken `<script src="/_sdk/element_sdk.js">` and
+    `<script src="/_sdk/data_sdk.js">` tags; neither file exists in the repo,
+    causing MIME type errors and blocking script execution
+  - Bug 2 — Guarded `window.elementSdk.init(...)` and `window.dataSdk.init(...)`
+    with optional-chaining null checks (`if (window.elementSdk?.init)`) so the
+    DOMContentLoaded handler no longer throws an Uncaught TypeError when the SDK
+    globals are absent; the payment state machine and polling logic are untouched
+  - Bug 3 — Added sessionStorage fallback in `renderPaymentState('completed')`:
+    `opts_.vlp_ref || sessionStorage.getItem('vlp_ref') || null` so the reference
+    number displays even if the poll response omits vlp_ref; "—" only shown when
+    both sources are null
+- Root cause of Bug 2: SDK script tags (Bug 1) loaded the HTML 404 page as text/html,
+  leaving `window.elementSdk` and `window.dataSdk` undefined; `.init()` on undefined
+  crashed before the payment polling block ran
+
 ### 2026-03-25 — Domain rename: developer → developers
 - Changes:
   - Renamed all occurrences of `developer.virtuallaunch.pro` → `developers.virtuallaunch.pro`
