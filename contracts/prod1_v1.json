@@ -1,0 +1,34 @@
+{
+  "id": "prod_UBULSPgsL0yRZv",
+  "object": "product",
+  "active": true,
+  "created": 1774029724,
+  "description": "We find freelance and contract opportunities online and introduce you directly to the posters. Save time and get matched faster. Includes access to onboarding guidance and personalized introductions.",
+  "images": [
+    "https://files.stripe.com/links/MDB8YWNjdF8xVDk5cGw5Uk9leWVYT3FlfGZsX2xpdmVfOVJsUHBjSDNwQWloajh3REFiRUxDd3lw008wVySp1G"
+  ],
+  "livemode": true,
+  "marketing_features": [
+    {
+      "name": "Personalized Job Matches"
+    },
+    {
+      "name": "Direct Introductions"
+    },
+    {
+      "name": "Profile Amplification"
+    },
+    {
+      "name": "Time-Saving Automation"
+    },
+    {
+      "name": "Real-Time Notifications"
+    }
+  ],
+  "metadata": {},
+  "name": "Virtual Launch Pro – Job Match & Intro Service",
+  "statement_descriptor": null,
+  "tax_code": "txcd_10000000",
+  "type": "service",
+  "updated": 1774029724
+}

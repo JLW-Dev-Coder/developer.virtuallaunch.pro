@@ -1,0 +1,125 @@
+{
+  "object": {
+    "id": "price_1TEtJw9ROeyeXOqeG9pEHCEt",
+    "object": "price",
+    "active": true,
+    "billing_scheme": "per_unit",
+    "created": 1774452372,
+    "currency": "usd",
+    "custom_unit_amount": null,
+    "livemode": true,
+    "lookup_key": null,
+    "metadata": {},
+    "nickname": null,
+    "product": "prod_UBULSPgsL0yRZv",
+    "recurring": {
+      "interval": "month",
+      "interval_count": 1,
+      "meter": null,
+      "trial_period_days": null,
+      "usage_type": "licensed"
+    },
+    "tax_behavior": "unspecified",
+    "tiers_mode": null,
+    "transform_quantity": null,
+    "type": "recurring",
+    "unit_amount": 299,
+    "unit_amount_decimal": "299"
+  },
+  "previous_attributes": null
+}
+{
+  "object": {
+    "id": "plink_1TD7Sf9ROeyeXOqeTMzkJAzR",
+    "object": "payment_link",
+    "active": true,
+    "after_completion": {
+      "redirect": {
+        "url": "https://developer.virtuallaunch.pro/success.html"
+      },
+      "type": "redirect"
+    },
+    "allow_promotion_codes": true,
+    "application": null,
+    "application_fee_amount": null,
+    "application_fee_percent": null,
+    "automatic_tax": {
+      "enabled": true,
+      "liability": {
+        "type": "self"
+      }
+    },
+    "billing_address_collection": "auto",
+    "consent_collection": {
+      "payment_method_reuse_agreement": null,
+      "promotions": "none",
+      "terms_of_service": "none"
+    },
+    "currency": "usd",
+    "custom_fields": [],
+    "custom_text": {
+      "after_submit": null,
+      "shipping_address": null,
+      "submit": null,
+      "terms_of_service_acceptance": null
+    },
+    "customer_creation": "if_required",
+    "inactive_message": null,
+    "invoice_creation": {
+      "enabled": false,
+      "invoice_data": {
+        "account_tax_ids": null,
+        "custom_fields": null,
+        "description": null,
+        "footer": null,
+        "issuer": null,
+        "metadata": {},
+        "rendering_options": null
+      }
+    },
+    "livemode": true,
+    "metadata": {},
+    "name_collection": {
+      "business": {
+        "enabled": true,
+        "optional": true
+      },
+      "individual": {
+        "enabled": true,
+        "optional": false
+      }
+    },
+    "on_behalf_of": null,
+    "payment_intent_data": null,
+    "payment_method_collection": "always",
+    "payment_method_types": null,
+    "phone_number_collection": {
+      "enabled": false
+    },
+    "restrictions": null,
+    "shipping_address_collection": null,
+    "shipping_options": [],
+    "submit_type": "auto",
+    "subscription_data": {
+      "description": null,
+      "invoice_settings": {
+        "issuer": {
+          "type": "self"
+        }
+      },
+      "metadata": {},
+      "trial_period_days": null,
+      "trial_settings": null
+    },
+    "tax_id_collection": {
+      "enabled": false,
+      "required": "never"
+    },
+    "transfer_data": null,
+    "url": "https://buy.stripe.com/cNi5kx2FfaAU8TpaO673G00"
+  },
+  "previous_attributes": {
+    "payment_method_collection": "if_required",
+    "subscription_data": null
+  }
+}
