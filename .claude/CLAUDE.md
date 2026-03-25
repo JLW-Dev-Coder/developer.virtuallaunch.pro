@@ -9,7 +9,7 @@
 
 ## Key Files
 - Onboarding flow: `public/onboarding.html` (multi-step SPA: form-page → payment-page)
-- Post-payment landing: `public/success.html` (polls `/forms/stripe/session-status` on load)
+- Post-payment landing: `public/success.html` — served at `/success` (Cloudflare Pages Pretty URLs strips `.html`); polls `/forms/stripe/session-status` on load
 - Onboarding Pages Function: `functions/forms/onboarding.js` (GET / POST / PATCH)
 - Worker entry (status + onboarding): `workers/src/index.js`
 - Developer listing: `functions/forms/developers.js` + `public/js/developers.js`
@@ -34,6 +34,13 @@ States: plan-selection → processing → completed | error
 - `vl_payment_state` key in sessionStorage tracks current state
 - `success.html` polls `/forms/stripe/session-status?session_id=...` every 2s, 30s timeout
 - See registry.json > paymentStates for full contract
+
+## sessionStorage and Stripe Checkout
+sessionStorage does NOT survive cross-origin navigation. Stripe Checkout redirects to checkout.stripe.com
+and back — any sessionStorage written on onboarding.html (vlp_ref, vlp_email, etc.) will be empty when
+success.html loads. All data needed on success.html must be read from the session-status endpoint response,
+not from sessionStorage. The session-status endpoint returns `vlp_ref` in the response body; success.html
+writes it back to sessionStorage only after the poll confirms `status: "completed"`.
 
 ## Environment Variables
 
@@ -135,6 +142,25 @@ The coupon is never applied to the free plan.
     `href`, `target`, `rel` from the element; updated error-state selector from
     `a[href*="cal.com"]` to `[data-cal-link]`; added Cal.com embed script block before
     `</body>` on success.html only
+
+### 2026-03-25 — Fix missing reference number on success page
+- Root cause: sessionStorage does not survive Stripe Checkout cross-origin redirect —
+  vlp_ref written in onboarding.html is empty when success.html loads
+- Changes:
+  - `functions/forms/stripe/session-status.js`: added `vlp_ref: vlp_ref || null` to
+    Response.json in the single return path — `vlp_ref` already extracted from
+    `session.client_reference_id` at line 24; R2 field name confirmed as `recordId`
+    from contracts/onboarding.json (same value as eventId = vlp_ref)
+  - `public/success.html`: poll function now passes `vlp_ref: data.vlp_ref || null`
+    to `renderPaymentState`; writes vlp_ref back to sessionStorage only after
+    status === "completed"; `renderPaymentState('completed')` reads vlp_ref from
+    `opts_.vlp_ref` instead of `sessionStorage.getItem('vlp_ref')`
+  - `.claude/registry.json`: added `vlp_ref: "string | null"` to sessionStatusResponseShape
+  - `.claude/CLAUDE.md`: added sessionStorage/Stripe limitation note; updated Key Files
+    to note /success Pretty URL behavior; added this audit log entry
+- Fix 3 — /success vs /success.html: no _redirects or _routes.json found; Cloudflare
+  Pages serves success.html at /success via its built-in Pretty URLs feature (strips .html)
+  No routing change needed — noted in Key Files
 
 ### 2026-03-25 — Domain rename: developer → developers
 - Changes:

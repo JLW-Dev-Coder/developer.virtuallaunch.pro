@@ -65,6 +65,7 @@ export async function onRequestGet({ request, env }) {
     plan,
     webhookConfirmed,
     webhookEvent,
+    vlp_ref: vlp_ref || null,
   });
 }
 

@@ -280,7 +280,8 @@
           if (data.status === 'completed') {
             clearInterval(pollTimer);
             sessionStorage.setItem('vl_payment_state', 'completed');
-            renderPaymentState('completed', { plan: data.plan });
+            if (data.vlp_ref) sessionStorage.setItem('vlp_ref', data.vlp_ref);
+            renderPaymentState('completed', { plan: data.plan, vlp_ref: data.vlp_ref || null });
             return;
           }
 
@@ -347,7 +348,7 @@
         }
         if (subtext) subtext.style.display = '';
         if (refSection) {
-          const ref = sessionStorage.getItem('vlp_ref');
+          const ref = opts_.vlp_ref || null;
           if (ref) {
             refSection.style.display = '';
             document.getElementById('ref-display').textContent = ref;

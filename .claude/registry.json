@@ -47,7 +47,8 @@
       "status": "processing | completed | error",
       "plan": "free | paid | null",
       "webhookConfirmed": "boolean",
-      "webhookEvent": "string | null"
+      "webhookEvent": "string | null",
+      "vlp_ref": "string | null"
     },
     "missingEndpoints": []
   },

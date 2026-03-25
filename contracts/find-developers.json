@@ -1,0 +1,194 @@
+{
+  "auth": {
+    "required": false,
+    "trustClientIdentityFields": false,
+    "type": "none"
+  },
+  "contract": {
+    "authority": [
+      "R2_VIRTUAL_LAUNCH"
+    ],
+    "governs": "Public intake form submission for requesting a developer match (company, contact info, project details, skills preferences).",
+    "path": "app/contracts/forms/developer-match-intake.contract.json",
+    "source": "Virtual Launch Pro",
+    "title": "Virtual Launch Pro - Form Contract - Developer Match Intake",
+    "usedOnPages": [
+      "/public/find-developers.html"
+    ],
+    "validation": {
+      "enumStrict": true,
+      "normalizeCheckboxToBoolean": true,
+      "rejectUnknownValues": true,
+      "requireJsonContentType": true
+    },
+    "version": 1
+  },
+  "delivery": {
+    "endpoint": "/forms/developer-match-intake",
+    "method": "POST",
+    "receiptKeyPattern": "receipts/{source}/{eventId}.json",
+    "receiptSource": "form",
+    "signature": {
+      "header": null,
+      "required": false,
+      "secretEnvVar": null
+    }
+  },
+  "effects": {
+    "dedupeKey": "payload.eventId",
+    "eventIdFrom": "payload.eventId",
+    "receiptAppend": {
+      "to": "receipts/{source}/{eventId}.json"
+    },
+    "canonicalPatch": {
+      "createdAt": "{system.nowIso}",
+      "eventId": "{payload.eventId}",
+      "recordId": "{payload.eventId}",
+      "status": "submitted",
+      "updatedAt": "{system.nowIso}",
+
+      "company": "{payload.company}",
+      "contactName": "{payload.contactName}",
+      "email": "{payload.email}",
+
+      "projectType": "{payload.projectType}",
+      "budget": "{payload.budget}",
+      "timeline": "{payload.timeline}",
+      "description": "{payload.description}",
+
+      "skillsPreference": "{payload.skillsPreference}",
+      "experienceLevel": "{payload.experienceLevel}",
+      "selectedSkills": "{payload.selectedSkills}"
+    },
+    "canonicalUpsert": {
+      "patchFrom": "effects.canonicalPatch",
+      "target": "developer-match-requests/{recordId}.json"
+    },
+    "writeOrder": [
+      "receiptAppend",
+      "canonicalUpsert"
+    ],
+    "writes": [
+      "developer-match-requests"
+    ]
+  },
+  "payload": {
+    "additionalProperties": false,
+    "properties": {
+      "eventId": {
+        "description": "Client-generated id for dedupe + receipts (recommend UUID v4).",
+        "minLength": 1,
+        "type": "string"
+      },
+      "company": {
+        "minLength": 1,
+        "maxLength": 200,
+        "type": "string"
+      },
+      "contactName": {
+        "minLength": 1,
+        "maxLength": 200,
+        "type": "string"
+      },
+      "email": {
+        "minLength": 3,
+        "maxLength": 320,
+        "type": "string",
+        "format": "email"
+      },
+      "projectType": {
+        "type": "string",
+        "enum": [
+          "web-app",
+          "mobile-app",
+          "saas",
+          "api",
+          "other"
+        ]
+      },
+      "budget": {
+        "type": "string",
+        "enum": [
+          "under-10k",
+          "10-50k",
+          "50-100k",
+          "100k+"
+        ]
+      },
+      "timeline": {
+        "type": "string",
+        "enum": [
+          "1-month",
+          "3-months",
+          "6-months",
+          "flexible"
+        ]
+      },
+      "description": {
+        "minLength": 1,
+        "maxLength": 20000,
+        "type": "string"
+      },
+      "skillsPreference": {
+        "description": "Whether the user chose to select skills explicitly.",
+        "type": "string",
+        "enum": [
+          "yes",
+          "no"
+        ]
+      },
+      "experienceLevel": {
+        "description": "Desired years-of-experience band selected in the form.",
+        "type": "string",
+        "enum": [
+          "novice",
+          "intermediate",
+          "experienced"
+        ]
+      },
+      "selectedSkills": {
+        "description": "Skill tags selected in the UI (may be empty when skillsPreference=no).",
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        }
+      }
+    },
+    "required": [
+      "eventId",
+      "company",
+      "contactName",
+      "email",
+      "projectType",
+      "budget",
+      "timeline",
+      "description",
+      "skillsPreference",
+      "experienceLevel",
+      "selectedSkills"
+    ],
+    "type": "object"
+  },
+  "response": {
+    "deduped": {
+      "deduped": true,
+      "eventId": "{effects.eventIdFrom}",
+      "ok": true
+    },
+    "error": {
+      "error": "validation_failed",
+      "ok": false
+    },
+    "success": {
+      "eventId": "{effects.eventIdFrom}",
+      "ok": true,
+      "status": "submitted"
+    }
+  },
+  "schema": {
+    "name": "vlp_form_developer_match_intake",
+    "version": 1
+  }
+}
