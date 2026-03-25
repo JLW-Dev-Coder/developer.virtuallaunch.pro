@@ -50,6 +50,13 @@
     z-index: 1;
   }
 
+  /* Footer must not carry z-index:1 — it forces GPU compositing which
+     disables subpixel antialiasing and makes footer text appear thinner/lighter.
+     Override both the `footer` and `#app > *` selectors above. */
+  footer, #app > footer {
+    z-index: auto;
+  }
+
   .bg-blob {
     position: absolute;
     border-radius: 9999px;
@@ -147,7 +154,7 @@
   <!-- Header -->
    <div id="site-header"></div> 
 
-   <main class="flex-1 px-6 py-12 md:py-16 overflow-auto">
+   <main class="flex-1 px-6 py-12 md:py-16">
     <div class="max-w-3xl mx-auto">
      <!-- Hero Section -->
      <div class="text-center mb-12 animate-fadeInUp">
@@ -361,28 +368,6 @@
       </div>
      </div>
     </div>
-   <!-- ── Available Opportunities ──────────────────────────────────── -->
-   <section id="available-opportunities" class="mt-12 mb-4 animate-fadeInUp" style="animation-delay: 0.15s;">
-    <div class="rounded-2xl border border-slate-700/50 bg-slate-800/20 p-8">
-     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-      <h2 class="text-xl font-semibold text-slate-100 flex items-center gap-2">
-       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-       Available Opportunities
-      </h2>
-      <!-- Reference filter -->
-      <div class="flex gap-2 items-center">
-       <input type="text" id="jobs-ref-input" placeholder="Enter ref (VLP-…) to filter"
-        class="field-focus border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-slate-100 bg-slate-900 w-48 transition placeholder-slate-600">
-       <button id="jobs-ref-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-semibold text-sm rounded-lg transition-all duration-200 whitespace-nowrap">Filter</button>
-       <button id="jobs-ref-clear" class="hidden px-3 py-2 border border-slate-700 hover:border-slate-600 text-slate-400 hover:text-slate-200 text-sm rounded-lg transition">Clear</button>
-      </div>
-     </div>
-     <p class="text-sm text-slate-400 mb-6">Browse open positions below. Enter your reference number to see opportunities matched to your profile.</p>
-     <div id="jobs-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-      <p class="col-span-full text-slate-500 text-sm text-center py-6">Loading opportunities…</p>
-     </div>
-    </div>
-   </section>
    </main><!-- Final CTA Section -->
    <section class="mt-16 pt-12 border-t border-slate-800/50">
     <div class="text-center max-w-3xl mx-auto px-6 py-12 animate-fadeInUp" style="animation-delay: 0.3s;">

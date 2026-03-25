@@ -192,6 +192,29 @@ The coupon is never applied to the free plan.
   - `operator.html`: custom operator header and minimal footer replaced with standard placeholders — site-wide nav now injected uniformly
 - Registry updates: `contracts/registry.json` — added `sharedAssets` array with 3 entries; `.claude/registry.json` — added 3 new files to `frontend.additionalFiles`
 
+### 2026-03-25 — Fix footer visual inconsistency on support.html
+- Files modified: `public/support.html`
+- Issue 1 — Missing top border divider:
+  - Root cause: `<main class="flex-1 ... overflow-auto">` created an inner scroll container.
+    With `#app { min-h-screen; flex flex-col }` and `main { flex-1 }`, the main fills the
+    viewport. The section (Final CTA) and footer outside `<main>` relied on body-level
+    scrolling but the inner scroll container confused the layout and obscured the footer's
+    `border-t border-slate-800/50` divider.
+  - Fix: Removed `overflow-auto` from `<main>` — page now scrolls as a whole (body-level),
+    consistent with onboarding.html which has no `overflow-auto` on its `<main>`.
+- Issue 2 — Thinner/lighter footer text:
+  - Root cause: CSS rule `#app, #app > *, main, main > section, header, footer { position: relative; z-index: 1; }`
+    applied `z-index: 1` to the footer element (via both `footer` and `#app > *` selectors).
+    In Blink/WebKit, `z-index: 1` forces GPU compositing on the element; composited layers
+    disable subpixel antialiasing for text, causing it to appear thinner and lighter.
+  - Fix: Added scoped CSS override `footer, #app > footer { z-index: auto; }` after the
+    existing rule. Higher specificity (`#app > footer` = `(1,0,1)`) overrides both `#app > *`
+    = `(1,0,0)` and `footer` = `(0,0,1)`. Footer keeps `position: relative` for layering
+    above `site-bg-effects` (DOM order preserves correct paint order at `z-index: auto`).
+- Verified: `<body class="h-full bg-slate-950 text-slate-100">` matches onboarding.html and
+  index.html — no change needed to body structure.
+- partials/footer.html and partials-loader.js were NOT modified.
+
 ### 2026-03-25 — Domain rename: developer → developers
 - Changes:
   - Renamed all occurrences of `developer.virtuallaunch.pro` → `developers.virtuallaunch.pro`
