@@ -55,7 +55,7 @@
     "sdkVersion": "20.4.1",
     "webhookEndpoint": "https://api.virtuallaunch.pro/v1/webhooks/stripe",
     "webhookSecret": "env:STRIPE_WEBHOOK_SECRET",
-    "successRedirect": "https://developer.virtuallaunch.pro/success.html?session_id={CHECKOUT_SESSION_ID}",
+    "successRedirect": "https://developers.virtuallaunch.pro/success.html?session_id={CHECKOUT_SESSION_ID}",
     "webhookEvents": [
       "checkout.session.completed",
       "customer.subscription.created",

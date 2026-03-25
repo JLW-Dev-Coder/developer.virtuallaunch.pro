@@ -1,11 +1,11 @@
 # VirtualLaunch Developer — Claude Context
 
 ## Architecture Overview
-- Frontend: Static HTML + Tailwind CSS, served via Cloudflare Pages (developer.virtuallaunch.pro)
+- Frontend: Static HTML + Tailwind CSS, served via Cloudflare Pages (developers.virtuallaunch.pro)
 - Backend: Cloudflare Workers (`workers/src/index.js`) + Cloudflare Pages Functions (`functions/forms/`)
 - Storage: Cloudflare R2 bucket (`onboarding-records`)
 - Runtime: workerd (Cloudflare); entrypoint declared in `wrangler.toml`
-- Hosting: developer.virtuallaunch.pro
+- Hosting: developers.virtuallaunch.pro
 
 ## Key Files
 - Onboarding flow: `public/onboarding.html` (multi-step SPA: form-page → payment-page)
@@ -22,7 +22,7 @@
 - Webhook endpoint: https://api.virtuallaunch.pro/v1/webhooks/stripe
 - Webhook secret: stored as env var STRIPE_WEBHOOK_SECRET — never hardcode
 - Listening events: see registry.json > stripe.webhookEvents
-- Success redirect URL: https://developer.virtuallaunch.pro/success.html?session_id={CHECKOUT_SESSION_ID}
+- Success redirect URL: https://developers.virtuallaunch.pro/success.html?session_id={CHECKOUT_SESSION_ID}
 - Both Free and $2.99 plans go through Stripe Checkout Sessions (not Payment Links)
 - Stripe lives in Pages Functions in this repo (`functions/forms/stripe/`)
 - Stripe SDK version: 20.4.1
@@ -119,3 +119,16 @@ The coupon is never applied to the free plan.
   - success.html polls session-status endpoint (not sessionStorage-only)
   - selectPlan('free') initiates Stripe Checkout (free $0 one_time, payment_method_collection: if_required)
 - Nulls remaining: none — all fields resolved; see registry.json audit log for confirmation
+
+### 2026-03-25 — Domain rename: developer → developers
+- Changes:
+  - Renamed all occurrences of `developer.virtuallaunch.pro` → `developers.virtuallaunch.pro`
+  - Files updated: `functions/forms/stripe/create-session.js` (success_url, cancel_url),
+    `contracts/price1_v1.json`, `contracts/price2_v1.json` (payment_link redirect url),
+    `.claude/registry.json` (stripe.successRedirect),
+    `.claude/CLAUDE.md` (Architecture Overview, Hosting, Stripe Integration, audit log),
+    `.claude/settings.local.json` (Bash permission file path),
+    `README.md` (repository name, Stripe config URL),
+    `package-lock.json` (name field)
+  - No logic, routing behavior, or configuration changed beyond the domain string itself
+  - `node_modules/.package-lock.json` skipped — auto-generated file

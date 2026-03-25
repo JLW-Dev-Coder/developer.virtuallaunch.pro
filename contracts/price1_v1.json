@@ -30,7 +30,7 @@
     "active": true,
     "after_completion": {
       "redirect": {
-        "url": "https://developer.virtuallaunch.pro/success.html"
+        "url": "https://developers.virtuallaunch.pro/success.html"
       },
       "type": "redirect"
     },

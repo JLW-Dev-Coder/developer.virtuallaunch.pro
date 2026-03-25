@@ -54,7 +54,7 @@ Support page → Worker lookup → status returned
 Create a new repository:
 
 ```
-developer.virtuallaunch.pro
+developers.virtuallaunch.pro
 ```
 
 ---
@@ -252,7 +252,7 @@ document.getElementById("checkBtn").onclick = async () => {
 Set success URL in Stripe:
 
 ```
-https://developer.virtuallaunch.pro/success.html?session_id={CHECKOUT_SESSION_ID}
+https://developers.virtuallaunch.pro/success.html?session_id={CHECKOUT_SESSION_ID}
 ```
 
 ---

@@ -37,8 +37,8 @@ export async function onRequestPost({ request, env }) {
     customer_email: email,
     client_reference_id: vlp_ref,
     metadata: { vlp_ref, plan, full_name },
-    success_url: `https://developer.virtuallaunch.pro/success.html?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `https://developer.virtuallaunch.pro/onboarding.html`,
+    success_url: `https://developers.virtuallaunch.pro/success.html?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `https://developers.virtuallaunch.pro/onboarding.html`,
   };
 
   if (plan === 'free') {
