@@ -120,6 +120,22 @@ The coupon is never applied to the free plan.
   - selectPlan('free') initiates Stripe Checkout (free $0 one_time, payment_method_collection: if_required)
 - Nulls remaining: none — all fields resolved; see registry.json audit log for confirmation
 
+### 2026-03-25 — Success page: reference number, double scroll, Cal.com embed
+- Files modified: `public/success.html`, `.claude/CLAUDE.md`
+- Changes:
+  - Fix 1 — Reference number display: `vlp_ref` key confirmed by reading onboarding.html
+    (set on form submit via `sessionStorage.setItem('vlp_ref', ...)`). Adjusted
+    `renderPaymentState('completed')` to hide the entire ref section silently when
+    `vlp_ref` is absent from sessionStorage — previously the section showed with "—"
+  - Fix 2 — Double scroll (success.html only): removed `height: 100%` and `overflow-y: auto`
+    from `html, body` style rule; removed `h-full` from `#app` div; removed `overflow-auto`
+    from `<main>`. onboarding.html has no inner overflow-auto container — not affected
+  - Fix 3 — Cal.com popup embed: replaced direct `href` on Schedule Your Call `<a>` tag
+    with `data-cal-link`, `data-cal-namespace`, `data-cal-config` attributes; removed
+    `href`, `target`, `rel` from the element; updated error-state selector from
+    `a[href*="cal.com"]` to `[data-cal-link]`; added Cal.com embed script block before
+    `</body>` on success.html only
+
 ### 2026-03-25 — Domain rename: developer → developers
 - Changes:
   - Renamed all occurrences of `developer.virtuallaunch.pro` → `developers.virtuallaunch.pro`
