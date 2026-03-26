@@ -10,7 +10,9 @@
       "title": "Virtual Launch Pro — Form Contract — Developer Match Intake",
       "governs": "Public intake form submission for requesting a developer match (company, contact info, project details, skills preferences).",
       "version": 1,
-      "status": "active"
+      "status": "active",
+      "handlerPath": "functions/forms/find-developers.js",
+      "handlerStatus": "implemented"
     },
     {
       "path": "contracts/onboarding.json",
@@ -20,7 +22,9 @@
       "title": "Virtual Launch Pro — Form Contract — Onboarding",
       "governs": "Onboarding form submission (POST) and profile update (PATCH) for Virtual Launch Pro developers",
       "version": 2,
-      "status": "active"
+      "status": "active",
+      "handlerPath": "functions/forms/onboarding.js",
+      "handlerStatus": "implemented"
     },
     {
       "path": "contracts/onboarding-status.json",
@@ -30,7 +34,9 @@
       "title": "Virtual Launch Pro — Form Contract — Onboarding Status",
       "governs": "Public read of onboarding submission status by VLP- reference ID",
       "version": 1,
-      "status": "active"
+      "status": "active",
+      "handlerPath": "functions/forms/onboarding/status.js",
+      "handlerStatus": "implemented"
     },
     {
       "path": "contracts/reviews.json",
@@ -39,8 +45,10 @@
       "endpoint": "/forms/review-submit",
       "title": "Virtual Launch Pro — Form Contract — Review Submit",
       "governs": "Developer review submissions for Virtual Launch Pro",
-      "version": 1,
-      "status": "active"
+      "version": 2,
+      "status": "active",
+      "handlerPath": "functions/forms/review-submit/index.js",
+      "handlerStatus": "implemented"
     },
     {
       "path": "contracts/support.json",
@@ -50,7 +58,10 @@
       "title": "Virtual Launch Pro — Contract — Support Status",
       "governs": "Client support status and posts lookup by client reference ID",
       "version": 1,
-      "status": "active"
+      "status": "active",
+      "handlerPath": "workers/src/index.js",
+      "handlerStatus": "implemented",
+      "note": "Handler returns an extra `eventId` field not present in contract response shape."
     },
     {
       "path": "contracts/operator-analytics.json",
@@ -171,17 +182,6 @@
       "handlerStatus": "implemented"
     },
     {
-      "path": "contracts/operator.json",
-      "category": "operator",
-      "method": ["POST"],
-      "endpoint": "/operator/auth",
-      "title": "Virtual Launch Pro — Operator Contract — Session Auth",
-      "governs": "Multi-endpoint operator data access layer (submissions, developers, analytics, job posts) — authentication is handled by contracts/operator-auth.json",
-      "version": 1,
-      "status": "active",
-      "note": "Primary endpoint only. Secondary endpoints documented in notes.additionalEndpoints."
-    },
-    {
       "path": "contracts/cron-job-match.json",
       "category": "cron",
       "method": ["POST"],
@@ -190,6 +190,8 @@
       "governs": "Internal job matching trigger — evaluates developer skills against job required_skills, queues notifications, updates nextNotificationDue per cronSchedule",
       "version": 2,
       "status": "active",
+      "handlerPath": "functions/cron/job-match.js",
+      "handlerStatus": "implemented",
       "note": "Internal trigger. Auth via x-cron-secret, not operator Bearer token."
     },
     {

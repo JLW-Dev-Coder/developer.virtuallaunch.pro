@@ -208,6 +208,95 @@ The Virtual Launch Pro Team`,
   }
 ];
 
+// ── Additional templates migrated from legacy operator/email.js ───────────────
+
+const legacyTemplates = [
+  {
+    templateId: 'default-consent-publish',
+    eventId:    'default-consent-publish',
+    userType:   'developer',
+    label:      'Consent to Publish',
+    subject:    'Your Developer Profile on Virtual Launch Pro',
+    body: `Dear [developerName],
+
+To view your postings, go to the link below and enter your reference number [developerRef].
+
+https://developers.virtuallaunch.pro/support.html
+
+Thank you for trusting me with providing you with personalized vetted matches.
+
+Don't forget to leave your review:
+https://developers.virtuallaunch.pro/reviews.html
+
+Your EA turned professional connector,
+JLW
+Virtual Launch Pro
+developers.virtuallaunch.pro`,
+    isDefault:  true,
+    createdAt:  now,
+    updatedAt:  now
+  },
+
+  {
+    templateId: 'default-welcome-aboard',
+    eventId:    'default-welcome-aboard',
+    userType:   'developer',
+    label:      'Welcome Aboard',
+    subject:    "Welcome Aboard — You're Now Listed on Virtual Launch Pro",
+    body: `Dear [developerName],
+
+Congratulations, you have joined a membership that gets you vetted people who want to work with your specific skills. Look out in your email in the next three days for your next lists of client matches. To view your matches, go to the link below and enter your reference number [developerRef].
+
+https://developers.virtuallaunch.pro/support.html
+
+Thank you for trusting me with providing you with personalized vetted matches.
+
+Don't forget to leave your review:
+https://developers.virtuallaunch.pro/reviews.html
+
+Let's get you matched.
+
+Your EA turned professional connector,
+JLW
+Virtual Launch Pro
+developers.virtuallaunch.pro`,
+    isDefault:  true,
+    createdAt:  now,
+    updatedAt:  now
+  },
+
+  {
+    templateId: 'default-client-match',
+    eventId:    'default-client-match',
+    userType:   'developer',
+    label:      'Client Match',
+    subject:    'New Client Matches Found for You',
+    body: `Dear [developerName],
+
+We found some client matches who are looking for the exact skills and expertise you offer. To view your matches, go to the link below and enter your reference number [developerRef].
+
+https://developers.virtuallaunch.pro/support.html
+
+Thank you for trusting me with personally vetted matches.
+
+Don't forget to leave your review:
+https://developers.virtuallaunch.pro/reviews.html
+
+Let's get you matched.
+
+Your EA turned professional connector,
+JLW
+Virtual Launch Pro
+developers.virtuallaunch.pro`,
+    isDefault:  true,
+    createdAt:  now,
+    updatedAt:  now
+  }
+];
+
+// Merge all templates for seeding
+templates.push(...legacyTemplates);
+
 // ── R2 REST API upload ────────────────────────────────────────────────────────
 
 async function putR2Object(key, value) {

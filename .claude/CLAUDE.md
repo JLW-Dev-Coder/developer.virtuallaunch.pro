@@ -31,7 +31,10 @@
 - Operator ticket reply: `functions/operator/tickets/[ticketId]/reply.js` → POST `/operator/tickets/{ticketId}/reply` (append reply to ticket; update status to in_progress; send email to submitter)
 - Operator canned responses: `functions/operator/canned-responses.js` → GET `/operator/canned-responses` (list with optional ?userType filter) + POST (create new template; isDefault:false)
 - Operator canned response PATCH/DELETE: `functions/operator/canned-responses/[templateId].js` → PATCH `/operator/canned-responses/{templateId}` (edit mutable fields) + DELETE (isDefault guard — cannot delete default templates)
-- Canned response seed script: `scripts/seed-canned-responses.js` → writes 8 isDefault:true templates (4 developer + 4 client) to R2 via Cloudflare REST API
+- Canned response seed script: `scripts/seed-canned-responses.js` → writes 11 isDefault:true templates (4 developer + 4 client + 3 legacy migrated) to R2 via Cloudflare REST API
+- Developer match intake handler: `functions/forms/find-developers.js` → POST `/forms/developer-match-intake` (no auth; writes to `developer-match-requests/{eventId}.json` + receipt to `receipts/form/{eventId}.json`)
+- Cron job match handler: `functions/cron/job-match.js` → POST `/cron/job-match` (x-cron-secret auth — NOT operator Bearer; matches active/published developers to a job by skill; sends bulk email via Resend; updates nextNotificationDue per cronSchedule; writes run record + receipt to R2; KV dedupe in OPERATOR_SESSIONS)
+- Onboarding status handler: `functions/forms/onboarding/status.js` → GET `/forms/onboarding/status?referenceId=VLP-xxx` (no auth — public; returns status + lastUpdated only; R2 prefix scan by ref_number)
 
 ## Stripe Integration
 - Webhook endpoint: https://api.virtuallaunch.pro/v1/webhooks/stripe
@@ -450,3 +453,90 @@ All email dispatch imports from `functions/_shared/email.js` only. Never call `g
   - `CF_ZONE_ID` must be filled in `wrangler.toml` (found in Cloudflare dashboard → Overview)
   - `CF_API_TOKEN` must be set via `wrangler secret put CF_API_TOKEN` with Analytics:Read permission
   - Seed script requires `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` env vars at run time
+
+### 2026-03-26 — Implement Cron Job Match + Onboarding Status Handlers
+- New files:
+  - `functions/cron/job-match.js` — POST `/cron/job-match`
+    - Auth: `x-cron-secret` header against `CRON_SECRET` env var — NOT operator Bearer token
+    - Required body fields: `eventId`, `jobId`; optional: `required_skills` (array), `notifyAll` (boolean)
+    - KV dedupe: `cron-dedupe:{eventId}` in OPERATOR_SESSIONS (TTL 86400s)
+    - Fetches job from `job-posts/{jobId}.json`; 404 if not found
+    - Loads `required_skills` from payload (falls back to job record's `required_skills`)
+    - Full R2 pagination loop for `onboarding-records/` prefix (handles >1000 records)
+    - Filter: `status === 'active' && publish_profile === true`
+    - Match: `notifyAll` bypasses skill filter; otherwise matches any dev with skill field >= 1
+    - Per-record: updates `nextNotificationDue` (3/7/14 days ISO string) + `updatedAt` in R2 — wrapped in try/catch (non-fatal)
+    - Bulk email: `sendBulkEmail` (Resend) with `cronMatchNotification` template — caught, non-fatal
+    - Writes run record: `cron-job-match-runs/{eventId}.json` and receipt: `receipts/cron/job-match/{eventId}.json`
+    - Response matches `contracts/cron-job-match.json` success shape
+  - `functions/forms/onboarding/status.js` — GET `/forms/onboarding/status`
+    - No auth required — public endpoint
+    - Query param: `referenceId` (400 if missing)
+    - R2 prefix scan of `onboarding-records/` — finds record where `ref_number === referenceId`
+    - Returns `{ ok, referenceId, status, lastUpdated }` only — never full record
+    - 404 `{ ok: false, error: "not_found" }` if no match
+- Updated `wrangler.toml`:
+  - Added `[triggers]` with `crons = ["0 9 * * 1"]` (every Monday 9am UTC)
+  - Added `CRON_SECRET` secret comment
+- Updated `contracts/registry.json`:
+  - `cron-job-match.json` entry: added `handlerPath`, `handlerStatus: "implemented"`
+  - `onboarding-status.json` entry: added `handlerPath`, `handlerStatus: "implemented"`
+- Updated `.claude/CLAUDE.md` Key Files section — added 2 new handler entries
+- clientReference.js endpoint: no change needed — already calls `/forms/onboarding/status`
+- FLAGS:
+  - `CRON_SECRET` not yet set — run: `wrangler secret put CRON_SECRET` (use a long random string, unrelated to OPERATOR_KEY)
+
+### 2026-03-26 — Post-verification fixes: find-developers handler, reviews auth, email/profiles retirement
+
+**Task 1 — Create missing handler: POST /forms/developer-match-intake**
+- New file: `functions/forms/find-developers.js`
+  - `onRequestPost` + `onRequestOptions` following onboarding.js pattern
+  - Validates all 11 required fields from `contracts/find-developers.json` payload.required
+  - Enum validation for projectType, budget, timeline, skillsPreference, experienceLevel
+  - Dedupe via R2 receipt check: `receipts/form/{eventId}.json`
+  - Writes receipt first, then canonical record to `developer-match-requests/{eventId}.json`
+  - Email skipped — no template exists for this flow
+- Updated `contracts/registry.json`: handlerPath + handlerStatus: "implemented"
+
+**Task 2 — Fix contracts/reviews.json auth**
+- `auth.required`: true → false
+- `auth.type`: "session" → "none"
+- `contract.version`: 1 → 2
+- Updated `contracts/registry.json`: version 1 → 2, removed stale mismatch note
+
+**Task 3 — Retire functions/operator/email.js**
+- Added 3 named exports to `functions/_shared/emailTemplates.js`:
+  - `consentPublishTemplate({ full_name, ref_number })` — subject + HTML + text migrated from buildConsentPublish()
+  - `welcomeAboardTemplate({ full_name, ref_number })` — migrated from buildWelcomeAboard()
+  - `clientMatchTemplate({ full_name, ref_number, job })` — migrated from buildClientMatch(); job is optional
+- Appended 3 legacy default canned responses to `scripts/seed-canned-responses.js`:
+  - `default-consent-publish`, `default-welcome-aboard`, `default-client-match`
+  - All isDefault:true; body uses [developerName]/[developerRef] placeholders
+  - Uses `templates.push(...legacyTemplates)` — safe to re-run, upsert semantics
+- Updated `public/operator.html`:
+  - Login flow now calls POST `/operator/auth` (x-operator-key header + { eventId } body)
+  - Stores `data.token` in sessionStorage as `vlp_operator_token`
+  - `keyApiFetch` now uses `Authorization: Bearer ${token}` for ALL operator endpoints
+  - `/operator/email` fetch replaced with `/operator/bulk-email`
+    - template string mapped to templateId (default-consent-publish / default-welcome-aboard / default-client-match)
+    - eventId generated via crypto.randomUUID()
+  - `loadProfiles()` now calls `/operator/submissions` (returns `data.results`)
+  - `togglePublish()` now calls `PATCH /operator/developer` with `{ ref_number, publish_profile }`
+  - `loadDevelopers()` now uses `keyApiFetch` (Bearer token) instead of direct fetch with x-operator-key
+  - `showDashboard()` calls `loadProfiles()` on entry; no longer accepts profilesData param
+  - `operatorKey` variable removed from state; `vlp_operator_key` sessionStorage key no longer written
+- Deleted: `functions/operator/email.js`
+
+**Task 4 — Retire functions/operator/profiles.js**
+- All fetch('/operator/profiles') calls in operator.html migrated (covered by Task 3 operator.html update):
+  - GET /operator/profiles → GET /operator/submissions
+  - PATCH /operator/profiles → PATCH /operator/developer
+  - Login validation fetch → POST /operator/auth
+- Auth header update covered all operator fetch calls in a single pass
+- Deleted: `functions/operator/profiles.js`
+
+**Note — consentPublish, welcomeAboard, clientMatch templates**
+- Now in `emailTemplates.js` as named exports (code-driven use)
+- Now in `scripts/seed-canned-responses.js` as default canned responses (R2 storage)
+- Run `node scripts/seed-canned-responses.js` to write the 3 new templates to R2
+  (Re-running is safe — uses upsert; existing templates are preserved)

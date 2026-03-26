@@ -1,8 +1,8 @@
 {
   "auth": {
-    "required": true,
+    "required": false,
     "trustClientIdentityFields": false,
-    "type": "session"
+    "type": "none"
   },
   "contract": {
     "authority": [
@@ -21,7 +21,7 @@
       "rejectUnknownValues": true,
       "requireJsonContentType": true
     },
-    "version": 1
+    "version": 2
   },
   "delivery": {
     "endpoint": "/forms/review-submit",

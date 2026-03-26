@@ -196,6 +196,196 @@ export function supportTicketReply({ clientRef, subject: ticketSubject, replyBod
   return { subject, html, text };
 }
 
+// ── consentPublishTemplate ────────────────────────────────────────────────────
+// Migrated from functions/operator/email.js buildConsentPublish()
+
+export function consentPublishTemplate({ full_name, ref_number }) {
+  const subject = 'Your Developer Profile on Virtual Launch Pro';
+
+  const html = wrap(`
+    <tr><td style="padding:32px 32px 24px;">
+      <p style="margin:0 0 16px;font-size:16px;color:#0f172a;font-weight:600;">Dear ${full_name || 'there'},</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
+        To view your postings, go to the link below and enter your reference number <strong>${ref_number}</strong>.
+      </p>
+      <p style="margin:0 0 16px;"><a href="https://developers.virtuallaunch.pro/support.html" style="color:#10b981;text-decoration:none;">https://developers.virtuallaunch.pro/support.html</a></p>
+      <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
+        Thank you for trusting me with providing you with personalized vetted matches.
+      </p>
+      <p style="margin:0 0 8px;font-size:15px;color:#334155;">Don't forget to leave your review:<br>
+        <a href="https://developers.virtuallaunch.pro/reviews.html" style="color:#10b981;text-decoration:none;">https://developers.virtuallaunch.pro/reviews.html</a>
+      </p>
+      <p style="margin:24px 0 0;font-size:14px;color:#475569;line-height:1.7;">
+        Your EA turned professional connector,<br>
+        JLW<br>
+        Virtual Launch Pro<br>
+        developers.virtuallaunch.pro
+      </p>
+    </td></tr>
+  `);
+
+  const text = [
+    `Dear ${full_name || 'there'},`,
+    '',
+    `To view your postings, go to the link below and enter your reference number ${ref_number}.`,
+    '',
+    'https://developers.virtuallaunch.pro/support.html',
+    '',
+    'Thank you for trusting me with providing you with personalized vetted matches.',
+    '',
+    "Don't forget to leave your review:",
+    'https://developers.virtuallaunch.pro/reviews.html',
+    '',
+    'Your EA turned professional connector,',
+    'JLW',
+    'Virtual Launch Pro',
+    'developers.virtuallaunch.pro',
+    '',
+    FOOTER_TXT
+  ].join('\n');
+
+  return { subject, html, text };
+}
+
+// ── welcomeAboardTemplate ─────────────────────────────────────────────────────
+// Migrated from functions/operator/email.js buildWelcomeAboard()
+
+export function welcomeAboardTemplate({ full_name, ref_number }) {
+  const subject = "Welcome Aboard — You're Now Listed on Virtual Launch Pro";
+
+  const html = wrap(`
+    <tr><td style="padding:32px 32px 24px;">
+      <p style="margin:0 0 16px;font-size:16px;color:#0f172a;font-weight:600;">Dear ${full_name || 'there'},</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
+        Congratulations, you have joined a membership that gets you vetted people who want to work with your specific skills. Look out in your email in the next three days for your next lists of client matches. To view your matches, go to the link below and enter your reference number <strong>${ref_number}</strong>.
+      </p>
+      <p style="margin:0 0 16px;"><a href="https://developers.virtuallaunch.pro/support.html" style="color:#10b981;text-decoration:none;">https://developers.virtuallaunch.pro/support.html</a></p>
+      <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
+        Thank you for trusting me with providing you with personalized vetted matches.
+      </p>
+      <p style="margin:0 0 8px;font-size:15px;color:#334155;">Don't forget to leave your review:<br>
+        <a href="https://developers.virtuallaunch.pro/reviews.html" style="color:#10b981;text-decoration:none;">https://developers.virtuallaunch.pro/reviews.html</a>
+      </p>
+      <p style="margin:16px 0 0;font-size:15px;color:#334155;">Let's get you matched.</p>
+      <p style="margin:24px 0 0;font-size:14px;color:#475569;line-height:1.7;">
+        Your EA turned professional connector,<br>
+        JLW<br>
+        Virtual Launch Pro<br>
+        developers.virtuallaunch.pro
+      </p>
+    </td></tr>
+  `);
+
+  const text = [
+    `Dear ${full_name || 'there'},`,
+    '',
+    `Congratulations, you have joined a membership that gets you vetted people who want to work with your specific skills. Look out in your email in the next three days for your next lists of client matches. To view your matches, go to the link below and enter your reference number ${ref_number}.`,
+    '',
+    'https://developers.virtuallaunch.pro/support.html',
+    '',
+    'Thank you for trusting me with providing you with personalized vetted matches.',
+    '',
+    "Don't forget to leave your review:",
+    'https://developers.virtuallaunch.pro/reviews.html',
+    '',
+    "Let's get you matched.",
+    '',
+    'Your EA turned professional connector,',
+    'JLW',
+    'Virtual Launch Pro',
+    'developers.virtuallaunch.pro',
+    '',
+    FOOTER_TXT
+  ].join('\n');
+
+  return { subject, html, text };
+}
+
+// ── clientMatchTemplate ───────────────────────────────────────────────────────
+// Migrated from functions/operator/email.js buildClientMatch()
+
+export function clientMatchTemplate({ full_name, ref_number, job }) {
+  const subject = 'New Client Matches Found for You';
+
+  const jobSection = job ? (() => {
+    const skills = Array.isArray(job.required_skills) ? job.required_skills.join(', ') : (job.required_skills || '');
+    return `
+      <table role="presentation" cellpadding="0" cellspacing="0" style="background-color:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px 20px;width:100%;margin-top:16px;">
+        <tr><td>
+          <p style="margin:0 0 6px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Job Title</p>
+          <p style="margin:0 0 12px;font-size:15px;font-weight:600;color:#0f172a;">${job.job_title || ''}</p>
+          <p style="margin:0 0 6px;font-size:12px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;">Description</p>
+          <p style="margin:0 0 12px;font-size:14px;color:#334155;line-height:1.7;">${job.job_description || ''}</p>
+          ${job.hourly_rate_range ? `<p style="margin:0 0 6px;font-size:13px;color:#475569;">Rate: ${job.hourly_rate_range}</p>` : ''}
+          ${skills ? `<p style="margin:0 0 6px;font-size:13px;color:#475569;">Skills: ${skills}</p>` : ''}
+          ${job.contact_method ? `<p style="margin:0;font-size:13px;color:#475569;">How to Apply: ${job.contact_method}</p>` : ''}
+        </td></tr>
+      </table>`;
+  })() : '';
+
+  const html = wrap(`
+    <tr><td style="padding:32px 32px 24px;">
+      <p style="margin:0 0 16px;font-size:16px;color:#0f172a;font-weight:600;">Dear ${full_name || 'there'},</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#334155;line-height:1.6;">
+        We found some client matches who are looking for the exact skills and expertise you offer. To view your matches, go to the link below and enter your reference number <strong>${ref_number}</strong>.
+      </p>
+      <p style="margin:0 0 16px;"><a href="https://developers.virtuallaunch.pro/support.html" style="color:#10b981;text-decoration:none;">https://developers.virtuallaunch.pro/support.html</a></p>
+      ${jobSection}
+      <p style="margin:16px 0 0;font-size:15px;color:#334155;line-height:1.6;">
+        Thank you for trusting me with personally vetted matches.
+      </p>
+      <p style="margin:8px 0 8px;font-size:15px;color:#334155;">Don't forget to leave your review:<br>
+        <a href="https://developers.virtuallaunch.pro/reviews.html" style="color:#10b981;text-decoration:none;">https://developers.virtuallaunch.pro/reviews.html</a>
+      </p>
+      <p style="margin:16px 0 0;font-size:15px;color:#334155;">Let's get you matched.</p>
+      <p style="margin:24px 0 0;font-size:14px;color:#475569;line-height:1.7;">
+        Your EA turned professional connector,<br>
+        JLW<br>
+        Virtual Launch Pro<br>
+        developers.virtuallaunch.pro
+      </p>
+    </td></tr>
+  `);
+
+  const jobTextSection = job ? (() => {
+    const skills = Array.isArray(job.required_skills) ? job.required_skills.join(', ') : (job.required_skills || '');
+    return [
+      '',
+      '---',
+      `Job Title: ${job.job_title || ''}`,
+      `Description: ${job.job_description || ''}`,
+      `Rate Range: ${job.hourly_rate_range || ''}`,
+      `Skills Required: ${skills}`,
+      `How to Apply: ${job.contact_method || ''}`
+    ].join('\n');
+  })() : '';
+
+  const text = [
+    `Dear ${full_name || 'there'},`,
+    '',
+    `We found some client matches who are looking for the exact skills and expertise you offer. To view your matches, go to the link below and enter your reference number ${ref_number}.`,
+    '',
+    'https://developers.virtuallaunch.pro/support.html',
+    '',
+    'Thank you for trusting me with personally vetted matches.',
+    '',
+    "Don't forget to leave your review:",
+    'https://developers.virtuallaunch.pro/reviews.html',
+    '',
+    "Let's get you matched.",
+    '',
+    'Your EA turned professional connector,',
+    'JLW',
+    'Virtual Launch Pro',
+    'developers.virtuallaunch.pro',
+    jobTextSection,
+    '',
+    FOOTER_TXT
+  ].join('\n');
+
+  return { subject, html, text };
+}
+
 // ── bulkEmailTemplate ─────────────────────────────────────────────────────────
 
 export function bulkEmailTemplate({ full_name, subject, body }) {

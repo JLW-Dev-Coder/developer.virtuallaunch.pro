@@ -383,9 +383,9 @@
                   <label class="block text-sm font-medium text-slate-300 mb-1.5">Email Template *</label>
                   <select id="ef-template" class="field-focus w-full border border-slate-700 rounded-lg px-4 py-3 text-sm text-slate-100 bg-slate-900 transition">
                     <option value="">-- Select template --</option>
-                    <option value="consentPublish">consentPublish — Profile consent reminder</option>
-                    <option value="welcomeAboard">welcomeAboard — New member welcome</option>
-                    <option value="clientMatch">clientMatch — New client matches</option>
+                    <option value="consentPublish">Consent to Publish — Profile consent reminder</option>
+                    <option value="welcomeAboard">Welcome Aboard — New member welcome</option>
+                    <option value="clientMatch">Client Match — New client matches</option>
                   </select>
                 </div>
                 <!-- Job post (for clientMatch) -->
@@ -516,7 +516,6 @@
   <script>
   // ── State ─────────────────────────────────────────────────────────────────────
   let token = sessionStorage.getItem('vlp_operator_token');
-  let operatorKey = sessionStorage.getItem('vlp_operator_key') || '';
   let allDevelopers = [];
   let allProfiles = [];
   let allJobPosts = [];
@@ -524,7 +523,7 @@
   // ── Init ──────────────────────────────────────────────────────────────────────
   document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
-    if (operatorKey) showDashboard();
+    if (token) showDashboard();
 
     // Tab switching
     document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -543,15 +542,22 @@
       document.getElementById('login-btn').disabled = true;
 
       try {
-        const res = await fetch('/operator/profiles', {
-          headers: { 'x-operator-key': key }
+        const authRes = await fetch('/operator/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-operator-key': key },
+          body: JSON.stringify({ eventId: crypto.randomUUID() })
         });
-        if (res.ok) {
-          const data = await res.json();
-          operatorKey = key;
-          sessionStorage.setItem('vlp_operator_key', key);
-          showDashboard(data.profiles || []);
-        } else if (res.status === 401) {
+        if (authRes.status === 200 || authRes.status === 201) {
+          const authData = await authRes.json();
+          if (authData.ok && authData.token) {
+            token = authData.token;
+            sessionStorage.setItem('vlp_operator_token', token);
+            showDashboard();
+          } else {
+            errEl.textContent = 'Login failed — please try again';
+            errEl.classList.remove('hidden');
+          }
+        } else if (authRes.status === 401) {
           errEl.textContent = 'Invalid key — please try again';
           errEl.classList.remove('hidden');
           document.getElementById('login-code').value = '';
@@ -613,55 +619,45 @@
     document.getElementById('email-form').addEventListener('submit', handleEmailSend);
   });
 
-  // x-operator-key auth for new endpoints
+  // Bearer token auth for operator endpoints
   async function keyApiFetch(url, options = {}) {
-    if (!operatorKey) {
-      const k = (prompt('Enter your Operator API Key:') || '').trim();
-      if (!k) return null;
-      operatorKey = k;
-      sessionStorage.setItem('vlp_operator_key', k);
+    if (!token) {
+      logout();
+      return null;
     }
     const headers = {
       'Content-Type': 'application/json',
-      'x-operator-key': operatorKey,
+      'Authorization': `Bearer ${token}`,
       ...(options.headers || {})
     };
     let res;
     try {
-      console.log('operator key length:', operatorKey.length, 'value:', JSON.stringify(operatorKey));
       res = await fetch(url, { ...options, headers });
     } catch {
       return null;
     }
     if (res.status === 401) {
-      const k = (prompt('Invalid operator key. Re-enter your Operator API Key:') || '').trim();
-      if (!k) return null;
-      operatorKey = k;
-      sessionStorage.setItem('vlp_operator_key', k);
-      return keyApiFetch(url, options);
+      logout();
+      return null;
     }
     return res;
   }
 
   function logout() {
     sessionStorage.removeItem('vlp_operator_token');
-    sessionStorage.removeItem('vlp_operator_key');
     token = null;
-    operatorKey = '';
     document.getElementById('dashboard-screen').classList.add('hidden');
     document.getElementById('login-screen').classList.remove('hidden');
     document.getElementById('header-logout').classList.add('hidden');
   }
 
   // ── Screen transitions ────────────────────────────────────────────────────────
-  function showDashboard(profilesData) {
+  function showDashboard() {
     document.getElementById('login-screen').classList.add('hidden');
     document.getElementById('dashboard-screen').classList.remove('hidden');
     document.getElementById('header-logout').classList.remove('hidden');
     lucide.createIcons();
-    if (profilesData) allProfiles = profilesData;
-    populateSubmissionsFromProfiles();
-    populateAnalyticsFromProfiles();
+    loadProfiles();
   }
 
   function switchTab(tab) {
@@ -802,17 +798,8 @@
     const container = document.getElementById('dev-cards');
     container.innerHTML = '<p class="text-slate-500 text-sm col-span-3">Loading…</p>';
 
-    // Task 3: use direct fetch instead of keyApiFetch to suppress the
-    // "Invalid operator key" prompt — login screen already gates access.
-    let res;
-    try {
-      res = await fetch('/operator/developers', {
-        headers: { 'Content-Type': 'application/json', 'x-operator-key': operatorKey }
-      });
-    } catch {
-      container.innerHTML = '<p class="text-red-400 text-sm col-span-3">Error loading developers.</p>';
-      return;
-    }
+    const res = await keyApiFetch('/operator/developers');
+    if (!res) { container.innerHTML = '<p class="text-red-400 text-sm col-span-3">Error loading developers.</p>'; return; }
     if (!res.ok) { container.innerHTML = '<p class="text-red-400 text-sm col-span-3">Error loading developers.</p>'; return; }
 
     const data = await res.json();
@@ -883,14 +870,16 @@
     const tbody = document.getElementById('prof-table-body');
     tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-slate-500 text-sm">Loading…</td></tr>';
 
-    const res = await keyApiFetch('/operator/profiles');
+    const res = await keyApiFetch('/operator/submissions');
     if (!res) return;
     const data = await res.json();
     if (!data.ok) {
       tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-8 text-center text-red-400 text-sm">Error loading profiles</td></tr>';
       return;
     }
-    allProfiles = data.profiles || [];
+    allProfiles = data.results || [];
+    populateSubmissionsFromProfiles();
+    populateAnalyticsFromProfiles();
     renderProfRows();
   }
 
@@ -933,9 +922,9 @@
   }
 
   async function togglePublish(id, value, checkboxEl) {
-    const res = await keyApiFetch('/operator/profiles', {
+    const res = await keyApiFetch('/operator/developer', {
       method: 'PATCH',
-      body: JSON.stringify({ id, publish_profile: value })
+      body: JSON.stringify({ ref_number: id, publish_profile: value })
     });
     if (!res || res.status !== 200) {
       checkboxEl.checked = !value; // revert
@@ -1077,13 +1066,21 @@
     document.getElementById('ef-spinner').classList.remove('hidden');
     document.getElementById('ef-submit').disabled = true;
 
+    const templateIdMap = {
+      consentPublish: 'default-consent-publish',
+      welcomeAboard:  'default-welcome-aboard',
+      clientMatch:    'default-client-match'
+    };
+    const templateId = templateIdMap[template];
+    const subject    = EMAIL_PREVIEWS[template]?.subject || '';
+
     const filters = {};
     if (filterStatus) filters.status       = filterStatus;
     if (filterCron)   filters.cronSchedule = filterCron;
 
-    const res = await keyApiFetch('/operator/email', {
+    const res = await keyApiFetch('/operator/bulk-email', {
       method: 'POST',
-      body: JSON.stringify({ template, filters, jobPostId: jobPostId || undefined })
+      body: JSON.stringify({ eventId: crypto.randomUUID(), subject, templateId, filters })
     });
 
     document.getElementById('ef-submit-text').textContent = 'Send Emails';
@@ -1093,7 +1090,7 @@
     if (res) {
       const data = await res.json();
       if (data.ok) {
-        resultEl.textContent = `Done — ${data.sent} sent, ${data.skipped} skipped${data.errors?.length ? `, ${data.errors.length} failed` : ''}.`;
+        resultEl.textContent = `Done — ${data.sent} sent${data.failed ? `, ${data.failed} failed` : ''}${data.errors?.length ? ` (${data.errors.length} batch errors)` : ''}.`;
         resultEl.className = 'mt-2 rounded-lg px-4 py-3 text-sm text-emerald-400 bg-emerald-950/30 border border-emerald-800/50';
       } else {
         resultEl.textContent = data.error || 'Failed to send emails.';

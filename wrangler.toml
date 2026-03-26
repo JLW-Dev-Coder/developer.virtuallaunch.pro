@@ -1,7 +1,6 @@
 name = "vlp-onboarding-worker"
 main = "workers/src/index.js"
 compatibility_date = "2026-03-20"
-type = "javascript"
 
 [[r2_buckets]]
 binding = "ONBOARDING_R2"
@@ -17,17 +16,27 @@ preview_bucket_name = "onboarding-records"
 # Operator session store — create the KV namespace in the Cloudflare dashboard
 # and paste the namespace ID below (leave empty until created)
 [[kv_namespaces]]
-name = "OPERATOR_SESSIONS"
+binding = "OPERATOR_SESSIONS"
 id   = "7e094500597c41e2954fd4e6894a36cf"
 
 [vars]
 STRIPE_PRICE_FREE = "REPLACE_IN_DASHBOARD"
 STRIPE_PRICE_PAID = "REPLACE_IN_DASHBOARD"
 EMAIL_FROM        = "team@virtuallaunch.pro"
-CF_ZONE_ID        = "" # Set to your Cloudflare zone ID (found in dashboard → Overview)
+CF_ZONE_ID        = "dc402def9a745a2a65fc9b829b72c6f3" # Cloudflare zone ID
 
+# OPERATOR_KEY         — set via: wrangler secret put OPERATOR_KEY
+#                        Used by POST /operator/auth (x-operator-key header validation)
 # RESEND_API_KEY       — set via: wrangler secret put RESEND_API_KEY
 # GOOGLE_PRIVATE_KEY   — set via: wrangler secret put GOOGLE_PRIVATE_KEY
 # GOOGLE_CLIENT_EMAIL  — set via: wrangler secret put GOOGLE_CLIENT_EMAIL
 # CF_API_TOKEN         — set via: wrangler secret put CF_API_TOKEN
 #                        Token needs Analytics:Read permission
+# CRON_SECRET          — set via: wrangler secret put CRON_SECRET
+#                        Used by POST /cron/job-match (x-cron-secret header auth)
+#                        Use a long random string — unrelated to OPERATOR_KEY
+
+[triggers]
+# Cron trigger — fires POST /cron/job-match on schedule
+# Adjust cadence as needed; handler is at functions/cron/job-match.js
+crons = ["0 9 * * 1"] # Every Monday at 9am UTC
