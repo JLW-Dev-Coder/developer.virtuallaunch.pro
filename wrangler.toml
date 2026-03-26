@@ -1,7 +1,9 @@
 name = "vlp-onboarding-worker"
-main = "workers/src/index.js"
 compatibility_date = "2026-03-20"
 pages_build_output_dir = "."
+# Cron schedule: "0 9 * * 1" (every Monday 9am UTC)
+# Configure via Cloudflare Dashboard → Pages → Settings → Functions → Cron Triggers
+# Trigger path: POST /cron/job-match (requires x-cron-secret header)
 
 [[r2_buckets]]
 binding = "ONBOARDING_R2"
@@ -37,7 +39,3 @@ CF_ZONE_ID        = "dc402def9a745a2a65fc9b829b72c6f3" # Cloudflare zone ID
 #                        Used by POST /cron/job-match (x-cron-secret header auth)
 #                        Use a long random string — unrelated to OPERATOR_KEY
 
-[triggers]
-# Cron trigger — fires POST /cron/job-match on schedule
-# Adjust cadence as needed; handler is at functions/cron/job-match.js
-crons = ["0 9 * * 1"] # Every Monday at 9am UTC
