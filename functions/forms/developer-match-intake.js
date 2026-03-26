@@ -22,11 +22,12 @@ export async function onRequestPost({ request, env }) {
     'projectType', 'budget', 'timeline', 'description',
     'skillsPreference', 'experienceLevel', 'selectedSkills'
   ];
-  for (const field of requiredFields) {
-    const val = payload[field];
-    if (val === undefined || val === null || val === '') {
-      return json({ ok: false, error: 'validation_failed' }, 400, CORS);
-    }
+  const missingFields = requiredFields.filter(f => {
+    const val = payload[f];
+    return val === undefined || val === null || val === '';
+  });
+  if (missingFields.length > 0) {
+    return json({ ok: false, error: 'validation_failed', missing: missingFields }, 400, CORS);
   }
 
   // Validate enum fields
@@ -36,12 +37,12 @@ export async function onRequestPost({ request, env }) {
   const skillsPrefEnum    = ['yes', 'no'];
   const expLevelEnum      = ['novice', 'intermediate', 'experienced'];
 
-  if (!projectTypeEnum.includes(payload.projectType)) return json({ ok: false, error: 'validation_failed' }, 400, CORS);
-  if (!budgetEnum.includes(payload.budget))           return json({ ok: false, error: 'validation_failed' }, 400, CORS);
-  if (!timelineEnum.includes(payload.timeline))       return json({ ok: false, error: 'validation_failed' }, 400, CORS);
-  if (!skillsPrefEnum.includes(payload.skillsPreference)) return json({ ok: false, error: 'validation_failed' }, 400, CORS);
-  if (!expLevelEnum.includes(payload.experienceLevel))    return json({ ok: false, error: 'validation_failed' }, 400, CORS);
-  if (!Array.isArray(payload.selectedSkills))             return json({ ok: false, error: 'validation_failed' }, 400, CORS);
+  if (!projectTypeEnum.includes(payload.projectType))     return json({ ok: false, error: 'validation_failed', invalid: 'projectType' }, 400, CORS);
+  if (!budgetEnum.includes(payload.budget))               return json({ ok: false, error: 'validation_failed', invalid: 'budget' }, 400, CORS);
+  if (!timelineEnum.includes(payload.timeline))           return json({ ok: false, error: 'validation_failed', invalid: 'timeline' }, 400, CORS);
+  if (!skillsPrefEnum.includes(payload.skillsPreference)) return json({ ok: false, error: 'validation_failed', invalid: 'skillsPreference' }, 400, CORS);
+  if (!expLevelEnum.includes(payload.experienceLevel))    return json({ ok: false, error: 'validation_failed', invalid: 'experienceLevel' }, 400, CORS);
+  if (!Array.isArray(payload.selectedSkills))             return json({ ok: false, error: 'validation_failed', invalid: 'selectedSkills' }, 400, CORS);
 
   if (!env.ONBOARDING_R2) {
     return json({ ok: false, error: 'storage_unavailable' }, 500, CORS);
