@@ -1,6 +1,6 @@
 name = "vlp-onboarding-worker"
 compatibility_date = "2026-03-20"
-pages_build_output_dir = "."
+pages_build_output_dir = "public"
 # Cron schedule: "0 9 * * 1" (every Monday 9am UTC)
 # Configure via Cloudflare Dashboard → Pages → Settings → Functions → Cron Triggers
 # Trigger path: POST /cron/job-match (requires x-cron-secret header)
