@@ -1,58 +1,140 @@
 {
   "auth": {
     "required": true,
-    "type": "operator",
-    "fields": ["email", "accessCode"],
-    "sessionCookie": "vlp_operator_session"
+    "trustClientIdentityFields": false,
+    "type": "session"
   },
   "contract": {
-    "title": "VLP Operator Dashboard Contract",
-    "version": 2
+    "authority": ["R2_VIRTUAL_LAUNCH"],
+    "governs": "Operator session authentication and dashboard data access",
+    "path": "contracts/operator.json",
+    "source": "Virtual Launch Pro",
+    "title": "Virtual Launch Pro — Operator Contract — Session Auth",
+    "usedOnPages": ["/operator"],
+    "validation": {
+      "enumStrict": true,
+      "normalizeCheckboxToBoolean": true,
+      "rejectUnknownValues": true,
+      "requireJsonContentType": true
+    },
+    "version": 1
   },
-  "endpoints": {
-    "auth":         { "path": "/operator/auth",         "method": "POST" },
-    "submissions":  { "path": "/operator/submissions",  "method": "GET"  },
-    "post":         { "path": "/operator/post",         "method": "POST" },
-    "developers":   { "path": "/operator/developers",   "method": "GET"  },
-    "analytics":    { "path": "/operator/analytics",    "method": "GET"  },
-    "developerRef": { "path": "/operator/developer",    "method": "GET"  }
-  },
-  "postPayload": {
-    "required": ["developerRef", "postContent"],
-    "properties": {
-      "developerRef":        { "type": "string" },
-      "developerName":       { "type": "string" },
-      "posterName":          { "type": "string" },
-      "postContent":         { "type": "string" },
-      "postUrl":             { "type": "string" },
-      "dueDate":             { "type": "string" },
-      "cronSchedule":        { "type": "string" },
-      "status":              { "type": "string", "enum": ["complete","pending","upcoming"] },
-      "nextNotificationDue": { "type": "string" }
+  "delivery": {
+    "endpoint": "/operator/auth",
+    "method": "POST",
+    "receiptKeyPattern": "receipts/{source}/{eventId}.json",
+    "receiptSource": "operator",
+    "signature": {
+      "header": null,
+      "required": false,
+      "secretEnvVar": null
     }
   },
-  "storage": {
-    "dashboardRecords": "dashboard-records/{developerRef}.json",
-    "onboardingRecords": "onboarding-records/{eventId}.json",
-    "jobPosts": "job-posts/{postId}.json"
+  "effects": {
+    "dedupeKey": "payload.eventId",
+    "eventIdFrom": "payload.eventId",
+    "writeOrder": ["receiptAppend"],
+    "writes": ["operator-sessions"]
   },
-  "apiAuth": {
-    "header": "x-operator-key",
-    "env": "OPERATOR_KEY"
-  },
-  "jobPost": {
+  "payload": {
+    "additionalProperties": false,
     "properties": {
-      "job_title":          { "type": "string",  "required": true },
-      "job_description":    { "type": "string",  "required": true },
-      "hourly_rate_range":  { "type": "string",  "required": true },
-      "required_skills":    { "type": "array",   "items": { "type": "string" }, "required": true },
-      "contact_method":     { "type": "string",  "required": true },
-      "posted_date":        { "type": "string",  "format": "date-time" },
-      "status":             { "type": "string",  "enum": ["active", "closed"] }
+      "accessCode": { "minLength": 1, "type": "string" },
+      "email": { "minLength": 1, "type": "string" },
+      "eventId": { "minLength": 1, "type": "string" }
+    },
+    "required": ["eventId", "email", "accessCode"],
+    "type": "object"
+  },
+  "response": {
+    "deduped": {
+      "deduped": true,
+      "eventId": "{effects.eventIdFrom}",
+      "ok": true
+    },
+    "error": {
+      "error": "validation_failed",
+      "ok": false
+    },
+    "success": {
+      "eventId": "{effects.eventIdFrom}",
+      "ok": true,
+      "status": "authenticated"
     }
   },
-  "bulkEmail": {
-    "filterFields": ["publish_profile", "status", "cronSchedule"],
-    "templates": ["consentPublish", "welcomeAboard", "clientMatch"]
+  "schema": {
+    "name": "vlp_operator_auth",
+    "version": 1
+  },
+  "notes": {
+    "additionalEndpoints": [
+      {
+        "name": "submissions",
+        "endpoint": "/operator/submissions",
+        "method": "GET"
+      },
+      {
+        "name": "post",
+        "endpoint": "/operator/post",
+        "method": "POST"
+      },
+      {
+        "name": "developers",
+        "endpoint": "/operator/developers",
+        "method": "GET"
+      },
+      {
+        "name": "analytics",
+        "endpoint": "/operator/analytics",
+        "method": "GET"
+      },
+      {
+        "name": "developerRef",
+        "endpoint": "/operator/developer",
+        "method": "GET"
+      }
+    ],
+    "authSessionFields": {
+      "fields": ["email", "accessCode"],
+      "sessionCookie": "vlp_operator_session"
+    },
+    "postPayload": {
+      "required": ["developerRef", "postContent"],
+      "properties": {
+        "developerRef":        { "type": "string" },
+        "developerName":       { "type": "string" },
+        "posterName":          { "type": "string" },
+        "postContent":         { "type": "string" },
+        "postUrl":             { "type": "string" },
+        "dueDate":             { "type": "string" },
+        "cronSchedule":        { "type": "string" },
+        "status":              { "type": "string", "enum": ["complete", "pending", "upcoming"] },
+        "nextNotificationDue": { "type": "string" }
+      }
+    },
+    "storage": {
+      "dashboardRecords": "dashboard-records/{developerRef}.json",
+      "onboardingRecords": "onboarding-records/{eventId}.json",
+      "jobPosts": "job-posts/{postId}.json"
+    },
+    "apiAuth": {
+      "header": "x-operator-key",
+      "env": "OPERATOR_KEY"
+    },
+    "jobPost": {
+      "properties": {
+        "job_title":         { "type": "string", "required": true },
+        "job_description":   { "type": "string", "required": true },
+        "hourly_rate_range": { "type": "string", "required": true },
+        "required_skills":   { "type": "array", "items": { "type": "string" }, "required": true },
+        "contact_method":    { "type": "string", "required": true },
+        "posted_date":       { "type": "string", "format": "date-time" },
+        "status":            { "type": "string", "enum": ["active", "closed"] }
+      }
+    },
+    "bulkEmail": {
+      "filterFields": ["publish_profile", "status", "cronSchedule"],
+      "templates": ["consentPublish", "welcomeAboard", "clientMatch"]
+    }
   }
 }

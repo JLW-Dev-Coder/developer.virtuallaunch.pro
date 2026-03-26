@@ -9,9 +9,9 @@
       "R2_VIRTUAL_LAUNCH"
     ],
     "governs": "Public intake form submission for requesting a developer match (company, contact info, project details, skills preferences).",
-    "path": "app/contracts/forms/developer-match-intake.contract.json",
+    "path": "contracts/find-developers.json",
     "source": "Virtual Launch Pro",
-    "title": "Virtual Launch Pro - Form Contract - Developer Match Intake",
+    "title": "Virtual Launch Pro — Form Contract — Developer Match Intake",
     "usedOnPages": [
       "/public/find-developers.html"
     ],

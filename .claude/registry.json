@@ -13,7 +13,6 @@
       "public/operator.html",
       "public/js/developers.js",
       "public/js/partials-loader.js",
-      "public/clientReference.js",
       "public/partials/header.html",
       "public/partials/footer.html"
     ],
@@ -21,6 +20,15 @@
     "paymentViewSelector": "#payment-page",
     "planSelectionTrigger": "selectPlan(plan)"
   },
+  "formUtilities": [
+    {
+      "path": "functions/forms/clientReference.js",
+      "type": "client-form-utility",
+      "route": "/forms/onboarding",
+      "contract": "contracts/onboarding.json",
+      "description": "Client-side submission and status utilities for the onboarding form."
+    }
+  ],
   "backend": {
     "entry": "workers/src/index.js",
     "framework": "Cloudflare Workers + Cloudflare Pages Functions",

@@ -7,7 +7,7 @@
   "contract": {
     "authority": ["R2_VIRTUAL_LAUNCH"],
     "governs": "Onboarding form submission for Virtual Launch Pro developers",
-    "path": "app/contracts/forms/onboarding.contract.json",
+    "path": "contracts/onboarding.json",
     "source": "Virtual Launch Pro",
     "title": "Virtual Launch Pro — Form Contract — Onboarding",
     "usedOnPages": ["/public/onboarding.html"],

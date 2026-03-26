@@ -1,31 +1,80 @@
 {
-  "name": "support",
-  "endpoints": {
-    "status": {
-      "route": "/forms/support/status",
-      "method": "GET",
-      "query": {
-        "clientRef": {
-          "type": "string",
-          "required": true,
-          "pattern": "^VLP-[a-zA-Z0-9]+$"
-        }
+  "auth": {
+    "required": false,
+    "trustClientIdentityFields": false,
+    "type": "none"
+  },
+  "contract": {
+    "authority": ["R2_VIRTUAL_LAUNCH"],
+    "governs": "Client support status and posts lookup by client reference ID",
+    "path": "contracts/support.json",
+    "source": "Virtual Launch Pro",
+    "title": "Virtual Launch Pro — Contract — Support Status",
+    "usedOnPages": ["/support.html"],
+    "validation": {
+      "enumStrict": true,
+      "normalizeCheckboxToBoolean": false,
+      "rejectUnknownValues": true,
+      "requireJsonContentType": false
+    },
+    "version": 1
+  },
+  "delivery": {
+    "endpoint": "/forms/support/status",
+    "method": "GET",
+    "receiptKeyPattern": null,
+    "receiptSource": null,
+    "signature": {
+      "header": null,
+      "required": false,
+      "secretEnvVar": null
+    }
+  },
+  "effects": {
+    "dedupeKey": "query.clientRef",
+    "eventIdFrom": "query.clientRef",
+    "writeOrder": [],
+    "writes": []
+  },
+  "payload": {
+    "additionalProperties": false,
+    "properties": {
+      "clientRef": {
+        "pattern": "^VLP-[a-zA-Z0-9]+$",
+        "type": "string"
       }
     },
-    "posts": {
+    "required": ["clientRef"],
+    "type": "object"
+  },
+  "response": {
+    "deduped": {
+      "deduped": true,
+      "ok": true
+    },
+    "error": {
+      "error": "not_found",
+      "ok": false
+    },
+    "success": {
+      "ok": true,
+      "status": "string",
+      "updatedAt": "string"
+    }
+  },
+  "schema": {
+    "name": "vlp_support_status",
+    "version": 1
+  },
+  "notes": {
+    "secondaryEndpoint": {
       "route": "/forms/support/posts",
       "method": "GET",
       "query": {
-        "clientRef": {
-          "type": "string",
-          "required": true
-        }
-      }
-    }
-  },
-  "response": {
-    "status": { "ok": "boolean", "status": "string", "updatedAt": "string" },
-    "posts":  { "ok": "boolean", "posts": "array (max 5)" }
-  },
-  "errors": ["invalid_reference", "not_found"]
+        "clientRef": { "type": "string", "required": true }
+      },
+      "response": { "ok": "boolean", "posts": "array (max 5)" }
+    },
+    "errors": ["invalid_reference", "not_found"]
+  }
 }

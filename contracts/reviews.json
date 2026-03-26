@@ -9,7 +9,7 @@
       "R2_VIRTUAL_LAUNCH"
     ],
     "governs": "Developer review submissions for Virtual Launch Pro",
-    "path": "app/contracts/forms/review-submit.contract.json",
+    "path": "contracts/reviews.json",
     "source": "Virtual Launch Pro",
     "title": "Virtual Launch Pro — Form Contract — Review Submit",
     "usedOnPages": [
