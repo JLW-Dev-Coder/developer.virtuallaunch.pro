@@ -23,8 +23,8 @@ binding = "OPERATOR_SESSIONS"
 id   = "7e094500597c41e2954fd4e6894a36cf"
 
 [vars]
-STRIPE_PRICE_FREE = "REPLACE_IN_DASHBOARD"
-STRIPE_PRICE_PAID = "REPLACE_IN_DASHBOARD"
+STRIPE_PRICE_FREE = "price_1TD7P79ROeyeXOqeuTnVu3oS"
+STRIPE_PRICE_PAID = "price_1TEtJw9ROeyeXOqeG9pEHCEt"
 EMAIL_FROM        = "team@virtuallaunch.pro"
 CF_ZONE_ID        = "dc402def9a745a2a65fc9b829b72c6f3" # Cloudflare zone ID
 
