@@ -46,6 +46,19 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
+    // Check for duplicate email using the lightweight email index
+    const normalizedEmail = payload.email.toLowerCase().trim();
+    const emailIndexKey   = `onboarding-email-index/${normalizedEmail}.json`;
+    const existingIndex   = await getRecord(env, emailIndexKey);
+    if (existingIndex) {
+      return json({
+        ok: false,
+        error: 'duplicate_email',
+        message: 'A profile already exists for this email address.',
+        existingRef: existingIndex.eventId
+      }, 409, CORS);
+    }
+
     const now = new Date().toISOString();
     const record = {
       ...payload,
@@ -65,6 +78,13 @@ export async function onRequestPost({ request, env }) {
     }
 
     await putRecord(env, recordKey, record);
+
+    // Write email index entry so future submissions from this address are rejected
+    await putRecord(env, emailIndexKey, {
+      eventId:    payload.eventId,
+      ref_number: payload.eventId,
+      createdAt:  now
+    });
 
     // Send confirmation email (non-blocking — don't fail submission if email fails)
     try {
