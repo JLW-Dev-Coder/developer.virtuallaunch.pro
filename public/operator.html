@@ -95,26 +95,26 @@ tbody td{padding:11px 20px;font-size:.8rem;color:#cbd5e1}
 
   <!-- LOGIN -->
   <div id="login-screen" class="h-full w-full flex items-center justify-center">
-    <div class="w-full max-w-sm fade-in">
-      <div class="text-center mb-10">
-        <div class="inline-flex items-center gap-2.5 mb-5">
-          <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20" style="background:linear-gradient(135deg,#10b981,#059669)">
-            <i data-lucide="rocket" style="width:18px;height:18px;color:#020617"></i>
+    <div class="w-full fade-in" style="max-width:420px">
+      <div class="text-center mb-12">
+        <div class="inline-flex items-center gap-3 mb-6">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-500/20" style="background:linear-gradient(135deg,#10b981,#059669)">
+            <i data-lucide="rocket" style="width:24px;height:24px;color:#020617"></i>
           </div>
-          <span class="text-base font-semibold tracking-tight">Virtual Launch Pro</span>
+          <span class="text-xl font-semibold tracking-tight">Virtual Launch Pro</span>
         </div>
-        <h1 class="text-2xl font-semibold tracking-tight mb-1.5">Operator Dashboard</h1>
-        <p class="text-sm text-slate-500">Authenticated access only</p>
+        <h1 class="text-3xl font-semibold tracking-tight mb-2">Operator Dashboard</h1>
+        <p class="text-base text-slate-500">Authenticated access only</p>
       </div>
-      <div class="vlp-card p-6">
-        <form id="login-form" class="space-y-4">
+      <div class="vlp-card p-8">
+        <form id="login-form" class="space-y-5">
           <div>
-            <label class="block text-[0.65rem] font-semibold text-slate-500 mb-2 uppercase tracking-widest">Operator Key</label>
-            <input type="password" id="login-key" placeholder="Enter your operator key" required>
+            <label class="block text-[0.75rem] font-semibold text-slate-500 mb-2.5 uppercase tracking-widest">Operator Key</label>
+            <input type="password" id="login-key" placeholder="Enter your operator key" required style="font-size:.95rem;padding:13px 16px">
           </div>
-          <button type="submit" id="login-btn" class="btn-primary w-full py-3">Sign In</button>
+          <button type="submit" id="login-btn" class="btn-primary w-full" style="padding:14px;font-size:.9rem">Sign In</button>
         </form>
-        <p id="login-error" class="hidden text-red-400 text-xs text-center mt-3">Invalid operator key. Please try again.</p>
+        <p id="login-error" class="hidden text-red-400 text-sm text-center mt-4">Invalid operator key. Please try again.</p>
       </div>
     </div>
   </div>
@@ -229,11 +229,76 @@ async function rAnalytics(){
   const{data}=await api('GET','/operator/analytics');
   if(!data.ok){toast('Failed to load analytics','error');return}
   const s=data.submissions||{};
+  const pv=data.pageViews||{};
+  const pvData=pv.data&&typeof pv.data==='object'?pv.data:{};
+  const pvAvail=pv.data&&pv.data!==null&&!pv.error;
   const cards=[{l:'Onboarding',v:s.onboarding??0,icon:'inbox',c:'#10b981'},{l:'Find Developers',v:s.findDevelopers??0,icon:'users',c:'#60a5fa'},{l:'Support',v:s.support??0,icon:'life-buoy',c:'#fbbf24'},{l:'Reviews',v:s.reviews??0,icon:'star',c:'#a78bfa'}];
   const ts=(data.timeSeries||[]).slice(-7);
   const mx=Math.max(...ts.map(t=>(t.onboarding||0)+(t.findDevelopers||0)+(t.support||0)+(t.reviews||0)),1);
+
+  // Extract CF metrics — handles both flat object and nested viewer/httpRequests shapes
+  function cfMetric(key,fallback='—'){
+    if(!pvAvail)return fallback;
+    const d=pvData;
+    // try top-level
+    if(d[key]!==undefined)return typeof d[key]==='number'?d[key].toLocaleString():d[key];
+    // try viewer.budget / viewer.zones shape
+    const z=d.viewer?.zones?.[0];
+    if(z&&z[key]!==undefined)return typeof z[key]==='number'?z[key].toLocaleString():z[key];
+    // try httpRequests1dGroups sum
+    const groups=z?.httpRequests1dGroups||z?.httpRequests1hGroups||[];
+    if(groups.length){
+      const sums=groups.reduce((acc,g)=>{const agg=g.sum||g.uniq||{};Object.keys(agg).forEach(k=>{acc[k]=(acc[k]||0)+(agg[k]||0)});return acc},{});
+      if(sums[key]!==undefined)return sums[key].toLocaleString();
+      const dims=groups[0]?.dimensions||{};
+      if(dims[key]!==undefined)return dims[key];
+    }
+    return fallback;
+  }
+
+  // Build CF stat cards from whatever is available
+  function cfNum(key){
+    if(!pvAvail)return null;
+    const d=pvData;
+    if(typeof d[key]==='number')return d[key];
+    const z=d.viewer?.zones?.[0];
+    if(z&&typeof z[key]==='number')return z[key];
+    const groups=z?.httpRequests1dGroups||z?.httpRequests1hGroups||[];
+    if(groups.length){
+      const total=groups.reduce((acc,g)=>{const v=(g.sum||g.uniq||{})[key];return acc+(typeof v==='number'?v:0)},0);
+      if(total>0)return total;
+    }
+    return null;
+  }
+
+  const cfStats=[];
+  const cfKeys=[
+    {k:'pageViews',l:'Page Views',icon:'eye',c:'#60a5fa'},
+    {k:'visits',l:'Unique Visits',icon:'users',c:'#a78bfa'},
+    {k:'requests',l:'Total Requests',icon:'activity',c:'#34d399'},
+    {k:'bytes',l:'Bandwidth',icon:'hard-drive',c:'#fbbf24'},
+    {k:'cachedRequests',l:'Cached Requests',icon:'zap',c:'#10b981'},
+    {k:'encryptedRequests',l:'Encrypted Req.',icon:'lock',c:'#f472b6'},
+    {k:'threats',l:'Threats Blocked',icon:'shield',c:'#f87171'},
+    {k:'uniqueVisitors',l:'Unique Visitors',icon:'user-check',c:'#818cf8'},
+  ];
+  cfKeys.forEach(({k,l,icon,c})=>{
+    const v=cfNum(k);
+    if(v!==null)cfStats.push({l,v,icon,c,raw:v});
+  });
+
+  // Also try to extract top pages / countries if present
+  const z=pvAvail?(pvData.viewer?.zones?.[0]||{}):null;
+  const topPages=z?.topPaths||z?.topPathsWithRequests||pvData.topPages||[];
+  const topCountries=z?.topCountries||pvData.topCountries||[];
+  const topBrowsers=z?.topBrowsers||pvData.topBrowsers||[];
+  const topOS=z?.topOperatingSystems||pvData.topOperatingSystems||[];
+
   mc.innerHTML=`<div class="p-8 fade-in">
     ${hdr('Overview','Platform metrics and submission activity')}
+
+    <!-- Submission stat cards -->
+    <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-3">Form Submissions</div>
     <div class="grid grid-cols-4 gap-4 mb-7">
       ${cards.map(c=>`<div class="vlp-card p-5 flex gap-3">
         <div class="stat-pip" style="background:linear-gradient(180deg,${c.c},${c.c}55)"></div>
@@ -244,7 +309,28 @@ async function rAnalytics(){
         <i data-lucide="${c.icon}" style="width:14px;height:14px;color:${c.c};opacity:.5;flex-shrink:0;margin-top:2px"></i>
       </div>`).join('')}
     </div>
-    <div class="grid grid-cols-2 gap-5">
+
+    <!-- Cloudflare stat cards -->
+    <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-3 flex items-center gap-2">
+      Cloudflare Analytics
+      ${pvAvail?`<span style="font-size:.58rem;padding:1px 7px;border-radius:9999px;background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.18)">LIVE</span>`:`<span style="font-size:.58rem;padding:1px 7px;border-radius:9999px;background:rgba(100,116,139,.1);color:#94a3b8;border:1px solid rgba(100,116,139,.18)">${pv.error||'CF_API_TOKEN not configured'}</span>`}
+    </div>
+    ${pvAvail&&cfStats.length?`<div class="grid grid-cols-4 gap-4 mb-7">
+      ${cfStats.map(c=>`<div class="vlp-card p-5 flex gap-3">
+        <div class="stat-pip" style="background:linear-gradient(180deg,${c.c},${c.c}55)"></div>
+        <div class="flex-1 min-w-0">
+          <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-2">${c.l}</div>
+          <div class="text-xl font-semibold">${c.v.toLocaleString()}</div>
+        </div>
+        <i data-lucide="${c.icon}" style="width:14px;height:14px;color:${c.c};opacity:.5;flex-shrink:0;margin-top:2px"></i>
+      </div>`).join('')}
+    </div>`:`<div class="vlp-card p-5 mb-7 flex items-center gap-3" style="border-color:rgba(100,116,139,.2)">
+      <i data-lucide="info" style="width:14px;height:14px;color:#475569;flex-shrink:0"></i>
+      <span class="text-[0.75rem] text-slate-600">Set <code style="font-size:.72rem;background:rgba(15,23,42,.6);padding:1px 6px;border-radius:4px;color:#94a3b8">CF_API_TOKEN</code> and <code style="font-size:.72rem;background:rgba(15,23,42,.6);padding:1px 6px;border-radius:4px;color:#94a3b8">CF_ZONE_ID</code> environment variables to enable Cloudflare page view analytics.</span>
+    </div>`}
+
+    <!-- Charts row -->
+    <div class="grid grid-cols-2 gap-5 mb-5">
       <div class="vlp-card p-5">
         <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-5">Submission Volume</div>
         <div class="flex items-end gap-2 h-28">
@@ -252,20 +338,47 @@ async function rAnalytics(){
         </div>
       </div>
       <div class="vlp-card p-5">
-        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-3">Total</div>
+        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-3">Submission Breakdown</div>
         <div class="text-4xl font-semibold gradient-text mb-1">${(s.total??0).toLocaleString()}</div>
-        <div class="text-xs text-slate-600 mb-5">across all forms</div>
+        <div class="text-xs text-slate-600 mb-4">total submissions · window: ${data.window?.from?.slice(0,10)??'—'} → ${data.window?.to?.slice(0,10)??'—'}</div>
         <div class="space-y-2">
           ${[['Onboarding',s.onboarding??0,'#10b981'],['Find Devs',s.findDevelopers??0,'#60a5fa'],['Support',s.support??0,'#fbbf24'],['Reviews',s.reviews??0,'#a78bfa']].map(([l,v,c])=>`<div class="flex items-center gap-2.5">
-            <div class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background:${c}"></div>
+            <div class="w-1.5 h-1.5 rounded-full flex-shrink:0" style="background:${c}"></div>
             <span class="text-[0.7rem] text-slate-600 w-20">${l}</span>
             <div class="flex-1 skill-bar"><div class="skill-fill" style="width:${s.total?Math.round(v/s.total*100):0}%;background:${c}88"></div></div>
             <span class="text-[0.7rem] text-slate-500 w-6 text-right">${v}</span>
           </div>`).join('')}
         </div>
-        <div class="mt-4 pt-3 divider text-[0.62rem] text-slate-700">Window: ${data.window?.from?.slice(0,10)??'—'} → ${data.window?.to?.slice(0,10)??'—'}</div>
       </div>
     </div>
+
+    <!-- CF breakdown tables (only if data present) -->
+    ${(topPages.length||topCountries.length||topBrowsers.length||topOS.length)?`<div class="grid grid-cols-2 gap-5">
+      ${topCountries.length?`<div class="vlp-card p-5">
+        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-4">Top Countries</div>
+        <div class="space-y-2">
+          ${topCountries.slice(0,8).map((row,i)=>{const country=row.clientCountryName||row.country||row.dimensions?.clientCountryName||'Unknown';const visits=row.sum?.visits||row.visits||row.count||0;const maxV=topCountries[0]?.sum?.visits||topCountries[0]?.visits||topCountries[0]?.count||1;return`<div class="flex items-center gap-2.5"><span class="text-[0.68rem] text-slate-500 w-4 text-right">${i+1}</span><span class="text-[0.72rem] text-slate-300 flex-1 truncate">${country}</span><div class="skill-bar w-20"><div class="skill-fill" style="width:${Math.round(visits/maxV*100)}%;background:#60a5fa88"></div></div><span class="text-[0.68rem] text-slate-500 w-10 text-right">${typeof visits==='number'?visits.toLocaleString():visits}</span></div>`}).join('')}
+        </div>
+      </div>`:''}
+      ${topPages.length?`<div class="vlp-card p-5">
+        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-4">Top Pages</div>
+        <div class="space-y-2">
+          ${topPages.slice(0,8).map((row,i)=>{const path=row.path||row.dimensions?.uaBrowserFamily||row.clientRequestPath||'—';const reqs=row.sum?.requests||row.requests||row.count||0;const maxR=topPages[0]?.sum?.requests||topPages[0]?.requests||topPages[0]?.count||1;return`<div class="flex items-center gap-2.5"><span class="text-[0.68rem] text-slate-500 w-4 text-right">${i+1}</span><span class="text-[0.72rem] text-slate-300 flex-1 truncate font-mono">${path}</span><div class="skill-bar w-20"><div class="skill-fill" style="width:${Math.round(reqs/maxR*100)}%"></div></div><span class="text-[0.68rem] text-slate-500 w-10 text-right">${typeof reqs==='number'?reqs.toLocaleString():reqs}</span></div>`}).join('')}
+        </div>
+      </div>`:''}
+      ${topBrowsers.length?`<div class="vlp-card p-5">
+        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-4">Top Browsers</div>
+        <div class="space-y-2">
+          ${topBrowsers.slice(0,6).map((row,i)=>{const name=row.uaBrowserFamily||row.browser||row.dimensions?.uaBrowserFamily||'Unknown';const reqs=row.sum?.requests||row.requests||row.count||0;const maxR=topBrowsers[0]?.sum?.requests||topBrowsers[0]?.requests||topBrowsers[0]?.count||1;return`<div class="flex items-center gap-2.5"><span class="text-[0.68rem] text-slate-500 w-4 text-right">${i+1}</span><span class="text-[0.72rem] text-slate-300 flex-1 truncate">${name}</span><div class="skill-bar w-20"><div class="skill-fill" style="width:${Math.round(reqs/maxR*100)}%;background:#a78bfa88"></div></div><span class="text-[0.68rem] text-slate-500 w-10 text-right">${typeof reqs==='number'?reqs.toLocaleString():reqs}</span></div>`}).join('')}
+        </div>
+      </div>`:''}
+      ${topOS.length?`<div class="vlp-card p-5">
+        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-4">Top Operating Systems</div>
+        <div class="space-y-2">
+          ${topOS.slice(0,6).map((row,i)=>{const name=row.clientOSFamily||row.os||row.dimensions?.clientOSFamily||'Unknown';const reqs=row.sum?.requests||row.requests||row.count||0;const maxR=topOS[0]?.sum?.requests||topOS[0]?.requests||topOS[0]?.count||1;return`<div class="flex items-center gap-2.5"><span class="text-[0.68rem] text-slate-500 w-4 text-right">${i+1}</span><span class="text-[0.72rem] text-slate-300 flex-1 truncate">${name}</span><div class="skill-bar w-20"><div class="skill-fill" style="width:${Math.round(reqs/maxR*100)}%;background:#fbbf2488"></div></div><span class="text-[0.68rem] text-slate-500 w-10 text-right">${typeof reqs==='number'?reqs.toLocaleString():reqs}</span></div>`}).join('')}
+        </div>
+      </div>`:''}
+    </div>`:''}
   </div>`;lucide.createIcons();
 }
 
