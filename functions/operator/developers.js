@@ -71,14 +71,26 @@ export async function onRequestGet({ request, env }) {
     filtered = filtered.filter(r => r.publish_profile === publishBool);
   }
 
-  // Return lightweight shape only — never full records
+  // Return shape with fields needed by the operator Developers table
   return json({
     ok:      true,
-    results: filtered.map(r => ({
-      ref_number:      r.eventId       || r.ref_number || null,
-      full_name:       r.full_name     || null,
-      status:          r.status        || null,
-      publish_profile: r.publish_profile === true
-    }))
+    results: filtered.map(r => {
+      // Reshape flat skill_* fields into a nested skills object
+      const skills = {};
+      for (const [k, v] of Object.entries(r)) {
+        if (k.startsWith('skill_')) skills[k] = v;
+      }
+      return {
+        ref_number:      r.eventId         || r.ref_number  || null,
+        full_name:       r.full_name       || null,
+        email:           r.email           || null,
+        skills:          Object.keys(skills).length ? skills : null,
+        hourly_rate:     r.hourly_rate     || null,
+        country:         r.country         || null,
+        cronSchedule:    r.cronSchedule    || null,
+        status:          r.status          || null,
+        publish_profile: r.publish_profile === true
+      };
+    })
   }, 200, CORS);
 }
