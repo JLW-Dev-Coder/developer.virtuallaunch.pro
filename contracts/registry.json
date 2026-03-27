@@ -182,6 +182,19 @@
       "handlerStatus": "implemented"
     },
     {
+      "path": null,
+      "category": "operator",
+      "method": ["GET"],
+      "endpoint": "/operator/backfill-email-index",
+      "title": "Virtual Launch Pro — Operator Contract — Backfill Email Index",
+      "governs": "One-time idempotent backfill — writes onboarding-email-index/ entries for all existing onboarding records that are missing an index entry or have a stale one",
+      "version": 1,
+      "status": "active",
+      "handlerPath": "functions/operator/backfill-email-index.js",
+      "handlerStatus": "implemented",
+      "note": "No formal contract JSON — internal utility endpoint. Safe to call multiple times."
+    },
+    {
       "path": "contracts/cron-job-match.json",
       "category": "cron",
       "method": ["POST"],

@@ -35,6 +35,7 @@
 - Developer match intake handler: `functions/forms/developer-match-intake.js` → POST `/forms/developer-match-intake` (no auth; writes to `developer-match-requests/{eventId}.json` + receipt to `receipts/form/{eventId}.json`)
 - Cron job match handler: `functions/cron/job-match.js` → POST `/cron/job-match` (x-cron-secret auth — NOT operator Bearer; matches active/published developers to a job by skill; sends bulk email via Resend; updates nextNotificationDue per cronSchedule; writes run record + receipt to R2; KV dedupe in OPERATOR_SESSIONS)
 - Onboarding status handler: `functions/forms/onboarding/status.js` → GET `/forms/onboarding/status?referenceId=VLP-xxx` (no auth — public; returns status + lastUpdated only; direct R2 key lookup by referenceId)
+- Operator backfill email index: `functions/operator/backfill-email-index.js` → GET `/operator/backfill-email-index` (Bearer auth; idempotent backfill of `onboarding-email-index/` entries for all existing onboarding records; returns `{ ok, total, written, skipped, errors }`)
 
 ## Stripe Integration
 - Webhook endpoint: https://api.virtuallaunch.pro/v1/webhooks/stripe
@@ -563,6 +564,19 @@ to drive the weekly cron schedule for the Pages project. It is not part of the P
 - Auth: `CRON_SECRET` env var (set in Cloudflare dashboard → Worker → Settings → Variables)
 - Updated `.claude/CLAUDE.md`: added "Cron Trigger Worker" section and this audit log entry
 - Updated `.claude/registry.json`: added `workers/cron-trigger/index.js` entry to `sharedAssets`
+
+### 2026-03-26 — Add GET /operator/backfill-email-index
+- New file: `functions/operator/backfill-email-index.js`
+  - Bearer auth via `verifyOperatorToken` (same as all other operator handlers)
+  - Full R2 pagination loop for `onboarding-records/` prefix
+  - Skips sub-path keys (only processes top-level `{eventId}.json` files)
+  - Normalizes email (`toLowerCase().trim()`) → index key `onboarding-email-index/{email}.json`
+  - eventId derived from `record.eventId` or the R2 key suffix if absent
+  - Write logic: missing index → write; existing index with older createdAt → overwrite; existing index already newest → skip
+  - Returns `{ ok: true, total, written, skipped, errors }`; individual record errors are non-fatal
+  - Safe to call multiple times — fully idempotent
+- Updated `contracts/registry.json`: added operator category entry (no formal contract JSON — internal utility)
+- Updated `.claude/CLAUDE.md` Key Files + this audit log entry
 
 ### 2026-03-26 — Fix onboarding/status.js not_found + find-developers routing 405
 
