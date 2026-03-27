@@ -100,16 +100,12 @@ async function fetchCloudflarePageViews(env, from, to) {
           dimensions { date }
           sum {
             requests
-            pageViews
             bytes
             cachedBytes
             cachedRequests
             encryptedRequests
             encryptedBytes
             threats
-            countryMap { clientCountryName requests pageViews }
-            browserMap { uaBrowserFamily requests pageViews }
-            responseStatusMap { edgeResponseStatus requests }
           }
           uniq { uniques }
         }
@@ -143,7 +139,6 @@ async function fetchCloudflarePageViews(env, from, to) {
     const zone = payload?.data?.viewer?.zones?.[0] ?? {};
     const dailyGroups = zone.httpRequests1dGroups ?? [];
 
-    // DEBUG — remove after confirming data flows
     if (dailyGroups.length === 0) {
       return {
         source: 'Cloudflare Analytics API',
@@ -152,17 +147,14 @@ async function fetchCloudflarePageViews(env, from, to) {
         _debug: {
           payloadErrors: payload.errors ?? null,
           zonesCount: payload?.data?.viewer?.zones?.length ?? 0,
-          rawZoneKeys: zone ? Object.keys(zone) : [],
           rawPayloadSnippet: JSON.stringify(payload).slice(0, 500)
         }
       };
     }
 
-    // ── Daily time series ──────────────────────────────────────────────────
     const timeSeries = dailyGroups.map(g => ({
       date:              g.dimensions.date,
       requests:          g.sum?.requests          ?? 0,
-      pageViews:         g.sum?.pageViews          ?? 0,
       bytes:             g.sum?.bytes              ?? 0,
       cachedBytes:       g.sum?.cachedBytes        ?? 0,
       cachedRequests:    g.sum?.cachedRequests      ?? 0,
@@ -172,10 +164,8 @@ async function fetchCloudflarePageViews(env, from, to) {
       uniques:           g.uniq?.uniques            ?? 0,
     }));
 
-    // ── Aggregate totals across window ─────────────────────────────────────
     const totals = timeSeries.reduce((acc, d) => {
       acc.requests          += d.requests;
-      acc.pageViews         += d.pageViews;
       acc.bytes             += d.bytes;
       acc.cachedBytes       += d.cachedBytes;
       acc.cachedRequests    += d.cachedRequests;
@@ -185,7 +175,7 @@ async function fetchCloudflarePageViews(env, from, to) {
       acc.uniqueVisitors    += d.uniques;
       return acc;
     }, {
-      requests: 0, pageViews: 0, bytes: 0, cachedBytes: 0,
+      requests: 0, bytes: 0, cachedBytes: 0,
       cachedRequests: 0, encryptedRequests: 0, encryptedBytes: 0,
       threats: 0, uniqueVisitors: 0
     });
