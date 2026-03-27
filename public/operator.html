@@ -378,21 +378,47 @@ async function rAnalytics(){
   </div>`;lucide.createIcons();
 }
 
+// ── shared filter bar builder ─────────────────────────────────────────────────
+function filterBar(fields) {
+  // fields: [{id, type:'search'|'select', placeholder, options:[{v,l}], value}]
+  return `<div class="flex gap-2 mb-5 flex-wrap items-center">
+    ${fields.map(f => f.type==='search'
+      ? `<div class="relative" style="min-width:200px;flex:1;max-width:260px">
+           <i data-lucide="search" style="width:12px;height:12px;position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#334155"></i>
+           <input id="${f.id}" type="text" placeholder="${f.placeholder||'Search…'}" style="padding-left:30px;font-size:.76rem;padding-top:7px;padding-bottom:7px" value="${f.value||''}">
+         </div>`
+      : `<select id="${f.id}" style="font-size:.74rem;padding:7px 10px;width:auto;min-width:110px">
+           ${(f.options||[]).map(o=>`<option value="${o.v}" ${f.value===o.v?'selected':''}>${o.l}</option>`).join('')}
+         </select>`
+    ).join('')}
+  </div>`;
+}
+
 // SUBMISSIONS
-let sf='all',sp=1;
+let sf='all', sPub='', sCron='', sSearch='', sp=1;
 async function rSubmissions(){
   mc.innerHTML=`<div class="p-8 fade-in">${hdr('Submissions','Review and manage incoming submissions')}${spin()}</div>`;lucide.createIcons();
-  const p=new URLSearchParams({page:sp,limit:25});if(sf!=='all')p.set('status',sf);
+  const p=new URLSearchParams({page:sp,limit:25});
+  if(sf!=='all')p.set('status',sf);
+  if(sPub!=='')p.set('publish',sPub);
+  if(sCron)p.set('cronSchedule',sCron);
   const{data}=await api('GET',`/operator/submissions?${p}`);
   if(!data.ok){toast('Failed to load submissions','error');return}
-  const r=data.results||[];
+  let r=data.results||[];
+  if(sSearch)r=r.filter(s=>(s.full_name||'').toLowerCase().includes(sSearch.toLowerCase())||(s.ref_number||'').toLowerCase().includes(sSearch.toLowerCase())||(s.email||'').toLowerCase().includes(sSearch.toLowerCase()));
+
   mc.innerHTML=`<div class="p-8 fade-in">
     ${hdr('Submissions','Review and manage incoming submissions')}
-    <div class="flex gap-2 mb-5 flex-wrap">
-      ${['all','pending','active','complete','archived'].map(f=>`<button class="btn-sm ${sf===f?'btn-primary':'btn-secondary'}" data-sf="${f}">${f.charAt(0).toUpperCase()+f.slice(1)}</button>`).join('')}
-    </div>
+    ${filterBar([
+      {id:'s-search',type:'search',placeholder:'Search name, ref, email…',value:sSearch},
+      {id:'s-status',type:'select',value:sf,options:[{v:'all',l:'All Statuses'},{v:'pending',l:'Pending'},{v:'active',l:'Active'},{v:'complete',l:'Complete'},{v:'archived',l:'Archived'}]},
+      {id:'s-pub',type:'select',value:sPub,options:[{v:'',l:'Any Published'},{v:'true',l:'Published'},{v:'false',l:'Unpublished'}]},
+      {id:'s-cron',type:'select',value:sCron,options:[{v:'',l:'Any Cron'},{v:'3 days',l:'3 days'},{v:'7 days',l:'7 days'},{v:'14 days',l:'14 days'}]},
+    ])}
     <div class="vlp-card overflow-hidden">
-      <table><thead><tr><th>Ref</th><th>Name</th><th>Email</th><th>Cron</th><th>Published</th><th>Status</th><th>Action</th></tr></thead>
+      <table><thead><tr>
+        <th>Ref</th><th>Name</th><th>Email</th><th>Cron</th><th>Published</th><th>Status</th><th>Created</th><th>Action</th>
+      </tr></thead>
       <tbody>${r.length?r.map(s=>`<tr>
         <td class="font-mono text-[0.68rem] text-slate-500">${s.ref_number||'—'}</td>
         <td class="font-medium text-slate-200">${s.full_name||'—'}</td>
@@ -400,8 +426,9 @@ async function rSubmissions(){
         <td class="text-slate-600 text-[0.72rem]">${s.cronSchedule||'—'}</td>
         <td>${s.publish_profile?bdg('active'):bdg('closed')}</td>
         <td>${bdg(s.status)}</td>
+        <td class="text-slate-600 text-[0.72rem]">${s.createdAt?new Date(s.createdAt).toLocaleDateString():'—'}</td>
         <td><button class="btn-sm btn-secondary" onclick="vDev('${s.ref_number}')">View</button></td>
-      </tr>`).join(''):`<tr><td colspan="7" class="py-14 text-center text-slate-700 text-sm">No submissions found</td></tr>`}</tbody></table>
+      </tr>`).join(''):`<tr><td colspan="8" class="py-14 text-center text-slate-700 text-sm">No submissions found</td></tr>`}</tbody></table>
     </div>
     <div class="flex justify-between items-center mt-4 text-[0.7rem] text-slate-700">
       <span>Page ${data.page||1} · ${data.total??0} total</span>
@@ -411,47 +438,73 @@ async function rSubmissions(){
       </div>
     </div>
   </div>`;lucide.createIcons();
-  mc.querySelectorAll('[data-sf]').forEach(b=>b.addEventListener('click',()=>{sf=b.dataset.sf;sp=1;rSubmissions()}));
+  document.getElementById('s-search')?.addEventListener('input',e=>{sSearch=e.target.value;sp=1;rSubmissions()});
+  document.getElementById('s-status')?.addEventListener('change',e=>{sf=e.target.value;sp=1;rSubmissions()});
+  document.getElementById('s-pub')?.addEventListener('change',e=>{sPub=e.target.value;sp=1;rSubmissions()});
+  document.getElementById('s-cron')?.addEventListener('change',e=>{sCron=e.target.value;sp=1;rSubmissions()});
   document.getElementById('sp-prev')?.addEventListener('click',()=>{sp--;rSubmissions()});
   document.getElementById('sp-next')?.addEventListener('click',()=>{sp++;rSubmissions()});
 }
 
 // DEVELOPERS
-let ds='';
+let dSearch='', dStatus='', dPub='', dCron='', dp=1;
 async function rDevs(){
   mc.innerHTML=`<div class="p-8 fade-in">${hdr('Developers','Manage registered developer profiles')}${spin()}</div>`;lucide.createIcons();
-  const{data}=await api('GET','/operator/developers');
+  const p=new URLSearchParams();
+  if(dStatus)p.set('status',dStatus);
+  if(dPub!=='')p.set('publish',dPub);
+  const{data}=await api('GET',`/operator/developers?${p}`);
   if(!data.ok){toast('Failed to load developers','error');return}
-  const all=data.results||[];
-  const filtered=ds?all.filter(d=>(d.full_name||'').toLowerCase().includes(ds.toLowerCase())||(d.ref_number||'').toLowerCase().includes(ds.toLowerCase())):all;
+  let all=data.results||[];
+  if(dSearch)all=all.filter(d=>(d.full_name||'').toLowerCase().includes(dSearch.toLowerCase())||(d.ref_number||'').toLowerCase().includes(dSearch.toLowerCase()));
+  if(dCron)all=all.filter(d=>d.cronSchedule===dCron);
+  const pageSize=25, totalPages=Math.max(1,Math.ceil(all.length/pageSize));
+  if(dp>totalPages)dp=totalPages;
+  const r=all.slice((dp-1)*pageSize, dp*pageSize);
+
   mc.innerHTML=`<div class="p-8 fade-in">
     ${hdr('Developers','Manage registered developer profiles')}
-    <div class="flex gap-3 mb-5">
-      <div class="relative max-w-xs flex-1">
-        <i data-lucide="search" style="width:12px;height:12px;position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#334155"></i>
-        <input id="ds-inp" type="text" placeholder="Search by name or VLP- ref…" style="padding-left:32px" value="${ds}">
+    ${filterBar([
+      {id:'d-search',type:'search',placeholder:'Search name or VLP- ref…',value:dSearch},
+      {id:'d-status',type:'select',value:dStatus,options:[{v:'',l:'All Statuses'},{v:'active',l:'Active'},{v:'pending',l:'Pending'},{v:'complete',l:'Complete'},{v:'archived',l:'Archived'}]},
+      {id:'d-pub',type:'select',value:dPub,options:[{v:'',l:'Any Published'},{v:'true',l:'Published'},{v:'false',l:'Unpublished'}]},
+      {id:'d-cron',type:'select',value:dCron,options:[{v:'',l:'Any Cron'},{v:'3 days',l:'3 days'},{v:'7 days',l:'7 days'},{v:'14 days',l:'14 days'}]},
+    ])}
+    <div class="vlp-card overflow-hidden">
+      <table><thead><tr>
+        <th>Ref</th><th>Name</th><th>Email</th><th>Skills</th><th>Rate</th><th>Country</th><th>Cron</th><th>Published</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody>${r.length?r.map(d=>`<tr>
+        <td class="font-mono text-[0.68rem] text-slate-500">${d.ref_number||'—'}</td>
+        <td class="font-medium text-slate-200">${d.full_name||'—'}</td>
+        <td class="text-slate-500 text-[0.72rem]">${d.email||'—'}</td>
+        <td class="text-slate-600 text-[0.72rem]">${d.skills?Object.entries(d.skills).filter(([k,v])=>k!=='skill_other_skills'&&v>=7).map(([k])=>k.replace('skill_','')).slice(0,3).join(', ')||'—':'—'}</td>
+        <td class="text-slate-600 text-[0.72rem]">${d.hourly_rate?'$'+d.hourly_rate+'/hr':'—'}</td>
+        <td class="text-slate-600 text-[0.72rem]">${d.country||'—'}</td>
+        <td class="text-slate-600 text-[0.72rem]">${d.cronSchedule||'—'}</td>
+        <td>
+          <div class="toggle-track ${d.publish_profile?'on':''}" data-ref="${d.ref_number}" data-pub="${d.publish_profile?1:0}"><div class="toggle-knob"></div></div>
+        </td>
+        <td>${bdg(d.status)}</td>
+        <td class="flex gap-1.5">
+          <button class="btn-sm btn-secondary" onclick="vDev('${d.ref_number}')">View</button>
+        </td>
+      </tr>`).join(''):`<tr><td colspan="10" class="py-14 text-center text-slate-700 text-sm">No developers found</td></tr>`}</tbody></table>
+    </div>
+    <div class="flex justify-between items-center mt-4 text-[0.7rem] text-slate-700">
+      <span>Page ${dp} of ${totalPages} · ${all.length} total</span>
+      <div class="flex gap-2">
+        <button class="btn-sm btn-secondary" ${dp<=1?'disabled':''} id="dp-prev">← Prev</button>
+        <button class="btn-sm btn-secondary" ${dp>=totalPages?'disabled':''} id="dp-next">Next →</button>
       </div>
     </div>
-    <div class="space-y-2">
-      ${filtered.length?filtered.map(d=>`<div class="vlp-card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center text-[0.7rem] font-semibold flex-shrink-0" style="background:rgba(16,185,129,.08);color:#10b981;border:1px solid rgba(16,185,129,.15)">
-            ${(d.full_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2)}
-          </div>
-          <div>
-            <div class="font-medium text-[0.82rem] text-slate-200">${d.full_name||'—'}</div>
-            <div class="text-[0.66rem] text-slate-600 font-mono">${d.ref_number||'—'}</div>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          ${bdg(d.status)}
-          <div class="toggle-track ${d.publish_profile?'on':''}" data-ref="${d.ref_number}" data-pub="${d.publish_profile?1:0}"><div class="toggle-knob"></div></div>
-          <button class="btn-sm btn-secondary" onclick="vDev('${d.ref_number}')">View</button>
-        </div>
-      </div>`).join(''):empty('No developers found')}
-    </div>
   </div>`;lucide.createIcons();
-  document.getElementById('ds-inp')?.addEventListener('input',e=>{ds=e.target.value;rDevs()});
+  document.getElementById('d-search')?.addEventListener('input',e=>{dSearch=e.target.value;dp=1;rDevs()});
+  document.getElementById('d-status')?.addEventListener('change',e=>{dStatus=e.target.value;dp=1;rDevs()});
+  document.getElementById('d-pub')?.addEventListener('change',e=>{dPub=e.target.value;dp=1;rDevs()});
+  document.getElementById('d-cron')?.addEventListener('change',e=>{dCron=e.target.value;dp=1;rDevs()});
+  document.getElementById('dp-prev')?.addEventListener('click',()=>{dp--;rDevs()});
+  document.getElementById('dp-next')?.addEventListener('click',()=>{dp++;rDevs()});
   mc.querySelectorAll('.toggle-track').forEach(t=>{
     t.addEventListener('click',async()=>{
       const ref=t.dataset.ref,was=t.dataset.pub==='1',now=!was;
