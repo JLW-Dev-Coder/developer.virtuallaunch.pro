@@ -231,7 +231,7 @@ async function rAnalytics(){
   const s=data.submissions||{};
   const pv=data.pageViews||{};
   // Handler returns pageViews.data.totals / .timeSeries / .topCountries / .topBrowsers / .firewallEvents / .statusCodes
-  const pvAvail=pv.data!=null&&!pv.error;
+  const pvAvail=pv.data!=null&&pv.data!==null&&typeof pv.data==='object'&&!pv.error&&!pv._debug;
   const pvd=pvAvail?pv.data:{};
   const tot=pvd.totals||{};
   const cfTS=pvd.timeSeries||[];
@@ -248,15 +248,15 @@ async function rAnalytics(){
 
   // CF stat cards — only show what the handler actually returned
   const cfStatDefs=[
-    {k:'requests',        l:'Total Requests',    icon:'activity',   c:'#34d399'},
-    {k:'uniqueVisitors',  l:'Unique Visitors',   icon:'user-check', c:'#a78bfa'},
-    {k:'bytes',           l:'Bandwidth',         icon:'hard-drive', c:'#fbbf24', fmt:fmtBytes},
-    {k:'cachedRequests',  l:'Cached Requests',   icon:'zap',        c:'#10b981'},
-    {k:'cachedBytes',     l:'Cached Bandwidth',  icon:'database',   c:'#6ee7b7', fmt:fmtBytes},
+    {k:'requests',         l:'Total Requests',   icon:'activity',   c:'#34d399'},
+    {k:'uniqueVisitors',   l:'Unique Visitors',  icon:'user-check', c:'#a78bfa'},
+    {k:'bytes',            l:'Bandwidth',         icon:'hard-drive', c:'#fbbf24', fmt:fmtBytes},
+    {k:'cachedRequests',   l:'Cached Requests',  icon:'zap',        c:'#10b981'},
+    {k:'cachedBytes',      l:'Cached Bandwidth', icon:'database',   c:'#6ee7b7', fmt:fmtBytes},
     {k:'encryptedRequests',l:'Encrypted Req.',   icon:'lock',       c:'#f472b6'},
-    {k:'threats',         l:'Threats Blocked',   icon:'shield',     c:'#f87171'},
+    {k:'threats',          l:'Threats Blocked',  icon:'shield',     c:'#f87171'},
   ];
-  const cfStats=cfStatDefs.filter(d=>tot[d.k]!=null&&tot[d.k]!==0).map(d=>({...d,v:d.fmt?d.fmt(tot[d.k]):tot[d.k].toLocaleString()}));
+  const cfStats=pvAvail?cfStatDefs.map(d=>({...d,v:d.fmt?d.fmt(tot[d.k]??0):(tot[d.k]??0).toLocaleString()})):[];
 
   mc.innerHTML=`<div class="p-8 fade-in">
     ${hdr('Overview','Platform metrics and submission activity')}
@@ -279,12 +279,12 @@ async function rAnalytics(){
       Cloudflare Analytics
       ${pvAvail?`<span style="font-size:.58rem;padding:1px 7px;border-radius:9999px;background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.18)">LIVE</span>`:`<span style="font-size:.58rem;padding:1px 7px;border-radius:9999px;background:rgba(100,116,139,.1);color:#94a3b8;border:1px solid rgba(100,116,139,.18)">${pv.error||'CF_API_TOKEN not configured'}</span>`}
     </div>
-    ${pvAvail&&cfStats.length?`<div class="grid grid-cols-4 gap-4 mb-7">
+    ${pvAvail?`<div class="grid grid-cols-4 gap-4 mb-7">
       ${cfStats.map(c=>`<div class="vlp-card p-5 flex gap-3">
         <div class="stat-pip" style="background:linear-gradient(180deg,${c.c},${c.c}55)"></div>
         <div class="flex-1 min-w-0">
           <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-2">${c.l}</div>
-          <div class="text-xl font-semibold">${c.v.toLocaleString()}</div>
+          <div class="text-xl font-semibold">${c.v}</div>
         </div>
         <i data-lucide="${c.icon}" style="width:14px;height:14px;color:${c.c};opacity:.5;flex-shrink:0;margin-top:2px"></i>
       </div>`).join('')}
@@ -378,21 +378,47 @@ async function rAnalytics(){
   </div>`;lucide.createIcons();
 }
 
+// ── shared filter bar builder ─────────────────────────────────────────────────
+function filterBar(fields) {
+  // fields: [{id, type:'search'|'select', placeholder, options:[{v,l}], value}]
+  return `<div class="flex gap-2 mb-5 flex-wrap items-center">
+    ${fields.map(f => f.type==='search'
+      ? `<div class="relative" style="min-width:200px;flex:1;max-width:260px">
+           <i data-lucide="search" style="width:12px;height:12px;position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#334155"></i>
+           <input id="${f.id}" type="text" placeholder="${f.placeholder||'Search…'}" style="padding-left:30px;font-size:.76rem;padding-top:7px;padding-bottom:7px" value="${f.value||''}">
+         </div>`
+      : `<select id="${f.id}" style="font-size:.74rem;padding:7px 10px;width:auto;min-width:110px">
+           ${(f.options||[]).map(o=>`<option value="${o.v}" ${f.value===o.v?'selected':''}>${o.l}</option>`).join('')}
+         </select>`
+    ).join('')}
+  </div>`;
+}
+
 // SUBMISSIONS
-let sf='all',sp=1;
+let sf='all', sPub='', sCron='', sSearch='', sp=1;
 async function rSubmissions(){
   mc.innerHTML=`<div class="p-8 fade-in">${hdr('Submissions','Review and manage incoming submissions')}${spin()}</div>`;lucide.createIcons();
-  const p=new URLSearchParams({page:sp,limit:25});if(sf!=='all')p.set('status',sf);
+  const p=new URLSearchParams({page:sp,limit:25});
+  if(sf!=='all')p.set('status',sf);
+  if(sPub!=='')p.set('publish',sPub);
+  if(sCron)p.set('cronSchedule',sCron);
   const{data}=await api('GET',`/operator/submissions?${p}`);
   if(!data.ok){toast('Failed to load submissions','error');return}
-  const r=data.results||[];
+  let r=data.results||[];
+  if(sSearch)r=r.filter(s=>(s.full_name||'').toLowerCase().includes(sSearch.toLowerCase())||(s.ref_number||'').toLowerCase().includes(sSearch.toLowerCase())||(s.email||'').toLowerCase().includes(sSearch.toLowerCase()));
+
   mc.innerHTML=`<div class="p-8 fade-in">
     ${hdr('Submissions','Review and manage incoming submissions')}
-    <div class="flex gap-2 mb-5 flex-wrap">
-      ${['all','pending','active','complete','archived'].map(f=>`<button class="btn-sm ${sf===f?'btn-primary':'btn-secondary'}" data-sf="${f}">${f.charAt(0).toUpperCase()+f.slice(1)}</button>`).join('')}
-    </div>
+    ${filterBar([
+      {id:'s-search',type:'search',placeholder:'Search name, ref, email…',value:sSearch},
+      {id:'s-status',type:'select',value:sf,options:[{v:'all',l:'All Statuses'},{v:'pending',l:'Pending'},{v:'active',l:'Active'},{v:'complete',l:'Complete'},{v:'archived',l:'Archived'}]},
+      {id:'s-pub',type:'select',value:sPub,options:[{v:'',l:'Any Published'},{v:'true',l:'Published'},{v:'false',l:'Unpublished'}]},
+      {id:'s-cron',type:'select',value:sCron,options:[{v:'',l:'Any Cron'},{v:'3 days',l:'3 days'},{v:'7 days',l:'7 days'},{v:'14 days',l:'14 days'}]},
+    ])}
     <div class="vlp-card overflow-hidden">
-      <table><thead><tr><th>Ref</th><th>Name</th><th>Email</th><th>Cron</th><th>Published</th><th>Status</th><th>Action</th></tr></thead>
+      <table><thead><tr>
+        <th>Ref</th><th>Name</th><th>Email</th><th>Cron</th><th>Published</th><th>Status</th><th>Created</th><th>Action</th>
+      </tr></thead>
       <tbody>${r.length?r.map(s=>`<tr>
         <td class="font-mono text-[0.68rem] text-slate-500">${s.ref_number||'—'}</td>
         <td class="font-medium text-slate-200">${s.full_name||'—'}</td>
@@ -400,8 +426,9 @@ async function rSubmissions(){
         <td class="text-slate-600 text-[0.72rem]">${s.cronSchedule||'—'}</td>
         <td>${s.publish_profile?bdg('active'):bdg('closed')}</td>
         <td>${bdg(s.status)}</td>
+        <td class="text-slate-600 text-[0.72rem]">${s.createdAt?new Date(s.createdAt).toLocaleDateString():'—'}</td>
         <td><button class="btn-sm btn-secondary" onclick="vDev('${s.ref_number}')">View</button></td>
-      </tr>`).join(''):`<tr><td colspan="7" class="py-14 text-center text-slate-700 text-sm">No submissions found</td></tr>`}</tbody></table>
+      </tr>`).join(''):`<tr><td colspan="8" class="py-14 text-center text-slate-700 text-sm">No submissions found</td></tr>`}</tbody></table>
     </div>
     <div class="flex justify-between items-center mt-4 text-[0.7rem] text-slate-700">
       <span>Page ${data.page||1} · ${data.total??0} total</span>
@@ -411,47 +438,73 @@ async function rSubmissions(){
       </div>
     </div>
   </div>`;lucide.createIcons();
-  mc.querySelectorAll('[data-sf]').forEach(b=>b.addEventListener('click',()=>{sf=b.dataset.sf;sp=1;rSubmissions()}));
+  document.getElementById('s-search')?.addEventListener('input',e=>{sSearch=e.target.value;sp=1;rSubmissions()});
+  document.getElementById('s-status')?.addEventListener('change',e=>{sf=e.target.value;sp=1;rSubmissions()});
+  document.getElementById('s-pub')?.addEventListener('change',e=>{sPub=e.target.value;sp=1;rSubmissions()});
+  document.getElementById('s-cron')?.addEventListener('change',e=>{sCron=e.target.value;sp=1;rSubmissions()});
   document.getElementById('sp-prev')?.addEventListener('click',()=>{sp--;rSubmissions()});
   document.getElementById('sp-next')?.addEventListener('click',()=>{sp++;rSubmissions()});
 }
 
 // DEVELOPERS
-let ds='';
+let dSearch='', dStatus='', dPub='', dCron='', dp=1;
 async function rDevs(){
   mc.innerHTML=`<div class="p-8 fade-in">${hdr('Developers','Manage registered developer profiles')}${spin()}</div>`;lucide.createIcons();
-  const{data}=await api('GET','/operator/developers');
+  const p=new URLSearchParams();
+  if(dStatus)p.set('status',dStatus);
+  if(dPub!=='')p.set('publish',dPub);
+  const{data}=await api('GET',`/operator/developers?${p}`);
   if(!data.ok){toast('Failed to load developers','error');return}
-  const all=data.results||[];
-  const filtered=ds?all.filter(d=>(d.full_name||'').toLowerCase().includes(ds.toLowerCase())||(d.ref_number||'').toLowerCase().includes(ds.toLowerCase())):all;
+  let all=data.results||[];
+  if(dSearch)all=all.filter(d=>(d.full_name||'').toLowerCase().includes(dSearch.toLowerCase())||(d.ref_number||'').toLowerCase().includes(dSearch.toLowerCase()));
+  if(dCron)all=all.filter(d=>d.cronSchedule===dCron);
+  const pageSize=25, totalPages=Math.max(1,Math.ceil(all.length/pageSize));
+  if(dp>totalPages)dp=totalPages;
+  const r=all.slice((dp-1)*pageSize, dp*pageSize);
+
   mc.innerHTML=`<div class="p-8 fade-in">
     ${hdr('Developers','Manage registered developer profiles')}
-    <div class="flex gap-3 mb-5">
-      <div class="relative max-w-xs flex-1">
-        <i data-lucide="search" style="width:12px;height:12px;position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#334155"></i>
-        <input id="ds-inp" type="text" placeholder="Search by name or VLP- ref…" style="padding-left:32px" value="${ds}">
+    ${filterBar([
+      {id:'d-search',type:'search',placeholder:'Search name or VLP- ref…',value:dSearch},
+      {id:'d-status',type:'select',value:dStatus,options:[{v:'',l:'All Statuses'},{v:'active',l:'Active'},{v:'pending',l:'Pending'},{v:'complete',l:'Complete'},{v:'archived',l:'Archived'}]},
+      {id:'d-pub',type:'select',value:dPub,options:[{v:'',l:'Any Published'},{v:'true',l:'Published'},{v:'false',l:'Unpublished'}]},
+      {id:'d-cron',type:'select',value:dCron,options:[{v:'',l:'Any Cron'},{v:'3 days',l:'3 days'},{v:'7 days',l:'7 days'},{v:'14 days',l:'14 days'}]},
+    ])}
+    <div class="vlp-card overflow-hidden">
+      <table><thead><tr>
+        <th>Ref</th><th>Name</th><th>Email</th><th>Skills</th><th>Rate</th><th>Country</th><th>Cron</th><th>Published</th><th>Status</th><th>Actions</th>
+      </tr></thead>
+      <tbody>${r.length?r.map(d=>`<tr>
+        <td class="font-mono text-[0.68rem] text-slate-500">${d.ref_number||'—'}</td>
+        <td class="font-medium text-slate-200">${d.full_name||'—'}</td>
+        <td class="text-slate-500 text-[0.72rem]">${d.email||'—'}</td>
+        <td class="text-slate-600 text-[0.72rem]">${d.skills?Object.entries(d.skills).filter(([k,v])=>k!=='skill_other_skills'&&v>=7).map(([k])=>k.replace('skill_','')).slice(0,3).join(', ')||'—':'—'}</td>
+        <td class="text-slate-600 text-[0.72rem]">${d.hourly_rate?'$'+d.hourly_rate+'/hr':'—'}</td>
+        <td class="text-slate-600 text-[0.72rem]">${d.country||'—'}</td>
+        <td class="text-slate-600 text-[0.72rem]">${d.cronSchedule||'—'}</td>
+        <td>
+          <div class="toggle-track ${d.publish_profile?'on':''}" data-ref="${d.ref_number}" data-pub="${d.publish_profile?1:0}"><div class="toggle-knob"></div></div>
+        </td>
+        <td>${bdg(d.status)}</td>
+        <td class="flex gap-1.5">
+          <button class="btn-sm btn-secondary" onclick="vDev('${d.ref_number}')">View</button>
+        </td>
+      </tr>`).join(''):`<tr><td colspan="10" class="py-14 text-center text-slate-700 text-sm">No developers found</td></tr>`}</tbody></table>
+    </div>
+    <div class="flex justify-between items-center mt-4 text-[0.7rem] text-slate-700">
+      <span>Page ${dp} of ${totalPages} · ${all.length} total</span>
+      <div class="flex gap-2">
+        <button class="btn-sm btn-secondary" ${dp<=1?'disabled':''} id="dp-prev">← Prev</button>
+        <button class="btn-sm btn-secondary" ${dp>=totalPages?'disabled':''} id="dp-next">Next →</button>
       </div>
     </div>
-    <div class="space-y-2">
-      ${filtered.length?filtered.map(d=>`<div class="vlp-card p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center text-[0.7rem] font-semibold flex-shrink-0" style="background:rgba(16,185,129,.08);color:#10b981;border:1px solid rgba(16,185,129,.15)">
-            ${(d.full_name||'?').split(' ').map(w=>w[0]).join('').slice(0,2)}
-          </div>
-          <div>
-            <div class="font-medium text-[0.82rem] text-slate-200">${d.full_name||'—'}</div>
-            <div class="text-[0.66rem] text-slate-600 font-mono">${d.ref_number||'—'}</div>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          ${bdg(d.status)}
-          <div class="toggle-track ${d.publish_profile?'on':''}" data-ref="${d.ref_number}" data-pub="${d.publish_profile?1:0}"><div class="toggle-knob"></div></div>
-          <button class="btn-sm btn-secondary" onclick="vDev('${d.ref_number}')">View</button>
-        </div>
-      </div>`).join(''):empty('No developers found')}
-    </div>
   </div>`;lucide.createIcons();
-  document.getElementById('ds-inp')?.addEventListener('input',e=>{ds=e.target.value;rDevs()});
+  document.getElementById('d-search')?.addEventListener('input',e=>{dSearch=e.target.value;dp=1;rDevs()});
+  document.getElementById('d-status')?.addEventListener('change',e=>{dStatus=e.target.value;dp=1;rDevs()});
+  document.getElementById('d-pub')?.addEventListener('change',e=>{dPub=e.target.value;dp=1;rDevs()});
+  document.getElementById('d-cron')?.addEventListener('change',e=>{dCron=e.target.value;dp=1;rDevs()});
+  document.getElementById('dp-prev')?.addEventListener('click',()=>{dp--;rDevs()});
+  document.getElementById('dp-next')?.addEventListener('click',()=>{dp++;rDevs()});
   mc.querySelectorAll('.toggle-track').forEach(t=>{
     t.addEventListener('click',async()=>{
       const ref=t.dataset.ref,was=t.dataset.pub==='1',now=!was;
@@ -607,59 +660,362 @@ async function rMatches(){
 }
 
 // BULK EMAIL
+// State
+let ef={status:'',cron:'',pub:'',skill:'',country:'',contract:'',availability:'',minRate:'',maxRate:'',search:''};
+let efRecipients=[];   // loaded developer list
+let efSelected=new Set(); // selected ref_numbers
+let efPage=1;
+
 async function rEmail(){
-  mc.innerHTML=`<div class="p-8 fade-in">${hdr('Bulk Email','Compose and send targeted emails')}${spin()}</div>`;lucide.createIcons();
-  const{data:cd}=await api('GET','/operator/canned-responses');
+  mc.innerHTML=`<div class="p-8 fade-in">${hdr('Bulk Email','Filter recipients, select who to contact, compose and send')}${spin()}</div>`;
+  lucide.createIcons();
+  const[{data:cd},{data:jd}]=await Promise.all([
+    api('GET','/operator/canned-responses'),
+    api('GET','/operator/jobs?status=open')
+  ]);
   const tpls=(cd.ok?cd.templates:[])||[];
-  mc.innerHTML=`<div class="p-8 fade-in">
-    ${hdr('Bulk Email','Compose and send targeted emails')}
-    <div class="grid grid-cols-3 gap-5">
-      <div class="vlp-card p-5">
-        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-4">Audience Filter</div>
-        <div class="space-y-3">
-          <div><label class="block text-[0.65rem] text-slate-600 mb-1.5">Status</label><select id="ef-st"><option value="">All</option><option value="active">Active</option><option value="pending">Pending</option><option value="complete">Complete</option></select></div>
-          <div><label class="block text-[0.65rem] text-slate-600 mb-1.5">Cron Schedule</label><select id="ef-cr"><option value="">All</option><option value="3 days">3 days</option><option value="7 days">7 days</option><option value="14 days">14 days</option></select></div>
-          <div><label class="block text-[0.65rem] text-slate-600 mb-1.5">Published</label><select id="ef-pb"><option value="">All</option><option value="true">Published</option><option value="false">Unpublished</option></select></div>
-          <div><label class="block text-[0.65rem] text-slate-600 mb-1.5">Skill</label><input type="text" id="ef-sk" placeholder="e.g. skill_react"></div>
+  const jobs=(jd.ok?jd.results:[])||[];
+
+  mc.innerHTML=`<div class="p-8 fade-in" style="min-height:100%">
+    ${hdr('Bulk Email','Filter recipients, select who to contact, compose and send')}
+
+    <!-- Two-column layout: filters+list left, compose right -->
+    <div class="grid gap-5" style="grid-template-columns:1fr 420px;align-items:start">
+
+      <!-- LEFT: filters + recipient list -->
+      <div class="space-y-4">
+
+        <!-- Filter panel -->
+        <div class="vlp-card p-5">
+          <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-4">Filter Recipients — Onboarding Fields</div>
+          <div class="grid grid-cols-3 gap-3">
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Search</label>
+              <input type="text" id="ef-search" placeholder="Name, email, ref…" style="font-size:.74rem;padding:7px 10px" value="${ef.search}">
+            </div>
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Status</label>
+              <select id="ef-st" style="font-size:.74rem;padding:7px 10px">
+                <option value="">All</option>
+                <option value="active" ${ef.status==='active'?'selected':''}>Active</option>
+                <option value="pending" ${ef.status==='pending'?'selected':''}>Pending</option>
+                <option value="complete" ${ef.status==='complete'?'selected':''}>Complete</option>
+                <option value="archived" ${ef.status==='archived'?'selected':''}>Archived</option>
+              </select>
+            </div>
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Published</label>
+              <select id="ef-pb" style="font-size:.74rem;padding:7px 10px">
+                <option value="">All</option>
+                <option value="true" ${ef.pub==='true'?'selected':''}>Published</option>
+                <option value="false" ${ef.pub==='false'?'selected':''}>Unpublished</option>
+              </select>
+            </div>
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Cron Schedule</label>
+              <select id="ef-cr" style="font-size:.74rem;padding:7px 10px">
+                <option value="">All</option>
+                <option value="3 days" ${ef.cron==='3 days'?'selected':''}>3 days</option>
+                <option value="7 days" ${ef.cron==='7 days'?'selected':''}>7 days</option>
+                <option value="14 days" ${ef.cron==='14 days'?'selected':''}>14 days</option>
+              </select>
+            </div>
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Skill</label>
+              <select id="ef-sk" style="font-size:.74rem;padding:7px 10px">
+                <option value="">Any skill</option>
+                ${['javascript','python','react','nodejs','typescript','aws','docker','mongodb','postgresql'].map(s=>`<option value="skill_${s}" ${ef.skill==='skill_'+s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Contract Type</label>
+              <select id="ef-ct" style="font-size:.74rem;padding:7px 10px">
+                <option value="">Any</option>
+                <option value="full-time" ${ef.contract==='full-time'?'selected':''}>Full-time</option>
+                <option value="part-time" ${ef.contract==='part-time'?'selected':''}>Part-time</option>
+                <option value="contract" ${ef.contract==='contract'?'selected':''}>Contract</option>
+                <option value="freelance" ${ef.contract==='freelance'?'selected':''}>Freelance</option>
+              </select>
+            </div>
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Country</label>
+              <input type="text" id="ef-co" placeholder="e.g. United States" style="font-size:.74rem;padding:7px 10px" value="${ef.country}">
+            </div>
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Availability</label>
+              <select id="ef-av" style="font-size:.74rem;padding:7px 10px">
+                <option value="">Any</option>
+                <option value="immediate" ${ef.availability==='immediate'?'selected':''}>Immediate</option>
+                <option value="2-weeks" ${ef.availability==='2-weeks'?'selected':''}>2 weeks</option>
+                <option value="1-month" ${ef.availability==='1-month'?'selected':''}>1 month</option>
+                <option value="flexible" ${ef.availability==='flexible'?'selected':''}>Flexible</option>
+              </select>
+            </div>
+            <div><label class="block text-[0.62rem] text-slate-600 mb-1">Hourly Rate ($/hr)</label>
+              <div class="flex gap-1">
+                <input type="number" id="ef-rmin" placeholder="Min" style="font-size:.74rem;padding:7px 8px" value="${ef.minRate}">
+                <input type="number" id="ef-rmax" placeholder="Max" style="font-size:.74rem;padding:7px 8px" value="${ef.maxRate}">
+              </div>
+            </div>
+          </div>
+          <div class="flex gap-2 mt-4">
+            <button class="btn-primary btn-sm" id="ef-load">Load Recipients</button>
+            <button class="btn-secondary btn-sm" id="ef-clear">Clear Filters</button>
+          </div>
         </div>
-        <button class="btn-secondary w-full mt-4 text-[0.72rem]" id="ef-dry">Preview Recipients</button>
-        <div id="ef-dr" class="hidden mt-3 p-3 rounded-lg text-center" style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.12)">
-          <div id="ef-dc" class="text-2xl font-semibold gradient-text">—</div>
-          <div class="text-[0.62rem] text-slate-600 mt-0.5">recipients match filters</div>
+
+        <!-- Recipient list -->
+        <div class="vlp-card overflow-hidden" id="ef-recip-wrap">
+          <div class="flex items-center justify-between px-5 py-3" style="border-bottom:1px solid rgba(30,41,59,.6)">
+            <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600">Recipients</div>
+            <div class="flex items-center gap-3">
+              <span id="ef-sel-count" class="text-[0.7rem] text-slate-500">0 selected</span>
+              <button class="btn-secondary btn-sm" id="ef-sel-all">Select All</button>
+              <button class="btn-secondary btn-sm" id="ef-sel-none">Deselect All</button>
+            </div>
+          </div>
+          <div id="ef-recip-body">
+            <div class="empty-state"><i data-lucide="users" style="width:24px;height:24px;color:#1e293b"></i><p class="text-sm text-slate-700">Click "Load Recipients" to populate the list</p></div>
+          </div>
+          <div id="ef-recip-pager" class="hidden flex items-center justify-between px-5 py-3 text-[0.7rem] text-slate-600" style="border-top:1px solid rgba(30,41,59,.6)">
+            <span id="ef-pager-info"></span>
+            <div class="flex gap-2">
+              <button class="btn-secondary btn-sm" id="ef-pg-prev">← Prev</button>
+              <button class="btn-secondary btn-sm" id="ef-pg-next">Next →</button>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-span-2 vlp-card p-5">
-        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600 mb-4">Compose</div>
-        <div class="space-y-3">
-          <div><label class="block text-[0.65rem] text-slate-600 mb-1.5">Template</label><select id="ef-tpl"><option value="">None — write from scratch</option>${tpls.map(t=>`<option value="${t.templateId}">${t.label} (${t.userType})</option>`).join('')}</select></div>
-          <div><label class="block text-[0.65rem] text-slate-600 mb-1.5">Subject *</label><input type="text" id="ef-sub" placeholder="Email subject…"></div>
-          <div><label class="block text-[0.65rem] text-slate-600 mb-1.5">Body</label><textarea id="ef-body" rows="8" placeholder="Write your email here…"></textarea></div>
+
+      <!-- RIGHT: compose -->
+      <div class="vlp-card p-5 space-y-4" style="position:sticky;top:24px">
+        <div class="text-[0.62rem] font-semibold uppercase tracking-widest text-slate-600">Compose</div>
+
+        <!-- Job attachment -->
+        <div>
+          <label class="block text-[0.62rem] text-slate-600 mb-1.5">Attach Job Post (optional)</label>
+          <select id="ef-job" style="font-size:.74rem;padding:7px 10px">
+            <option value="">No job — plain email</option>
+            ${jobs.map(j=>`<option value="${j.jobId}">${j.title}</option>`).join('')}
+          </select>
+          <p class="text-[0.6rem] text-slate-700 mt-1">When selected, job is attached to each recipient's profile via /operator/post and queues their cron notification.</p>
         </div>
-        <div class="flex justify-end mt-4">
-          <button class="btn-primary" id="ef-send"><span class="inline-flex items-center gap-1.5"><i data-lucide="send" style="width:13px;height:13px"></i> Send Email</span></button>
+
+        <!-- Template -->
+        <div>
+          <label class="block text-[0.62rem] text-slate-600 mb-1.5">Template</label>
+          <select id="ef-tpl" style="font-size:.74rem;padding:7px 10px">
+            <option value="">None — write from scratch</option>
+            ${tpls.map(t=>`<option value="${t.templateId}">${t.label} (${t.userType})</option>`).join('')}
+          </select>
         </div>
+
+        <div>
+          <label class="block text-[0.62rem] text-slate-600 mb-1.5">Subject *</label>
+          <input type="text" id="ef-sub" placeholder="Email subject…" style="font-size:.8rem">
+        </div>
+
+        <div>
+          <label class="block text-[0.62rem] text-slate-600 mb-1.5">Body</label>
+          <textarea id="ef-body" rows="7" placeholder="Write your email here…" style="font-size:.8rem;resize:vertical"></textarea>
+        </div>
+
+        <!-- Send modes -->
+        <div class="pt-2" style="border-top:1px solid rgba(30,41,59,.5)">
+          <div id="ef-send-info" class="text-[0.68rem] text-slate-600 mb-3">Select recipients above then send.</div>
+          <div class="flex flex-col gap-2">
+            <button class="btn-primary" id="ef-send-sel">
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="send" style="width:13px;height:13px"></i> Send to Selected (<span id="ef-sel-n">0</span>)</span>
+            </button>
+            <button class="btn-secondary" id="ef-send-all">
+              <span class="inline-flex items-center gap-1.5"><i data-lucide="send" style="width:13px;height:13px"></i> Send to All Filtered</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div id="ef-progress" class="hidden p-3 rounded-lg text-[0.75rem]" style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.12)"></div>
       </div>
     </div>
-  </div>`;lucide.createIcons();
-  const gf=()=>{const f={};const st=document.getElementById('ef-st').value,cr=document.getElementById('ef-cr').value,pb=document.getElementById('ef-pb').value,sk=document.getElementById('ef-sk').value.trim();if(st)f.status=st;if(cr)f.cronSchedule=cr;if(pb!=='')f.publish=pb==='true';if(sk)f.skill=sk;return f};
-  document.getElementById('ef-tpl').addEventListener('change',()=>{const t=tpls.find(t=>t.templateId===document.getElementById('ef-tpl').value);if(t){if(t.subject)document.getElementById('ef-sub').value=t.subject;if(t.body)document.getElementById('ef-body').value=t.body}});
-  document.getElementById('ef-dry').addEventListener('click',async()=>{
-    const btn=document.getElementById('ef-dry');btn.innerHTML='<span class="spinner"></span>';btn.disabled=true;
-    const{data}=await api('POST','/operator/bulk-email',{eventId:eid(),subject:document.getElementById('ef-sub').value.trim()||'Preview',body:'dry run',filters:gf(),dryRun:true});
-    btn.innerHTML='Preview Recipients';btn.disabled=false;
-    document.getElementById('ef-dr').classList.remove('hidden');
-    if(data.ok)document.getElementById('ef-dc').textContent=data.recipientCount??0;
-    else{document.getElementById('ef-dc').textContent='—';toast('Preview failed','error')};
+  </div>`;
+  lucide.createIcons();
+
+  // ── helpers ──────────────────────────────────────────────────────────────
+  function getFilters(){
+    return{
+      status:   document.getElementById('ef-st').value,
+      cron:     document.getElementById('ef-cr').value,
+      pub:      document.getElementById('ef-pb').value,
+      skill:    document.getElementById('ef-sk').value,
+      contract: document.getElementById('ef-ct').value,
+      country:  document.getElementById('ef-co').value.trim(),
+      availability: document.getElementById('ef-av').value,
+      minRate:  document.getElementById('ef-rmin').value,
+      maxRate:  document.getElementById('ef-rmax').value,
+      search:   document.getElementById('ef-search').value.trim(),
+    };
+  }
+
+  function applyClientFilters(devs, f){
+    return devs.filter(d=>{
+      if(f.search){const q=f.search.toLowerCase();if(!(d.full_name||'').toLowerCase().includes(q)&&!(d.email||'').toLowerCase().includes(q)&&!(d.ref_number||'').toLowerCase().includes(q))return false}
+      if(f.contract&&(d.contract_type||'')!==f.contract)return false;
+      if(f.country&&!(d.country||'').toLowerCase().includes(f.country.toLowerCase()))return false;
+      if(f.availability&&(d.availability||'')!==f.availability)return false;
+      if(f.minRate&&(d.hourly_rate||0)<parseFloat(f.minRate))return false;
+      if(f.maxRate&&(d.hourly_rate||0)>parseFloat(f.maxRate))return false;
+      return true;
+    });
+  }
+
+  function updateSelCount(){
+    const n=efSelected.size;
+    document.getElementById('ef-sel-count').textContent=`${n} selected`;
+    document.getElementById('ef-sel-n').textContent=n;
+  }
+
+  const PAGE=20;
+  function renderRecipientList(){
+    const start=(efPage-1)*PAGE, end=start+PAGE;
+    const page=efRecipients.slice(start,end);
+    const total=efRecipients.length, pages=Math.max(1,Math.ceil(total/PAGE));
+    const body=document.getElementById('ef-recip-body');
+    const pager=document.getElementById('ef-recip-pager');
+
+    if(!total){
+      body.innerHTML=`<div class="empty-state"><i data-lucide="users" style="width:24px;height:24px;color:#1e293b"></i><p class="text-sm text-slate-700">No recipients match filters</p></div>`;
+      pager.classList.add('hidden'); lucide.createIcons(); return;
+    }
+
+    body.innerHTML=`<table style="width:100%">
+      <thead><tr>
+        <th style="width:36px;padding:10px 12px 10px 16px"><input type="checkbox" id="ef-chk-all" style="width:auto;padding:0" ${page.every(d=>efSelected.has(d.ref_number))?'checked':''}></th>
+        <th>Name</th><th>Ref</th><th>Country</th><th>Rate</th><th>Cron</th><th>Status</th>
+      </tr></thead>
+      <tbody>${page.map(d=>`<tr>
+        <td style="padding:9px 12px 9px 16px"><input type="checkbox" class="ef-chk" data-ref="${d.ref_number}" style="width:auto;padding:0" ${efSelected.has(d.ref_number)?'checked':''}></td>
+        <td class="font-medium text-slate-200" style="font-size:.78rem">${d.full_name||'—'}</td>
+        <td class="font-mono text-slate-500" style="font-size:.68rem">${d.ref_number||'—'}</td>
+        <td class="text-slate-500" style="font-size:.72rem">${d.country||'—'}</td>
+        <td class="text-slate-500" style="font-size:.72rem">${d.hourly_rate?'$'+d.hourly_rate+'/hr':'—'}</td>
+        <td class="text-slate-600" style="font-size:.72rem">${d.cronSchedule||'—'}</td>
+        <td>${bdg(d.status)}</td>
+      </tr>`).join('')}</tbody>
+    </table>`;
+
+    pager.classList.remove('hidden');
+    document.getElementById('ef-pager-info').textContent=`Page ${efPage} of ${pages} · ${total} recipients`;
+    document.getElementById('ef-pg-prev').disabled=efPage<=1;
+    document.getElementById('ef-pg-next').disabled=efPage>=pages;
+    lucide.createIcons();
+    updateSelCount();
+
+    // row checkboxes
+    body.querySelectorAll('.ef-chk').forEach(c=>c.addEventListener('change',()=>{
+      if(c.checked)efSelected.add(c.dataset.ref); else efSelected.delete(c.dataset.ref);
+      updateSelCount();
+      const allChk=document.getElementById('ef-chk-all');
+      if(allChk)allChk.checked=page.every(d=>efSelected.has(d.ref_number));
+    }));
+    // select-all on page
+    document.getElementById('ef-chk-all')?.addEventListener('change',e=>{
+      page.forEach(d=>{if(e.target.checked)efSelected.add(d.ref_number);else efSelected.delete(d.ref_number)});
+      renderRecipientList();
+    });
+  }
+
+  // ── load recipients ────────────────────────────────────────────────────
+  async function loadRecipients(){
+    const f=getFilters();
+    ef=f;
+    const body=document.getElementById('ef-recip-body');
+    body.innerHTML=`<div class="flex items-center justify-center py-12">${spin()}</div>`;
+    // build API query — server-side filters
+    const p=new URLSearchParams({limit:100});
+    if(f.status)p.set('status',f.status);
+    if(f.cron)p.set('cronSchedule',f.cron);
+    if(f.pub!=='')p.set('publish',f.pub);
+    if(f.skill)p.set('skill',f.skill);
+    const{data}=await api('GET',`/operator/submissions?${p}`);
+    if(!data.ok){toast('Failed to load recipients','error');body.innerHTML=`<div class="p-4 text-xs text-red-400">Failed to load</div>`;return}
+    // apply client-side filters for fields not supported server-side
+    efRecipients=applyClientFilters(data.results||[], f);
+    efPage=1;
+    renderRecipientList();
+  }
+
+  // ── send logic ─────────────────────────────────────────────────────────
+  async function sendEmails(refs){
+    const sub=document.getElementById('ef-sub').value.trim();
+    const body=document.getElementById('ef-body').value.trim();
+    const tid=document.getElementById('ef-tpl').value;
+    const jobId=document.getElementById('ef-job').value;
+    if(!sub){toast('Subject required','error');return}
+    if(!body&&!tid){toast('Body or template required','error');return}
+    if(!refs.length){toast('No recipients selected','error');return}
+
+    const prog=document.getElementById('ef-progress');
+    prog.classList.remove('hidden');
+    prog.innerHTML='Starting…';
+
+    let sent=0,failed=0,jobsAttached=0;
+
+    for(const ref of refs){
+      // 1. send message to developer profile
+      const msgPayload={eventId:eid(),ref_number:ref,subject:sub,body:body||'(see template)'};
+      if(tid)msgPayload.templateId=tid;
+      const{data:md}=await api('POST','/operator/messages',msgPayload);
+      if(md.ok)sent++; else failed++;
+
+      // 2. if job selected, attach to profile via /operator/post
+      if(jobId){
+        const job=jobs.find(j=>j.jobId===jobId);
+        const{data:pd}=await api('POST','/operator/post',{
+          eventId:eid(),
+          ref_number:ref,
+          jobTitle:job?.title||'Job Opportunity',
+          jobDescription:job?.description||'Please see attached job posting.',
+          jobId
+        });
+        if(pd.ok)jobsAttached++;
+      }
+
+      prog.innerHTML=`Processing… ${sent+failed} / ${refs.length}`;
+    }
+
+    prog.innerHTML=`<span style="color:#6ee7b7;font-weight:600">Done</span> — ${sent} sent · ${failed} failed${jobId?` · ${jobsAttached} job postings attached`:''}`;
+    toast(`${sent} emails sent${failed?`, ${failed} failed`:''}`, failed?'error':'success');
+    updateSelCount();
+  }
+
+  // ── event listeners ────────────────────────────────────────────────────
+  document.getElementById('ef-load').addEventListener('click', loadRecipients);
+
+  document.getElementById('ef-clear').addEventListener('click',()=>{
+    ef={status:'',cron:'',pub:'',skill:'',country:'',contract:'',availability:'',minRate:'',maxRate:'',search:''};
+    efSelected.clear(); efRecipients=[]; efPage=1; rEmail();
   });
-  document.getElementById('ef-send').addEventListener('click',async()=>{
-    const sub=document.getElementById('ef-sub').value.trim(),body=document.getElementById('ef-body').value.trim(),tid=document.getElementById('ef-tpl').value;
-    if(!sub){toast('Subject required','error');return}if(!body&&!tid){toast('Body or template required','error');return}
-    const btn=document.getElementById('ef-send');btn.innerHTML='<span class="spinner"></span> Sending…';btn.disabled=true;
-    const p={eventId:eid(),subject:sub,filters:gf(),dryRun:false};if(body)p.body=body;if(tid)p.templateId=tid;
-    const{data}=await api('POST','/operator/bulk-email',p);
-    btn.innerHTML='<span class="inline-flex items-center gap-1.5"><i data-lucide="send" style="width:13px;height:13px"></i> Send Email</span>';btn.disabled=false;lucide.createIcons();
-    if(data.ok)toast(`Sent to ${data.recipientCount} recipients`,'success');else toast('Send failed: '+(data.error||'unknown'),'error');
+
+  document.getElementById('ef-tpl').addEventListener('change',()=>{
+    const t=tpls.find(t=>t.templateId===document.getElementById('ef-tpl').value);
+    if(t){if(t.subject)document.getElementById('ef-sub').value=t.subject;if(t.body)document.getElementById('ef-body').value=t.body}
   });
+
+  document.getElementById('ef-sel-all').addEventListener('click',()=>{
+    efRecipients.forEach(d=>efSelected.add(d.ref_number));renderRecipientList();
+  });
+  document.getElementById('ef-sel-none').addEventListener('click',()=>{
+    efSelected.clear();renderRecipientList();
+  });
+
+  document.getElementById('ef-pg-prev').addEventListener('click',()=>{efPage--;renderRecipientList()});
+  document.getElementById('ef-pg-next').addEventListener('click',()=>{efPage++;renderRecipientList()});
+
+  document.getElementById('ef-send-sel').addEventListener('click',()=>{
+    sendEmails([...efSelected]);
+  });
+
+  document.getElementById('ef-send-all').addEventListener('click',()=>{
+    const refs=efRecipients.map(d=>d.ref_number);
+    if(!refs.length){toast('Load recipients first','error');return}
+    if(!confirm(`Send to all ${refs.length} filtered recipients?`))return;
+    sendEmails(refs);
+  });
+
+  // restore existing list if state persisted
+  if(efRecipients.length)renderRecipientList();
 }
 
 // MESSAGES
