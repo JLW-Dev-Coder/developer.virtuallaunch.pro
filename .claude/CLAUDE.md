@@ -1,41 +1,30 @@
 # VirtualLaunch Developer — Claude Context
 
 ## Architecture Overview
-- Frontend: Static HTML + Tailwind CSS, served via Cloudflare Pages (developers.virtuallaunch.pro)
-- Backend: Cloudflare Workers (`workers/src/index.js`) + Cloudflare Pages Functions (`functions/forms/`)
+- Frontend: ✅ Next.js 15 (App Router), served via Cloudflare Pages (developers.virtuallaunch.pro)
+- Backend: ✅ All routes ported to VLP Worker (api.virtuallaunch.pro)
 - Storage: Cloudflare R2 bucket (`onboarding-records`)
-- Runtime: workerd (Cloudflare); entrypoint declared in `wrangler.toml`
+- Runtime: Next.js on Cloudflare Pages (Edge runtime); `wrangler.toml` configures bindings
 - Hosting: developers.virtuallaunch.pro
 
+## Migration Status
+- Frontend: ✅ Next.js conversion complete — legacy static HTML deleted
+- Backend: ✅ All routes ported to VLP Worker
+- Pages Functions: ✅ Deleted (`functions/` directory removed)
+- Legacy Worker files: ✅ Deleted (`workers/` directory removed)
+- Legacy JS/HTML: ✅ Deleted (`public/*.html`, `public/js/` removed)
+
 ## Key Files
-- Onboarding flow: `public/onboarding.html` (multi-step SPA: form-page → payment-page)
-- Post-payment landing: `public/success.html` — served at `/success` (Cloudflare Pages Pretty URLs strips `.html`); polls `/forms/stripe/session-status` on load
-- Onboarding Pages Function: `functions/forms/onboarding.js` (GET / POST / PATCH)
-- Worker entry (status + onboarding): `workers/src/index.js`
-- Developer listing: `functions/forms/developers.js` + `public/js/developers.js`
-- Support status endpoint: `workers/src/index.js` → GET `/forms/support/status?clientRef=VLP-xxx`
-- Stripe checkout session creator: `functions/forms/stripe/create-session.js` (POST)
-- Stripe webhook handler: `functions/forms/stripe/webhook.js` (POST)
-- Session status endpoint: `functions/forms/stripe/session-status.js` (GET)
-- Operator auth handler: `functions/operator/auth.js` → POST `/operator/auth` (validates `x-operator-key`, issues Bearer session token stored in OPERATOR_SESSIONS KV)
-- Operator token verification: `functions/operator/_verifyToken.js` → shared `verifyOperatorToken(request, env)` — import and call first in every operator handler
-- Operator submissions: `functions/operator/submissions.js` → GET `/operator/submissions` (filter + paginate onboarding records; verifyOperatorToken first)
-- Operator developer (single): `functions/operator/developer.js` → GET `/operator/developer?ref=VLP-xxx` + PATCH `/operator/developer` (full record + skills reshape on GET; immutable fields enforced on PATCH)
-- Operator developers (list): `functions/operator/developers.js` → GET `/operator/developers` (lightweight list: ref_number, full_name, status, publish_profile only)
-- Operator post handler: `functions/operator/post.js` → POST `/operator/post` (targeted job post to a developer record; updates nextNotificationDue per cronSchedule)
-- Operator jobs handler: `functions/operator/jobs.js` → GET/POST/PATCH `/operator/jobs` (job post CRUD; job stored in R2 `job-posts/{jobId}.json`)
-- Operator bulk email handler: `functions/operator/bulk-email.js` → POST `/operator/bulk-email` (filter-based bulk email via Gmail API; dry-run supported; receipt written to R2)
-- Operator analytics handler: `functions/operator/analytics.js` → GET `/operator/analytics` (submission counts across 4 R2 collections + Cloudflare Analytics API page views; time-bucketed metrics; CF_API_TOKEN + CF_ZONE_ID required)
-- Operator messages handler: `functions/operator/messages.js` → POST `/operator/messages` (send outbound message to developer; writes to R2 + sends email) + GET `/operator/messages?ref=VLP-xxx` (fetch full thread)
-- Operator tickets list: `functions/operator/tickets/index.js` → GET `/operator/tickets` (list support tickets from support-records/ with optional ?status filter; includes replyCount)
-- Operator ticket reply: `functions/operator/tickets/[ticketId]/reply.js` → POST `/operator/tickets/{ticketId}/reply` (append reply to ticket; update status to in_progress; send email to submitter)
-- Operator canned responses: `functions/operator/canned-responses.js` → GET `/operator/canned-responses` (list with optional ?userType filter) + POST (create new template; isDefault:false)
-- Operator canned response PATCH/DELETE: `functions/operator/canned-responses/[templateId].js` → PATCH `/operator/canned-responses/{templateId}` (edit mutable fields) + DELETE (isDefault guard — cannot delete default templates)
-- Canned response seed script: `scripts/seed-canned-responses.js` → writes 11 isDefault:true templates (4 developer + 4 client + 3 legacy migrated) to R2 via Cloudflare REST API
-- Developer match intake handler: `functions/forms/developer-match-intake.js` → POST `/forms/developer-match-intake` (no auth; writes to `developer-match-requests/{eventId}.json` + receipt to `receipts/form/{eventId}.json`)
-- Cron job match handler: `functions/cron/job-match.js` → POST `/cron/job-match` (x-cron-secret auth — NOT operator Bearer; matches active/published developers to a job by skill; sends bulk email via Resend; updates nextNotificationDue per cronSchedule; writes run record + receipt to R2; KV dedupe in OPERATOR_SESSIONS)
-- Onboarding status handler: `functions/forms/onboarding/status.js` → GET `/forms/onboarding/status?referenceId=VLP-xxx` (no auth — public; returns status + lastUpdated only; direct R2 key lookup by referenceId)
-- Operator backfill email index: `functions/operator/backfill-email-index.js` → GET `/operator/backfill-email-index` (Bearer auth; idempotent backfill of `onboarding-email-index/` entries for all existing onboarding records; returns `{ ok, total, written, skipped, errors }`)
+- Next.js app: `app/` directory (App Router; all routes live here)
+- Wrangler config: `wrangler.toml` (Pages only; R2 + KV bindings; no Worker name)
+- Seed script: `scripts/seed-canned-responses.js` → writes 11 isDefault:true canned response templates to R2
+
+## Deleted (DVLP Migration Complete)
+The following have been removed — all logic now lives in the VLP Worker (api.virtuallaunch.pro):
+- `public/*.html` — all legacy static HTML pages
+- `public/js/` — all legacy client JS
+- `functions/` — all Cloudflare Pages Functions
+- `workers/` — legacy Worker source and cron-trigger
 
 ## Stripe Integration
 - Webhook endpoint: https://api.virtuallaunch.pro/v1/webhooks/stripe
@@ -600,3 +589,16 @@ to drive the weekly cron schedule for the Pages project. It is not part of the P
 - Old file deleted: `functions/forms/find-developers.js`
 - Updated `contracts/registry.json`: handlerPath → `"functions/forms/developer-match-intake.js"`
 - Updated Key Files entry to reflect new filename
+
+### 2026-03-30 — DVLP migration cleanup: delete legacy files
+- Deleted: `public/index.html`, `public/onboarding.html`, `public/success.html`,
+  `public/available.html`, `public/find-developers.html`, `public/reviews.html`,
+  `public/support.html`, `public/site-analytics.html`, `public/operator.html`
+- Deleted: `public/js/` directory (developers.js, partials-loader.js)
+- Deleted: `functions/` directory (all Cloudflare Pages Functions)
+- Deleted: `workers/` directory (workers/src/index.js, workers/cron-trigger/)
+- Updated `wrangler.toml`: removed `name = "vlp-onboarding-worker"` and Stripe vars;
+  updated `pages_build_output_dir` to `.next`; kept R2, KV bindings and secrets comments
+- Updated `.claude/CLAUDE.md`: Architecture Overview reflects Next.js frontend;
+  added Migration Status section; Key Files section updated to reflect post-migration state
+- All logic now lives in VLP Worker (api.virtuallaunch.pro); this repo is frontend-only

@@ -1,9 +1,0 @@
-name = "developers-virtuallaunch-pro-api"
-main = "index.js"
-compatibility_date = "2024-01-01"
-
-[triggers]
-crons = ["0 9 * * 1"]
-
-# CRON_SECRET — set via Cloudflare dashboard → Worker → Settings → Variables
-# Must match CRON_SECRET set on the Pages project
