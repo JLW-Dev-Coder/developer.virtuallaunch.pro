@@ -1,7 +1,15 @@
 name = "developers-virtuallaunch-pro-site"
 main = ".open-next/worker.js"
 compatibility_date = "2026-03-20"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+[[services]]
+binding = "WORKER_SELF_REFERENCE"
+service = "developers-virtuallaunch-pro-site"
 
 [[r2_buckets]]
 binding = "ONBOARDING_R2"
@@ -10,16 +18,8 @@ preview_bucket_name = "onboarding-records"
 
 [[kv_namespaces]]
 binding = "OPERATOR_SESSIONS"
-id   = "7e094500597c41e2954fd4e6894a36cf"
+id = "7e094500597c41e2954fd4e6894a36cf"
 
 [vars]
 EMAIL_FROM = "team@virtuallaunch.pro"
 CF_ZONE_ID = "dc402def9a745a2a65fc9b829b72c6f3"
-
-# Secrets — set via: wrangler secret put <KEY>
-# OPERATOR_KEY
-# RESEND_API_KEY
-# GOOGLE_PRIVATE_KEY
-# GOOGLE_CLIENT_EMAIL
-# CF_API_TOKEN         — Analytics:Read permission required
-# CRON_SECRET          — used by POST /cron/job-match (x-cron-secret header)
