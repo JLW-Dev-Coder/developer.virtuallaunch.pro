@@ -1,11 +1,12 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/find-developers/page": "app/find-developers/page.js",
-  "/success/page": "app/success/page.js",
+  "/pricing/page": "app/pricing/page.js",
   "/onboarding/page": "app/onboarding/page.js",
-  "/operator/page": "app/operator/page.js",
+  "/success/page": "app/success/page.js",
   "/sign-in/page": "app/sign-in/page.js",
+  "/operator/page": "app/operator/page.js",
   "/developers/page": "app/developers/page.js",
-  "/page": "app/page.js",
-  "/reviews/page": "app/reviews/page.js"
+  "/reviews/page": "app/reviews/page.js",
+  "/page": "app/page.js"
 }

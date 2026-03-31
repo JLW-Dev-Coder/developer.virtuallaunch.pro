@@ -79,6 +79,23 @@
 .contactLink { color: #f1f5f9; font-weight: 500; text-decoration: none; font-size: 0.875rem; transition: color 0.15s; }
 .contactLink:hover { color: #34d399; }
 
+/* Upgrade CTA */
+.upgradeCard {
+  border-radius: 1rem; border: 1px solid rgba(16,185,129,.25);
+  background: rgba(16,185,129,.05); padding: 1.75rem 2rem;
+  text-align: center; margin-bottom: 2.5rem;
+}
+.upgradeEyebrow { font-size: 0.7rem; font-weight: 700; color: #10b981; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 0.5rem; }
+.upgradeTitle { font-size: 1.125rem; font-weight: 700; color: #f1f5f9; margin-bottom: 0.75rem; }
+.upgradeSub { font-size: 0.875rem; color: #94a3b8; line-height: 1.6; margin-bottom: 1.25rem; }
+.upgradeBtn {
+  display: inline-block; padding: 0.75rem 1.75rem;
+  background: linear-gradient(135deg, #10b981, #059669); color: #020617;
+  font-weight: 600; font-size: 0.9rem; border-radius: 0.5rem;
+  text-decoration: none; transition: all 0.2s;
+}
+.upgradeBtn:hover { background: linear-gradient(135deg, #34d399, #10b981); }
+
 /* Error */
 .errorTitle { font-size: clamp(1.25rem, 3vw, 1.75rem); font-weight: 700; color: #f87171; text-align: center; margin-bottom: 1rem; }
 .errorMsg { font-size: 1rem; color: #94a3b8; text-align: center; margin-bottom: 2rem; line-height: 1.6; }

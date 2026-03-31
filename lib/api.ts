@@ -58,6 +58,7 @@ export interface Developer {
   full_name: string;
   status: string;
   publish_profile: boolean;
+  plan?: 'free' | 'paid';
   skills?: Record<string, number>;
   hourly_rate?: number;
   availability?: string;
@@ -139,6 +140,35 @@ export async function submitMatchIntake(data: Record<string, unknown>): Promise<
   return request('/v1/dvlp/developer-match-intake', { method: 'POST', body: JSON.stringify(data) });
 }
 
+// ── Pricing ───────────────────────────────────────────────────────────────────
+
+export interface PricingPlan {
+  id: 'free' | 'paid';
+  name: string;
+  price: number;
+  interval?: string;
+  features: string[];
+  cta: string;
+}
+
+export interface DvlpPricing {
+  free: PricingPlan;
+  paid: PricingPlan;
+}
+
+export async function getDvlpPricing(): Promise<{ ok: boolean; plans: DvlpPricing }> {
+  return request('/v1/dvlp/pricing');
+}
+
+export async function getDeveloperPlan(ref: string): Promise<{ ok: boolean; plan: string | null }> {
+  try {
+    const data = await request<{ ok: boolean; record: OnboardingRecord }>(`/v1/dvlp/onboarding?ref=${encodeURIComponent(ref)}`);
+    return { ok: data.ok, plan: (data.record?.plan as string) ?? null };
+  } catch {
+    return { ok: false, plan: null };
+  }
+}
+
 // ── Stripe ────────────────────────────────────────────────────────────────────
 
 export async function createCheckout(data: { plan: 'free' | 'paid'; eventId: string; email?: string; internal?: boolean }): Promise<{ ok: boolean; url: string }> {
@@ -181,7 +211,7 @@ export async function updateDeveloper(data: { ref_number: string; [key: string]:
   return request('/v1/dvlp/operator/developer', { method: 'PATCH', body: JSON.stringify(data) });
 }
 
-export async function getOperatorDevelopers(params?: Record<string, string>): Promise<{ ok: boolean; results: Pick<Developer, 'ref_number' | 'full_name' | 'status' | 'publish_profile'>[] }> {
+export async function getOperatorDevelopers(params?: Record<string, string>): Promise<{ ok: boolean; results: Pick<Developer, 'ref_number' | 'full_name' | 'status' | 'publish_profile' | 'plan'>[] }> {
   const qs = params ? '?' + new URLSearchParams(params).toString() : '';
   return request(`/v1/dvlp/operator/developers${qs}`);
 }

@@ -26,6 +26,9 @@ export default function SubmissionsView({ onSelectDev }: { onSelectDev: (ref: st
 
   return (
     <div>
+      <div style={{ marginBottom: '0.75rem', padding: '0.5rem 0.875rem', borderRadius: '0.5rem', background: 'rgba(16,185,129,.06)', border: '1px solid rgba(16,185,129,.2)', fontSize: '0.75rem', color: '#6ee7b7' }}>
+        Only paid (Intro Track) developers receive curated job matches.
+      </div>
       <div className={styles.viewHead}>
         <h2 className={styles.viewTitle}>Submissions <span style={{ color: '#475569', fontSize: '0.75rem' }}>({total})</span></h2>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

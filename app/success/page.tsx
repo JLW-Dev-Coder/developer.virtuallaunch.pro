@@ -14,6 +14,8 @@ type PaymentState = 'processing' | 'completed' | 'error';
 function SuccessContent() {
   const searchParams = useSearchParams();
   const session_id = searchParams.get('session_id');
+  const plan_param = searchParams.get('plan');
+  const ref_param = searchParams.get('ref');
 
   const [state, setState] = useState<PaymentState>('processing');
   const [plan, setPlan] = useState<string | null>(null);
@@ -22,6 +24,16 @@ function SuccessContent() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    // Free plan path — no Stripe session required
+    if (plan_param === 'free' && ref_param) {
+      setPlan('free');
+      setRef(ref_param);
+      sessionStorage.setItem('vlp_ref', ref_param);
+      localStorage.setItem('vlp_current_plan', 'free');
+      setState('completed');
+      return;
+    }
+
     if (!session_id) {
       setState('error');
       setErrorMsg('No session ID found. Please return to onboarding and try again.');
@@ -75,7 +87,7 @@ function SuccessContent() {
     });
 
     return () => clearInterval(timer);
-  }, [session_id]);
+  }, [session_id, plan_param, ref_param]);
 
   async function copyRef() {
     if (!ref) return;
@@ -102,10 +114,12 @@ function SuccessContent() {
             </svg>
           </div>
           <h1 className={styles.title}>
-            {plan === 'paid' ? "You're all set! Welcome to Premium." : "Success! You're on the Free plan."}
+            {plan === 'paid' ? "You're all set! Welcome to Intro Track." : "You're listed! Welcome to DVLP."}
           </h1>
           <p className={styles.sub}>
-            Please schedule your onboarding call below. We&apos;ll reach out within 24 hours with your first set of client matches. Check your email for next steps.
+            {plan === 'paid'
+              ? "Schedule your 1-on-1 intro consultation below. We'll follow up within 24 hours with your first curated matches."
+              : "Your profile is live. We'll reach out when a matching opportunity comes in. Check your email for next steps."}
           </p>
 
           {ref && (
@@ -126,15 +140,29 @@ function SuccessContent() {
             </div>
           )}
 
-          <div className={styles.actions}>
-            <a
-              href="https://cal.com/tax-monitor-pro/developers-virtual-launch-pro-onboarding"
-              target="_blank" rel="noopener noreferrer"
-              className={styles.calBtn}>
-              Schedule Your Call
-            </a>
-            <Link href="/" className={styles.homeBtn}>Return to Home</Link>
-          </div>
+          {plan === 'paid' ? (
+            <div className={styles.actions}>
+              <a
+                href="https://cal.com/tax-monitor-pro/developers-virtual-launch-pro-onboarding"
+                target="_blank" rel="noopener noreferrer"
+                className={styles.calBtn}>
+                Schedule Your 1-on-1 Intro Call
+              </a>
+              <Link href="/" className={styles.homeBtn}>Return to Home</Link>
+            </div>
+          ) : (
+            <>
+              <div className={styles.actions}>
+                <Link href="/" className={styles.homeBtn}>Return to Home</Link>
+              </div>
+              <div className={styles.upgradeCard}>
+                <p className={styles.upgradeEyebrow}>Want more?</p>
+                <h2 className={styles.upgradeTitle}>Unlock curated job matches &amp; a 1-on-1 intro consultation</h2>
+                <p className={styles.upgradeSub}>Upgrade to Intro Track for $2.99/mo — featured placement, weekly matches, and a dedicated intro call.</p>
+                <Link href="/pricing" className={styles.upgradeBtn}>See Intro Track →</Link>
+              </div>
+            </>
+          )}
 
           <div className={styles.contactCard}>
             <h2 className={styles.contactTitle}>Questions? Get in Touch</h2>

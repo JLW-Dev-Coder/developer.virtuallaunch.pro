@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import Header from '@/components/Header';
 import BackgroundEffects from '@/components/BackgroundEffects';
-import { submitOnboarding, getOnboarding, createCheckout } from '@/lib/api';
+import { submitOnboarding, getOnboarding, createCheckout, getDvlpPricing, type DvlpPricing } from '@/lib/api';
 import styles from './page.module.css';
 
 function generateEventId() {
@@ -54,6 +54,11 @@ function OnboardingContent() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [eventId] = useState(() => generateEventId());
+  const [pricing, setPricing] = useState<DvlpPricing | null>(null);
+
+  useEffect(() => {
+    getDvlpPricing().then(d => { if (d.ok) setPricing(d.plans); }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!ref) return;
@@ -108,6 +113,11 @@ function OnboardingContent() {
       const payload = { ...form, eventId, hourly_rate: Number(form.hourly_rate) };
       await submitOnboarding(payload);
       sessionStorage.setItem('vlp_ref', eventId);
+
+      if (plan === 'free') {
+        window.location.href = `/success?plan=free&ref=${encodeURIComponent(eventId)}`;
+        return;
+      }
 
       const internal = sessionStorage.getItem('vlp_internal') === 'true';
       const checkout = await createCheckout({ plan, eventId, email: form.email, internal });
@@ -247,36 +257,49 @@ function OnboardingContent() {
       {step === 4 && (
         <div className={styles.stepCard}>
           <h2 className={styles.stepTitle}>Choose Your Plan</h2>
-          <p className={styles.stepSub}>Both plans go through a quick Stripe checkout. Cancel anytime.</p>
+          <p className={styles.stepSub}>Start free anytime. Upgrade to unlock curated matches and a 1-on-1 intro consult.</p>
           <div className={styles.planGrid}>
+            {/* Free Plan */}
             <div className={styles.planCard}>
-              <div className="future-eyebrow" style={{ marginBottom: '0.5rem' }}>Starter</div>
+              <div className="future-eyebrow" style={{ marginBottom: '0.5rem' }}>
+                {pricing?.free.name ?? 'Free'}
+              </div>
               <div className={styles.planPrice}>Free</div>
-              <p className={styles.planDesc}>Get listed and receive occasional job matches.</p>
+              <p className={styles.planDesc}>Get listed and start receiving client inquiries.</p>
               <ul className={styles.planFeatures}>
-                <li>Profile listing</li>
-                <li>Monthly notifications</li>
-                <li>Basic support</li>
+                {(pricing?.free.features ?? ['Profile listing', 'Receive & respond to inquiries', 'Basic support']).map(f => (
+                  <li key={f}>{f}</li>
+                ))}
               </ul>
               <button className={styles.planBtnSecondary} onClick={() => selectPlan('free')}
                 disabled={submitting}>
-                {submitting ? <span className="spinner" /> : 'Get Started Free'}
+                {submitting ? <span className="spinner" /> : (pricing?.free.cta ?? 'Get Listed Free')}
               </button>
             </div>
+            {/* Paid Plan */}
             <div className={`${styles.planCard} ${styles.planFeatured}`}>
               <div className={styles.popularBadge}>Most Popular</div>
-              <div className="future-eyebrow" style={{ marginBottom: '0.5rem' }}>Premium</div>
-              <div className={styles.planPrice}>$2.99<span className={styles.planPer}>/mo</span></div>
-              <p className={styles.planDesc}>Priority matching and more client introductions.</p>
+              <div className="future-eyebrow" style={{ marginBottom: '0.5rem' }}>
+                {pricing?.paid.name ?? 'Intro Track'}
+              </div>
+              <div className={styles.planPrice}>
+                ${pricing?.paid.price.toFixed(2) ?? '2.99'}
+                <span className={styles.planPer}>/{pricing?.paid.interval ?? 'mo'}</span>
+              </div>
+              <p className={styles.planDesc}>Curated job matches, featured placement, and a 1-on-1 intro consult.</p>
               <ul className={styles.planFeatures}>
-                <li>Priority job matching</li>
-                <li>Weekly notifications</li>
-                <li>Featured profile</li>
-                <li>Dedicated support</li>
+                {(pricing?.paid.features ?? [
+                  'Everything in Free',
+                  'Curated job matches',
+                  'Featured profile placement',
+                  '1-on-1 intro consultation',
+                ]).map(f => (
+                  <li key={f}>{f}</li>
+                ))}
               </ul>
               <button className={styles.planBtnPrimary} onClick={() => selectPlan('paid')}
                 disabled={submitting}>
-                {submitting ? <span className="spinner" /> : 'Get Started — $2.99/mo'}
+                {submitting ? <span className="spinner" /> : (pricing?.paid.cta ?? 'Start Intro Track — $2.99/mo')}
               </button>
             </div>
           </div>
