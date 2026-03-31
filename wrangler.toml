@@ -1,5 +1,6 @@
+name = "developers-virtuallaunch-pro-site"
 compatibility_date = "2026-03-20"
-pages_build_output_dir = ".next"
+pages_build_output_dir = ".vercel/output/static"
 
 [[r2_buckets]]
 binding = "ONBOARDING_R2"
