@@ -1,8 +1,7 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Output static export not needed — deploying to Cloudflare Pages with Next.js adapter
-  // or standard Node deployment
+  output: 'export',
   images: {
     unoptimized: true,
   },
