@@ -19,6 +19,7 @@ export default function Header() {
           <Link href="/reviews" className={styles.navLink}>Reviews</Link>
           <Link href="/support" className={styles.navLink}>Support</Link>
           <Link href="/find-developers" className={styles.navLink}>Find Developers</Link>
+          <Link href="/affiliate" className={styles.navLink}>Affiliate</Link>
         </nav>
 
         <div className={styles.actions}>

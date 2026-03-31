@@ -303,6 +303,46 @@ export async function deleteCannedResponse(id: string): Promise<{ ok: boolean }>
   return request(`/v1/dvlp/operator/canned-responses/${encodeURIComponent(id)}`, { method: 'DELETE' });
 }
 
+// ── Affiliates ────────────────────────────────────────────────────────────────
+
+export interface AffiliateData {
+  referral_code: string;
+  connect_status: 'pending' | 'active' | 'restricted' | string;
+  balance_pending: number;
+  balance_paid: number;
+  referral_url: string;
+}
+
+export interface AffiliateEvent {
+  platform: string;
+  gross_amount: number;
+  commission_amount: number;
+  status: 'pending' | 'paid' | string;
+  created_at: string;
+}
+
+export interface PayoutResult {
+  payout_id: string;
+  amount: number;
+  status: string;
+}
+
+export async function getAffiliate(account_id: string): Promise<AffiliateData> {
+  return request(`/v1/affiliates/${encodeURIComponent(account_id)}`);
+}
+
+export async function getAffiliateEvents(account_id: string): Promise<AffiliateEvent[]> {
+  return request(`/v1/affiliates/${encodeURIComponent(account_id)}/events`);
+}
+
+export async function startAffiliateOnboarding(): Promise<{ onboard_url: string }> {
+  return request('/v1/affiliates/connect/onboard', { method: 'POST' });
+}
+
+export async function requestPayout(amount: number): Promise<PayoutResult> {
+  return request('/v1/affiliates/payout/request', { method: 'POST', body: JSON.stringify({ amount }) });
+}
+
 // ── Operator — Bulk Email ──────────────────────────────────────────────────────
 
 export async function sendBulkEmail(data: { eventId: string; subject: string; body?: string; templateId?: string; dryRun?: boolean; filters?: Record<string, unknown> }): Promise<{ ok: boolean; recipientCount?: number; sent?: number; failed?: number }> {

@@ -1,0 +1,420 @@
+/* ── Page shell ──────────────────────────────────────────────────────────── */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+.main {
+  flex: 1;
+  padding: 3rem 1.5rem 4rem;
+  position: relative;
+  z-index: 1;
+}
+
+.inner {
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+/* ── Page header ─────────────────────────────────────────────────────────── */
+.pageHead {
+  margin-bottom: 2.5rem;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #10b981;
+  margin-bottom: 0.5rem;
+}
+
+.pageTitle {
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.5rem;
+}
+
+.pageSub {
+  font-size: 1rem;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ── Section spacing ─────────────────────────────────────────────────────── */
+.section {
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 1rem;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.card {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(51, 65, 85, 0.4);
+  border-radius: 12px;
+  backdrop-filter: blur(8px);
+  padding: 1.5rem;
+}
+
+/* ── Referral link section ───────────────────────────────────────────────── */
+.referralHeading {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0 0 0.375rem;
+}
+
+.referralSub {
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin: 0 0 1.25rem;
+  line-height: 1.5;
+}
+
+.copyRow {
+  display: flex;
+  gap: 0.625rem;
+  align-items: center;
+}
+
+.referralInput {
+  flex: 1;
+  background: rgba(2, 6, 23, 0.6);
+  border: 1px solid rgba(51, 65, 85, 0.5);
+  color: #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.8125rem;
+  font-family: 'Sora', sans-serif;
+  min-width: 0;
+}
+
+.copyBtn {
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #020617;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  font-family: 'Sora', sans-serif;
+  white-space: nowrap;
+}
+
+.copyBtn:hover {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.28);
+}
+
+.copyBtnCopied {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.copyBtnCopied:hover {
+  background: rgba(16, 185, 129, 0.2);
+  box-shadow: none;
+}
+
+/* ── Stat cards ──────────────────────────────────────────────────────────── */
+.statsRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.statCard {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(51, 65, 85, 0.4);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+}
+
+.statLabel {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 0.5rem;
+}
+
+.statValue {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.statSub {
+  font-size: 0.75rem;
+  color: #475569;
+}
+
+.payoutRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.payoutBtn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #020617;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  font-family: 'Sora', sans-serif;
+}
+
+.payoutBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.28);
+}
+
+.payoutBtn:disabled {
+  background: #1e293b;
+  color: #475569;
+  cursor: not-allowed;
+}
+
+.payoutTooltip {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.payoutSuccess {
+  font-size: 0.8125rem;
+  color: #6ee7b7;
+  padding: 8px 14px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 8px;
+}
+
+/* ── Stripe Connect section ──────────────────────────────────────────────── */
+.connectedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  color: #6ee7b7;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.connectCard {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(51, 65, 85, 0.4);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.connectHeading {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0 0 0.5rem;
+}
+
+.connectBody {
+  font-size: 0.8125rem;
+  color: #64748b;
+  margin: 0 0 1.25rem;
+  line-height: 1.6;
+}
+
+.connectBtn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #020617;
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+  font-family: 'Sora', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.connectBtn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #34d399, #10b981);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.28);
+}
+
+.connectBtn:disabled {
+  background: #1e293b;
+  color: #475569;
+  cursor: not-allowed;
+}
+
+/* ── Commission history table ────────────────────────────────────────────── */
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.table thead tr {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+}
+
+.table th {
+  text-align: left;
+  padding: 0 0.75rem 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+.table th:first-child { padding-left: 0; }
+.table th:last-child { padding-right: 0; }
+
+.table tbody tr {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.2);
+  transition: background 0.1s;
+}
+
+.table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.table td {
+  padding: 0.875rem 0.75rem;
+  color: #cbd5e1;
+  vertical-align: middle;
+}
+
+.table td:first-child { padding-left: 0; }
+.table td:last-child { padding-right: 0; }
+
+/* ── Status badges ───────────────────────────────────────────────────────── */
+.badgePending {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  background: rgba(245, 158, 11, 0.1);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.18);
+}
+
+.badgePaid {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  background: rgba(16, 185, 129, 0.1);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.emptyState {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: #475569;
+  font-size: 0.875rem;
+}
+
+/* ── Skeleton rows ───────────────────────────────────────────────────────── */
+.skeletonRow td {
+  padding: 0.875rem 0.75rem;
+}
+
+.skeletonRow td:first-child { padding-left: 0; }
+.skeletonRow td:last-child { padding-right: 0; }
+
+.skeletonCell {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.6) 25%, rgba(51, 65, 85, 0.4) 50%, rgba(30, 41, 59, 0.6) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* ── Loading skeleton for stat cards ────────────────────────────────────── */
+.skeletonValue {
+  height: 2rem;
+  width: 7rem;
+  border-radius: 6px;
+  margin-bottom: 0.25rem;
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.6) 25%, rgba(51, 65, 85, 0.4) 50%, rgba(30, 41, 59, 0.6) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeletonText {
+  height: 0.75rem;
+  width: 5rem;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(30, 41, 59, 0.6) 25%, rgba(51, 65, 85, 0.4) 50%, rgba(30, 41, 59, 0.6) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .statsRow {
+    grid-template-columns: 1fr;
+  }
+
+  .copyRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .copyBtn {
+    width: 100%;
+    justify-content: center;
+  }
+}
