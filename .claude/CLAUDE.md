@@ -166,6 +166,15 @@ After any change:
 
 ---
 
+## Post-Task Rules (mandatory after every task)
+
+1. **Commit:** After completing any task, commit all changed files with a descriptive message. Never leave work uncommitted.
+2. **Push:** After committing, run `git push origin main`.
+3. **Deploy:** Push triggers Cloudflare Pages automatically for DVLP. No manual deploy needed.
+4. **Report:** After commit+push, report the commit hash and any errors.
+
+---
+
 ## 11. Related Systems
 
 | System | Repo | Domain | Relationship |
