@@ -206,23 +206,23 @@ function OnboardingContent() {
           <h2 className={styles.stepTitle}>Personal Information</h2>
           <div className={styles.fields}>
             <div className={styles.row2}>
-              <Field label="Full Name *">
+              <Field label="Full Name *" tooltip="Your real first and last name as it should appear on your public developer profile and any signed agreements.">
                 <input className="vlp-input field-focus" placeholder="Jane Smith" value={form.full_name}
                   onChange={e => set('full_name', e.target.value)} />
               </Field>
-              <Field label="Email *">
+              <Field label="Email *" tooltip="We'll send job matches, your reference ID, and account updates here. Use an address you check regularly.">
                 <input type="email" className="vlp-input field-focus" placeholder="jane@example.com"
                   value={form.email} onChange={e => set('email', e.target.value)} />
               </Field>
             </div>
             <div className={styles.row2}>
-              <Field label="Phone *">
+              <Field label="Phone *" tooltip="Used only for client intro calls and urgent match notifications — never shared on your public profile.">
                 <input type="tel" className="vlp-input field-focus" placeholder="(555) 000-0000"
                   value={form.phone}
                   onChange={e => set('phone', e.target.value)}
                   onBlur={e => set('phone', normalizePhone(e.target.value))} />
               </Field>
-              <Field label="Country *">
+              <Field label="Country *" tooltip="Where you're based. Helps clients filter by timezone and confirm legal/contracting requirements.">
                 <select className="vlp-input field-focus" value={form.country}
                   onChange={e => set('country', e.target.value)}>
                   <option value="">Select country…</option>
@@ -230,7 +230,7 @@ function OnboardingContent() {
                 </select>
               </Field>
             </div>
-            <Field label="City *">
+            <Field label="City *" tooltip="Your nearest major city. Used for timezone alignment and local-market rate context.">
               {form.country === 'United States' ? (
                 <select className="vlp-input field-focus" value={form.city}
                   onChange={e => set('city', e.target.value)}>
@@ -242,11 +242,11 @@ function OnboardingContent() {
                   value={form.city} onChange={e => set('city', e.target.value)} />
               )}
             </Field>
-            <Field label="Bio">
+            <Field label="Bio" tooltip="A short pitch (2–4 sentences) that clients see on your public profile. Mention your specialty, the kinds of projects you love, and what makes you stand out.">
               <textarea className="vlp-input field-focus" rows={4} placeholder="Tell clients about yourself…"
                 value={form.bio} onChange={e => set('bio', e.target.value)} style={{ resize: 'vertical' }} />
             </Field>
-            <Field label="Portfolio / GitHub URL">
+            <Field label="Portfolio / GitHub URL" tooltip="A link to your best work — personal site, GitHub, Dribbble, or case studies. Clients use this to vet you before reaching out.">
               <input className="vlp-input field-focus" placeholder="https://github.com/you"
                 value={form.portfolio_url} onChange={e => set('portfolio_url', e.target.value)} />
             </Field>
@@ -258,7 +258,7 @@ function OnboardingContent() {
       {step === 2 && (
         <div className={styles.stepCard}>
           <h2 className={styles.stepTitle}>Skills &amp; Experience</h2>
-          <Field label="Select your skills *">
+          <Field label="Select your skills *" tooltip="Pick every technology you can comfortably work in on a paid project. Clients filter on these directly, so don't add ones you can't ship with.">
             <div className={styles.skillsGrid}>
               {SKILLS.map(s => (
                 <button type="button" key={s}
@@ -270,7 +270,7 @@ function OnboardingContent() {
             </div>
           </Field>
           {form.skills.length > 0 && (
-            <Field label="Experience level per skill *">
+            <Field label="Experience level per skill *" tooltip="Junior = under 2 yrs hands-on. Mid = 2–5 yrs and shipping production code independently. Senior = 5+ yrs, comfortable owning architecture and mentoring.">
               <div className={styles.skillLevelList}>
                 {form.skills.map(s => (
                   <div key={s} className={styles.skillLevelRow}>
@@ -285,7 +285,7 @@ function OnboardingContent() {
               </div>
             </Field>
           )}
-          <Field label="Experience Level *">
+          <Field label="Experience Level *" tooltip="Your overall years building software professionally — across all stacks. Used as a coarse filter for clients with seniority requirements.">
             <div className={styles.optionRow}>
               {EXPERIENCE_LEVELS.map(l => (
                 <button type="button" key={l}
@@ -304,11 +304,11 @@ function OnboardingContent() {
         <div className={styles.stepCard}>
           <h2 className={styles.stepTitle}>Availability &amp; Rate</h2>
           <div className={styles.fields}>
-            <Field label="Hourly Rate (USD) *">
+            <Field label="Hourly Rate (USD) *" tooltip="Your target hourly rate in U.S. dollars. We'll only surface clients whose budget fits — set the rate you actually want to work for, not a discount.">
               <input type="number" className="vlp-input field-focus" placeholder="e.g. 75"
                 value={form.hourly_rate} onChange={e => set('hourly_rate', e.target.value)} min="1" />
             </Field>
-            <Field label="Availability *">
+            <Field label="Availability *" tooltip="How much time you can realistically commit each week. You can change this later from your profile.">
               <div className={styles.optionRow}>
                 {AVAILABILITY.map(a => (
                   <button type="button" key={a}
@@ -319,7 +319,7 @@ function OnboardingContent() {
                 ))}
               </div>
             </Field>
-            <Field label="Notification Frequency">
+            <Field label="Notification Frequency" tooltip="How often we email you a digest of new client matches. Pick weekly if you're not sure — you can adjust anytime.">
               <div className={styles.optionRow}>
                 {CRON_SCHEDULES.map(c => (
                   <button type="button" key={c.value}
@@ -403,10 +403,22 @@ function OnboardingContent() {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, tooltip, children }: { label: string; tooltip?: string; children: React.ReactNode }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
-      <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#cbd5e1' }}>{label}</label>
+      <label style={{ fontSize: '0.875rem', fontWeight: 500, color: '#cbd5e1', display: 'inline-flex', alignItems: 'center', gap: '0.375rem' }}>
+        <span>{label}</span>
+        {tooltip && (
+          <span className={styles.tooltipWrap} tabIndex={0} aria-label={tooltip} role="button">
+            <svg className={styles.tooltipIcon} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+            <span className={styles.tooltipBubble} role="tooltip">{tooltip}</span>
+          </span>
+        )}
+      </label>
       {children}
     </div>
   );
